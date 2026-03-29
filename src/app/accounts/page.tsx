@@ -43,7 +43,7 @@ export default function AccountsPage() {
           <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2 uppercase tracking-widest font-medium">
             Admin Console <ChevronRight size={14} /> Account
           </div>
-          <h2 className="text-4xl font-headline font-bold text-foreground">Team Directory</h2>
+          <h2 className="text-4xl font-headline font-bold text-foreground">Account Directory</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl text-lg">
             Manage your organization's user accounts, roles, and access permissions. Utilize the AI-powered smart tool to maintain security best practices.
           </p>
