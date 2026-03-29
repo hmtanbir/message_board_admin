@@ -1,6 +1,7 @@
 export type UserRole = 'User';
 export type SubscriptionTier = 'Basic' | 'Standard' | 'Premium';
 export type Language = 'English' | 'French' | 'Spanish' | 'Chinese' | 'Japanese';
+export type Theme = 'Light' | 'Dark';
 
 export interface User {
   id: string;
@@ -15,7 +16,7 @@ export interface User {
   permissions: string[];
   status: 'Active' | 'Inactive';
   preferences: {
-    darkTheme: boolean;
+    theme: Theme;
     language: Language;
   };
   project?: {

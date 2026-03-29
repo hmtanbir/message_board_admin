@@ -12,7 +12,7 @@ export const MOCK_USERS: User[] = [
     permissions: ['read:users', 'write:code', 'deploy:prod'],
     status: 'Active',
     createdAt: '2023-10-01',
-    preferences: { darkTheme: false, language: 'English' },
+    preferences: { theme: 'Light', language: 'English' },
     project: { name: 'Titan Shield Pro' },
     platform: {
       name: 'Titan Mobile SDK',
@@ -31,7 +31,7 @@ export const MOCK_USERS: User[] = [
     permissions: ['read:all', 'edit:roadmap', 'manage:billing'],
     status: 'Active',
     createdAt: '2023-11-15',
-    preferences: { darkTheme: false, language: 'English' },
+    preferences: { theme: 'Light', language: 'English' },
     project: { name: 'Nova Genesis' },
     platform: {
       name: 'Nova Dashboard',
@@ -50,7 +50,7 @@ export const MOCK_USERS: User[] = [
     permissions: ['read:logs', 'manage:iam', 'write:security-audit'],
     status: 'Active',
     createdAt: '2024-01-20',
-    preferences: { darkTheme: false, language: 'English' },
+    preferences: { theme: 'Light', language: 'English' },
     project: { name: 'Zenith Flow' },
     platform: {
       name: 'Zenith Guard',
@@ -69,7 +69,7 @@ export const MOCK_USERS: User[] = [
     permissions: ['read:assets', 'comment:designs'],
     status: 'Active',
     createdAt: '2024-03-05',
-    preferences: { darkTheme: false, language: 'English' },
+    preferences: { theme: 'Light', language: 'English' },
     project: { name: 'Prism Core' },
     platform: {
       name: 'Prism Design System',
@@ -88,7 +88,7 @@ export const MOCK_USERS: User[] = [
     permissions: ['read:campaigns', 'write:copy'],
     status: 'Inactive',
     createdAt: '2023-08-12',
-    preferences: { darkTheme: false, language: 'English' },
+    preferences: { theme: 'Light', language: 'English' },
     project: { name: 'Aether Network' },
     platform: {
       name: 'Aether Client',

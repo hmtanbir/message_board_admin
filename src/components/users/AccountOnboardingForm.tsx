@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react'
@@ -25,7 +24,7 @@ const onboardingSchema = z.object({
   jobTitle: z.string().min(2, "Job title is required"),
   department: z.string().min(2, "Department is required"),
   preferences: z.object({
-    darkTheme: z.boolean().default(false),
+    theme: z.enum(['Light', 'Dark']).default('Light'),
     language: z.enum(['English', 'French', 'Spanish', 'Chinese', 'Japanese']).default('English')
   }),
   project: z.object({
@@ -57,7 +56,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
       subscription: 'Basic',
       jobTitle: '',
       department: '',
-      preferences: { darkTheme: false, language: 'English' },
+      preferences: { theme: 'Light', language: 'English' },
       project: { name: '' },
       platform: {
         package_name: '',
@@ -244,16 +243,22 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
               />
               <FormField
                 control={form.control}
-                name="preferences.darkTheme"
+                name="preferences.theme"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-background/50 mt-2">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Enable Dark Theme</FormLabel>
-                      <FormDescription>Set dark mode as default.</FormDescription>
-                    </div>
+                  <FormItem>
+                    <FormLabel>Theme Preference</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder="Select theme" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Light">Light</SelectItem>
+                        <SelectItem value="Dark">Dark</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
