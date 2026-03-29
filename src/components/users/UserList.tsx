@@ -99,7 +99,6 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               <TableHead className="w-[300px] text-xs uppercase tracking-widest font-semibold py-4">Account</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Roles & Permissions</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">Department</TableHead>
               <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -142,12 +141,6 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                 <TableCell>
                   {getStatusBadge(user.status)}
                 </TableCell>
-                <TableCell>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">{user.department}</span>
-                    <span className="text-xs text-muted-foreground">{user.jobTitle}</span>
-                  </div>
-                </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -170,7 +163,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-64 text-center">
+                <TableCell colSpan={4} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <div className="bg-muted p-4 rounded-full">
                       <Search className="h-8 w-8 text-muted-foreground opacity-50" />
