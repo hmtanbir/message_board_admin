@@ -1,11 +1,10 @@
-
 "use client"
 
 import React, { useMemo, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { User } from '@/lib/types'
-import { Briefcase, Smartphone, Search, Filter } from "lucide-react"
+import { Briefcase, Smartphone, Search, Apple, Smartphone as AndroidIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 interface ProjectListProps {
@@ -56,6 +55,7 @@ export function ProjectList({ users }: ProjectListProps) {
               <TableHead className="text-xs uppercase tracking-widest font-semibold py-4">Project Name</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">User ID</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Platform Name</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold text-center">Platform Type</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Project Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -65,7 +65,9 @@ export function ProjectList({ users }: ProjectListProps) {
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Briefcase className="h-4 w-4 text-primary" />
-                    <span className="font-semibold">{user.project?.name || 'Unassigned'}</span>
+                    <span className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                      {user.project?.name || 'Unassigned'}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>
@@ -80,12 +82,22 @@ export function ProjectList({ users }: ProjectListProps) {
                   </div>
                 </TableCell>
                 <TableCell>
+                  <div className="flex items-center justify-center gap-3">
+                    {user.platform?.platform_type.includes('android') && (
+                      <AndroidIcon className="h-4 w-4 text-secondary" title="Android" />
+                    )}
+                    {user.platform?.platform_type.includes('apple') && (
+                      <Apple className="h-4 w-4 text-primary" title="Apple" />
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
                   {getStatusBadge(user.status)}
                 </TableCell>
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={4} className="h-64 text-center">
+                <TableCell colSpan={5} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <p className="text-muted-foreground">No projects found matching your search.</p>
                   </div>
