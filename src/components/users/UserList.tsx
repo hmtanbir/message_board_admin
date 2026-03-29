@@ -124,8 +124,8 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
         <Table>
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="text-xs uppercase tracking-widest font-semibold py-4">User ID</TableHead>
-              <TableHead className="w-[280px] text-xs uppercase tracking-widest font-semibold">Account</TableHead>
+              <TableHead className="w-[280px] text-xs uppercase tracking-widest font-semibold py-4">Account</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">User ID</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Roles</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Subscription</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
@@ -135,11 +135,6 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
           <TableBody>
             {filteredUsers.length > 0 ? filteredUsers.map((user) => (
               <TableRow key={user.id} className="border-border hover:bg-muted/20 transition-colors group">
-                <TableCell>
-                  <code className="text-[10px] font-mono bg-muted/50 px-2 py-1 rounded text-muted-foreground group-hover:text-foreground transition-colors">
-                    {user.id}
-                  </code>
-                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border border-primary/20">
@@ -155,6 +150,11 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                       </div>
                     </div>
                   </div>
+                </TableCell>
+                <TableCell>
+                  <code className="text-[10px] font-mono bg-muted/50 px-2 py-1 rounded text-muted-foreground group-hover:text-foreground transition-colors">
+                    {user.id}
+                  </code>
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
