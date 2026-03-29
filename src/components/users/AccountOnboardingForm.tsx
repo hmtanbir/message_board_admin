@@ -11,14 +11,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { ChevronRight, ChevronLeft, CheckCircle2, User as UserIcon, Briefcase, Smartphone, Key, RefreshCw, CreditCard } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { ChevronRight, ChevronLeft, CheckCircle2, User as UserIcon, Briefcase, Smartphone, RefreshCw } from "lucide-react"
 
 const onboardingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  phone: z.string()
+    .min(10, "Phone number must be at least 10 characters")
+    .regex(/^\+/, "Phone number must start with '+' (e.g. +880...)"),
   status: z.enum(['Active', 'Inactive']),
   subscription: z.enum(['Basic', 'Standard', 'Premium']),
   preferences: z.object({
@@ -41,8 +42,8 @@ interface AccountOnboardingFormProps {
   onCancel: () => void;
 }
 
-const STEP_FIELDS: Record<number, any[]> = {
-  1: ['name', 'email', 'password', 'phone', 'status', 'subscription'],
+const STEP_FIELDS: Record<number, string[]> = {
+  1: ['name', 'email', 'password', 'phone', 'status', 'subscription', 'preferences.darkTheme'],
   2: ['project.name'],
   3: ['platform.name', 'platform.package_name', 'platform.platform_type']
 };
@@ -82,7 +83,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
   };
 
   const nextStep = async () => {
-    const fieldsToValidate = STEP_FIELDS[step] || [];
+    const fieldsToValidate = STEP_FIELDS[step] as any;
     const isValid = await form.trigger(fieldsToValidate);
     if (isValid) setStep(prev => Math.min(prev + 1, totalSteps));
   };
@@ -171,7 +172,8 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Phone Number</FormLabel>
-                        <FormControl><Input placeholder="+1 (555) 000-0000" {...field} className="h-11" /></FormControl>
+                        <FormControl><Input placeholder="+880123456789" {...field} className="h-11" /></FormControl>
+                        <FormDescription>Must start with '+' followed by country code.</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
