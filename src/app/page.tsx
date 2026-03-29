@@ -51,7 +51,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2 uppercase tracking-widest font-medium">
             Admin Console <ChevronRight size={14} /> Analytics
           </div>
-          <h2 className="text-4xl font-headline font-bold text-foreground">Command Center</h2>
+          <h2 className="text-4xl font-headline font-bold text-foreground">Dashboard</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl text-lg">
             Real-time insights into your organization's user ecosystem and project health.
           </p>
