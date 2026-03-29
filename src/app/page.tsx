@@ -3,7 +3,7 @@
 
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Users, Briefcase, ShieldCheck, TrendingUp, LayoutDashboard, LogOut, ChevronRight, BarChart3, PieChart } from "lucide-react"
+import { Users, Briefcase, ShieldCheck, TrendingUp, LayoutDashboard, LogOut, ChevronRight, PieChart as PieChartIcon } from "lucide-react"
 import Link from 'next/link'
 import { MOCK_USERS } from '@/lib/mock-data'
 import { 
@@ -13,24 +13,13 @@ import {
   ChartLegend, 
   ChartLegendContent 
 } from "@/components/ui/chart"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Pie, PieChart as RePieChart, Cell } from "recharts"
+import { ResponsiveContainer, Pie, PieChart as RePieChart, Cell } from "recharts"
 
 export default function DashboardPage() {
   const totalUsers = MOCK_USERS.length;
   const activeUsers = MOCK_USERS.filter(u => u.status === 'Active').length;
   const premiumUsers = MOCK_USERS.filter(u => u.subscription === 'Premium').length;
   const totalProjects = MOCK_USERS.filter(u => u.project).length;
-
-  // Data for Department Bar Chart
-  const deptData = MOCK_USERS.reduce((acc: any[], user) => {
-    const existing = acc.find(d => d.name === user.department);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      acc.push({ name: user.department, count: 1 });
-    }
-    return acc;
-  }, []);
 
   // Data for Subscription Pie Chart
   const subData = MOCK_USERS.reduce((acc: any[], user) => {
@@ -113,47 +102,14 @@ export default function DashboardPage() {
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom duration-700 delay-300">
-          {/* Bar Chart */}
+        <div className="max-w-2xl animate-in fade-in slide-in-from-bottom duration-700 delay-300">
           <Card className="border-border bg-card/50 shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <BarChart3 className="h-5 w-5 text-primary" />
-                Departmental Distribution
-              </CardTitle>
-              <CardDescription>User counts grouped by functional department</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={{ count: { label: "Users", color: "hsl(var(--primary))" } }} className="h-[300px] w-full">
-                <BarChart data={deptData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                  <XAxis 
-                    dataKey="name" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                  />
-                  <YAxis hide />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar 
-                    dataKey="count" 
-                    fill="hsl(var(--primary))" 
-                    radius={[4, 4, 0, 0]} 
-                    barSize={40}
-                  />
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          {/* Pie Chart */}
-          <Card className="border-border bg-card/50 shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <PieChart className="h-5 w-5 text-secondary" />
+                <PieChartIcon className="h-5 w-5 text-secondary" />
                 Subscription Tiers
               </CardTitle>
-              <CardDescription>Breakdown of account licensing levels</CardDescription>
+              <CardDescription>Breakdown of account licensing levels across the platform</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer config={{}} className="h-[300px] w-full">
