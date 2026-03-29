@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { ChevronRight, ChevronLeft, CheckCircle2, User as UserIcon, Briefcase, Smartphone } from "lucide-react"
+import { ChevronRight, ChevronLeft, CheckCircle2, User as UserIcon, Briefcase, Smartphone, Key, RefreshCw } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const onboardingSchema = z.object({
@@ -61,6 +61,16 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
       }
     }
   });
+
+  const generatePassword = () => {
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+    const length = 14;
+    let password = "";
+    for (let i = 0; i < length; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    form.setValue('password', password, { shouldValidate: true });
+  };
 
   const nextStep = async () => {
     let fieldsToValidate: any[] = [];
@@ -130,7 +140,22 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Password</FormLabel>
-                        <FormControl><Input placeholder="••••••••" type="password" {...field} className="h-11" /></FormControl>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input placeholder="••••••••" {...field} className="h-11" />
+                          </FormControl>
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            size="icon" 
+                            onClick={generatePassword}
+                            className="h-11 w-11 shrink-0 border-primary/30 text-primary hover:bg-primary/10"
+                            title="Generate Password"
+                          >
+                            <RefreshCw className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <FormDescription>Min. 8 chars with letters, numbers and symbols.</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
