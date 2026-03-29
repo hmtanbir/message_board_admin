@@ -1,9 +1,8 @@
 "use client"
 
-import React, { useState } from 'react'
+import React from 'react'
 import { useRouter } from 'next/navigation'
-import { UserForm } from '@/components/users/UserForm'
-import { User } from '@/lib/types'
+import { AccountOnboardingForm } from '@/components/users/AccountOnboardingForm'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
 import { Users, LayoutDashboard, LogOut, ChevronLeft, ChevronRight } from "lucide-react"
@@ -12,28 +11,18 @@ import Link from 'next/link'
 export default function NewAccountPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [formData, setFormData] = useState<Partial<User>>({
-    name: '',
-    email: '',
-    jobTitle: '',
-    department: '',
-    roles: [],
-    permissions: [],
-    status: 'Pending'
-  });
 
-  const handleSave = (userData: Partial<User>) => {
-    // In a real app, this would save to a database.
-    // For this prototype, we'll simulate the success and redirect.
+  const handleSave = (data: any) => {
+    // Colorful success toast
     toast({
-      title: "Account Created",
-      description: `${userData.name} has been added to the system.`,
+      title: "🚀 Account Provisioned Successfully!",
+      description: `${data.name} has been added to ${data.project.name}. Redirecting to directory...`,
+      className: "bg-secondary text-background border-secondary",
     });
     
-    // Simulate delay for realism
     setTimeout(() => {
       router.push('/');
-    }, 1500);
+    }, 2000);
   };
 
   return (
@@ -66,27 +55,24 @@ export default function NewAccountPage() {
       <main className="flex-1 p-6 md:p-12 overflow-y-auto">
         <header className="mb-10 animate-in fade-in slide-in-from-left duration-500">
           <div className="flex items-center gap-2 text-muted-foreground text-sm mb-4 uppercase tracking-widest font-medium">
-            Admin Console <ChevronRight size={14} /> Account <ChevronRight size={14} /> New
+            Admin Console <ChevronRight size={14} /> Account <ChevronRight size={14} /> Onboarding
           </div>
           
           <Link href="/" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-6 font-semibold group">
             <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-            Back to Directory
+            Exit Onboarding
           </Link>
           
-          <h2 className="text-4xl font-headline font-bold text-foreground">Create New Account</h2>
+          <h2 className="text-4xl font-headline font-bold text-foreground">Account Setup</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl text-lg">
-            Fill out the details below to provision a new organization account. Use the AI Role Assistant to ensure correct permissions.
+            Complete the multi-step process to provision a new organization account and associated project resources.
           </p>
         </header>
 
-        <section className="bg-card border border-border rounded-2xl p-8 shadow-2xl max-w-5xl animate-in fade-in slide-in-from-bottom duration-700 delay-200">
-          <UserForm 
-            formData={formData} 
-            setFormData={setFormData} 
+        <section className="bg-card border border-border rounded-2xl p-10 shadow-2xl max-w-4xl animate-in fade-in slide-in-from-bottom duration-700 delay-200">
+          <AccountOnboardingForm 
             onSave={handleSave} 
             onCancel={() => router.push('/')} 
-            submitLabel="Create Account"
           />
         </section>
         

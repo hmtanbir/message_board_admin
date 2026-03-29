@@ -67,26 +67,6 @@ export function UserForm({ formData, setFormData, onSave, onCancel, submitLabel 
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="jobTitle" className="text-xs uppercase tracking-widest text-muted-foreground">Job Title</Label>
-            <Input 
-              id="jobTitle" 
-              value={formData.jobTitle || ''} 
-              onChange={e => setFormData({ ...formData, jobTitle: e.target.value })} 
-              placeholder="e.g. Senior Developer"
-              className="bg-background border-muted focus:ring-primary h-11"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="department" className="text-xs uppercase tracking-widest text-muted-foreground">Department</Label>
-            <Input 
-              id="department" 
-              value={formData.department || ''} 
-              onChange={e => setFormData({ ...formData, department: e.target.value })} 
-              placeholder="e.g. Engineering"
-              className="bg-background border-muted focus:ring-primary h-11"
-            />
-          </div>
-          <div className="space-y-2">
             <Label htmlFor="status" className="text-xs uppercase tracking-widest text-muted-foreground">Account Status</Label>
             <Select 
               value={formData.status} 
