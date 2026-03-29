@@ -20,7 +20,7 @@ export function UserDialog({ isOpen, onClose, onSave, initialUser }: UserDialogP
     department: '',
     roles: [],
     permissions: [],
-    status: 'Pending'
+    status: 'Active'
   });
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export function UserDialog({ isOpen, onClose, onSave, initialUser }: UserDialogP
         department: '',
         roles: [],
         permissions: [],
-        status: 'Pending'
+        status: 'Active'
       });
     }
   }, [initialUser, isOpen]);
@@ -44,10 +44,10 @@ export function UserDialog({ isOpen, onClose, onSave, initialUser }: UserDialogP
       <DialogContent className="max-w-4xl bg-card border-border sm:rounded-xl overflow-hidden p-8">
         <DialogHeader className="mb-6">
           <DialogTitle className="text-primary font-headline text-3xl">
-            Edit User Profile
+            Edit Account Profile
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-lg">
-            Update user access and profile details.
+            Update account access and profile details.
           </DialogDescription>
         </DialogHeader>
 
@@ -56,7 +56,7 @@ export function UserDialog({ isOpen, onClose, onSave, initialUser }: UserDialogP
           setFormData={setFormData} 
           onSave={onSave} 
           onCancel={onClose} 
-          submitLabel="Update Profile" 
+          submitLabel="Update Account" 
         />
       </DialogContent>
     </Dialog>
