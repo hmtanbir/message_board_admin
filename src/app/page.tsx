@@ -3,7 +3,7 @@
 
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Users, Briefcase, ShieldCheck, TrendingUp, LayoutDashboard, LogOut, ChevronRight, PieChart as PieChartIcon } from "lucide-react"
+import { Users, Briefcase, ShieldCheck, TrendingUp, LayoutDashboard, LogOut, ChevronRight, PieChart as PieChartIcon, Activity } from "lucide-react"
 import Link from 'next/link'
 import { MOCK_USERS } from '@/lib/mock-data'
 import { 
@@ -13,7 +13,7 @@ import {
   ChartLegend, 
   ChartLegendContent 
 } from "@/components/ui/chart"
-import { ResponsiveContainer, Pie, PieChart as RePieChart, Cell } from "recharts"
+import { ResponsiveContainer, Pie, PieChart, Cell } from "recharts"
 
 export default function DashboardPage() {
   const totalUsers = MOCK_USERS.length;
@@ -32,7 +32,14 @@ export default function DashboardPage() {
     return acc;
   }, []);
 
-  const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--chart-3))'];
+  // Data for Status Pie Chart
+  const statusData = [
+    { name: 'Active', value: activeUsers },
+    { name: 'Inactive', value: totalUsers - activeUsers },
+  ];
+
+  const SUB_COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--chart-3))'];
+  const STATUS_COLORS = ['hsl(var(--secondary))', 'hsl(var(--muted))'];
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
@@ -102,18 +109,19 @@ export default function DashboardPage() {
         </div>
 
         {/* Charts Section */}
-        <div className="max-w-2xl animate-in fade-in slide-in-from-bottom duration-700 delay-300">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom duration-700 delay-300">
+          {/* Subscription Chart */}
           <Card className="border-border bg-card/50 shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <PieChartIcon className="h-5 w-5 text-secondary" />
+                <PieChartIcon className="h-5 w-5 text-primary" />
                 Subscription Tiers
               </CardTitle>
-              <CardDescription>Breakdown of account licensing levels across the platform</CardDescription>
+              <CardDescription>Breakdown of account licensing levels</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer config={{}} className="h-[300px] w-full">
-                <RePieChart>
+                <PieChart>
                   <Pie
                     data={subData}
                     cx="50%"
@@ -124,12 +132,44 @@ export default function DashboardPage() {
                     dataKey="value"
                   >
                     {subData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-sub-${index}`} fill={SUB_COLORS[index % SUB_COLORS.length]} />
                     ))}
                   </Pie>
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
-                </RePieChart>
+                </PieChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* User Status Chart */}
+          <Card className="border-border bg-card/50 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Activity className="h-5 w-5 text-secondary" />
+                Account Status
+              </CardTitle>
+              <CardDescription>Ratio of active vs. inactive accounts</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={{}} className="h-[300px] w-full">
+                <PieChart>
+                  <Pie
+                    data={statusData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {statusData.map((entry, index) => (
+                      <Cell key={`cell-status-${index}`} fill={STATUS_COLORS[index % STATUS_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                </PieChart>
               </ChartContainer>
             </CardContent>
           </Card>
