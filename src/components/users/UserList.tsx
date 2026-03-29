@@ -5,11 +5,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { User, UserRole, SubscriptionTier } from '@/lib/types'
-import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, Shield, CreditCard } from "lucide-react"
+import { User, SubscriptionTier } from '@/lib/types'
+import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, CreditCard, AlertTriangle } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface UserListProps {
   users: User[];
@@ -22,6 +32,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [subscriptionFilter, setSubscriptionFilter] = useState<string>('all');
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
@@ -48,6 +59,13 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
       case 'Standard': return <Badge variant="secondary" className="bg-secondary/40 text-foreground border-none">Standard</Badge>;
       case 'Basic': return <Badge variant="outline" className="border-muted-foreground/30 text-muted-foreground">Basic</Badge>;
       default: return <Badge>{tier}</Badge>;
+    }
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteId) {
+      onDelete(deleteId);
+      setDeleteId(null);
     }
   };
 
@@ -167,7 +185,10 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                       <DropdownMenuItem onClick={() => onEdit(user)} className="cursor-pointer hover:bg-primary/10">
                         <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onDelete(user.id)} className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10">
+                      <DropdownMenuItem 
+                        onClick={() => setDeleteId(user.id)} 
+                        className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
+                      >
                         <Trash2 className="mr-2 h-4 w-4" /> Remove Account
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -192,6 +213,31 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
           </TableBody>
         </Table>
       </div>
+
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent className="bg-card border-border">
+          <AlertDialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-destructive/10 rounded-full">
+                <AlertTriangle className="h-6 w-6 text-destructive" />
+              </div>
+              <AlertDialogTitle className="text-xl font-bold">Confirm Account Deletion</AlertDialogTitle>
+            </div>
+            <AlertDialogDescription className="text-muted-foreground">
+              Are you sure you want to remove this account? This action is irreversible and will immediately revoke all platform access and project associations for the user.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-0">
+            <AlertDialogCancel className="border-border hover:bg-muted hover:text-foreground">Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold"
+            >
+              Confirm Deletion
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

@@ -1,15 +1,24 @@
-
 "use client"
 
 import React, { useMemo, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { User } from '@/lib/types'
-import { Briefcase, Search, MonitorSmartphone, Filter, CheckCircle2, XCircle, FolderPlus, MoreHorizontal, Edit2, Trash2 } from "lucide-react"
+import { Briefcase, Search, Filter, CheckCircle2, FolderPlus, MoreHorizontal, Edit2, Trash2, AlertTriangle } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface ProjectListProps {
   users: User[];
@@ -52,6 +61,7 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
   const [searchTerm, setSearchTerm] = useState('');
   const [envFilter, setEnvFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const filteredProjects = useMemo(() => {
     return users.filter(user => {
@@ -73,6 +83,13 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
       case 'Active': return <Badge className="bg-secondary/20 text-secondary border-none">{status}</Badge>;
       case 'Inactive': return <Badge variant="outline" className="border-muted-foreground text-muted-foreground">{status}</Badge>;
       default: return <Badge>{status}</Badge>;
+    }
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteId) {
+      onDelete(deleteId);
+      setDeleteId(null);
     }
   };
 
@@ -188,7 +205,10 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
                       <DropdownMenuItem onClick={() => onEdit(user)} className="cursor-pointer hover:bg-primary/10">
                         <Edit2 className="mr-2 h-4 w-4" /> Edit Project
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onDelete(user.id)} className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10">
+                      <DropdownMenuItem 
+                        onClick={() => setDeleteId(user.id)} 
+                        className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
+                      >
                         <Trash2 className="mr-2 h-4 w-4" /> Remove Project
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -210,6 +230,31 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
           </TableBody>
         </Table>
       </div>
+
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent className="bg-card border-border">
+          <AlertDialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-destructive/10 rounded-full">
+                <AlertTriangle className="h-6 w-6 text-destructive" />
+              </div>
+              <AlertDialogTitle className="text-xl font-bold">Confirm Project Removal</AlertDialogTitle>
+            </div>
+            <AlertDialogDescription className="text-muted-foreground">
+              Are you sure you want to remove this project from the inventory? This will terminate all active provisioning and archive the project configuration.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-0">
+            <AlertDialogCancel className="border-border hover:bg-muted hover:text-foreground">Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold"
+            >
+              Confirm Removal
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
