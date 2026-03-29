@@ -8,7 +8,8 @@ import { MOCK_USERS } from '@/lib/mock-data'
 import { User } from '@/lib/types'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
-import { Users, LayoutDashboard, LogOut, ChevronRight } from "lucide-react"
+import { Users, LayoutDashboard, LogOut, ChevronRight, Briefcase } from "lucide-react"
+import Link from 'next/link'
 
 export default function UserFlowAdmin() {
   const router = useRouter();
@@ -45,8 +46,9 @@ export default function UserFlowAdmin() {
           </div>
           
           <nav className="space-y-2">
-            <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" />
-            <NavItem icon={<Users size={20} />} label="Account" active />
+            <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/" />
+            <NavItem icon={<Users size={20} />} label="Accounts" href="/" active />
+            <NavItem icon={<Briefcase size={20} />} label="Projects" href="/projects" />
           </nav>
         </div>
         
@@ -85,9 +87,9 @@ export default function UserFlowAdmin() {
   )
 }
 
-function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
+function NavItem({ icon, label, href, active = false }: { icon: React.ReactNode, label: string, href: string, active?: boolean }) {
   return (
-    <button className={`flex items-center gap-4 w-full px-4 py-3 rounded-lg transition-all duration-200 group ${
+    <Link href={href} className={`flex items-center gap-4 w-full px-4 py-3 rounded-lg transition-all duration-200 group ${
       active ? 'bg-primary text-background' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
     }`}>
       <span className={`${active ? 'text-background' : 'text-muted-foreground group-hover:text-primary'}`}>
@@ -95,6 +97,6 @@ function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label
       </span>
       <span className="font-semibold">{label}</span>
       {active && <div className="ml-auto w-1.5 h-1.5 bg-background rounded-full" />}
-    </button>
+    </Link>
   );
 }
