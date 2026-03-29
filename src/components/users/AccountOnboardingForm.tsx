@@ -1,3 +1,4 @@
+
 "use client"
 
 import React from 'react'
@@ -82,7 +83,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 gap-8 items-start">
           
           {/* Column 1: Account Details */}
           <Card className="border-border bg-card/50 shadow-sm h-full">

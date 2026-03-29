@@ -71,7 +71,7 @@ export default function NewAccountPage() {
           </p>
         </header>
 
-        <section className="bg-card border border-border rounded-2xl p-10 shadow-2xl max-w-full lg:max-w-7xl animate-in fade-in slide-in-from-bottom duration-700 delay-200">
+        <section className="bg-card border border-border rounded-2xl p-10 shadow-2xl max-w-full lg:max-w-4xl animate-in fade-in slide-in-from-bottom duration-700 delay-200">
           <AccountOnboardingForm 
             onSave={handleSave} 
             onCancel={() => router.push('/')} 
