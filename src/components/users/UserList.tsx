@@ -97,7 +97,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="w-[300px] text-xs uppercase tracking-widest font-semibold py-4">Account</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">Roles & Permissions</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">Roles</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
               <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">Actions</TableHead>
             </TableRow>
@@ -122,20 +122,12 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex flex-wrap gap-1">
-                      {user.roles.map(role => (
-                        <Badge key={role} variant="secondary" className="bg-primary/10 text-primary border-none text-[10px] px-1.5 py-0">
-                          {role}
-                        </Badge>
-                      ))}
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {user.permissions.slice(0, 3).map(p => (
-                        <span key={p} className="text-[10px] text-secondary opacity-80">{p}</span>
-                      ))}
-                      {user.permissions.length > 3 && <span className="text-[10px] text-muted-foreground">+{user.permissions.length - 3} more</span>}
-                    </div>
+                  <div className="flex flex-wrap gap-1">
+                    {user.roles.map(role => (
+                      <Badge key={role} variant="secondary" className="bg-primary/10 text-primary border-none text-[10px] px-1.5 py-0">
+                        {role}
+                      </Badge>
+                    ))}
                   </div>
                 </TableCell>
                 <TableCell>
