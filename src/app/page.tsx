@@ -3,9 +3,9 @@
 
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Users, Briefcase, ShieldCheck, TrendingUp, LayoutDashboard, LogOut, ChevronRight, PieChart as PieChartIcon, Activity } from "lucide-react"
-import Link from 'next/link'
+import { Users, Briefcase, ShieldCheck, TrendingUp, ChevronRight, PieChart as PieChartIcon, Activity } from "lucide-react"
 import { MOCK_USERS } from '@/lib/mock-data'
+import { Sidebar } from '@/components/layout/Sidebar'
 import { 
   ChartContainer, 
   ChartTooltip, 
@@ -13,7 +13,7 @@ import {
   ChartLegend, 
   ChartLegendContent 
 } from "@/components/ui/chart"
-import { ResponsiveContainer, Pie, PieChart, Cell } from "recharts"
+import { PieChart, Pie, Cell } from "recharts"
 
 export default function DashboardPage() {
   const totalUsers = MOCK_USERS.length;
@@ -43,30 +43,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-border bg-card/30 flex flex-col hidden lg:flex">
-        <div className="p-8">
-          <div className="flex items-center gap-2 mb-10">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-background font-black text-xl">U</span>
-            </div>
-            <h1 className="text-xl font-bold tracking-tight text-primary">UserFlow<span className="text-foreground">Admin</span></h1>
-          </div>
-          
-          <nav className="space-y-2">
-            <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/" active />
-            <NavItem icon={<Users size={20} />} label="Accounts" href="/accounts" />
-            <NavItem icon={<Briefcase size={20} />} label="Projects" href="/projects" />
-          </nav>
-        </div>
-        
-        <div className="mt-auto p-8">
-          <button className="flex items-center gap-3 text-muted-foreground hover:text-destructive transition-colors w-full px-4 py-3 rounded-lg hover:bg-destructive/5 group">
-            <LogOut size={20} className="group-hover:scale-110 transition-transform" />
-            <span className="font-medium">Logout</span>
-          </button>
-        </div>
-      </aside>
+      <Sidebar activePage="dashboard" />
 
       {/* Main Content */}
       <main className="flex-1 p-6 md:p-12 overflow-y-auto">
@@ -191,19 +168,5 @@ function StatCard({ title, value, icon, description }: { title: string, value: n
         <p className="text-xs text-muted-foreground">{description}</p>
       </CardContent>
     </Card>
-  );
-}
-
-function NavItem({ icon, label, href, active = false }: { icon: React.ReactNode, label: string, href: string, active?: boolean }) {
-  return (
-    <Link href={href} className={`flex items-center gap-4 w-full px-4 py-3 rounded-lg transition-all duration-200 group ${
-      active ? 'bg-primary text-background' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-    }`}>
-      <span className={`${active ? 'text-background' : 'text-muted-foreground group-hover:text-primary'}`}>
-        {icon}
-      </span>
-      <span className="font-semibold">{label}</span>
-      {active && <div className="ml-auto w-1.5 h-1.5 bg-background rounded-full" />}
-    </Link>
   );
 }
