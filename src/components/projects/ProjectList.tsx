@@ -51,12 +51,10 @@ export function ProjectList({ users }: ProjectListProps) {
   const filteredProjects = useMemo(() => {
     return users.filter(user => {
       const projectName = user.project?.name || 'N/A';
-      const platformName = user.platform?.name || 'N/A';
       const platformTypes = user.platform?.platform_type || [];
       const status = user.status;
       
-      const matchesSearch = projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           platformName.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = projectName.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesEnv = envFilter === 'all' || platformTypes.includes(envFilter as any);
       const matchesStatus = statusFilter === 'all' || status === statusFilter;
@@ -79,7 +77,7 @@ export function ProjectList({ users }: ProjectListProps) {
         <div className="relative w-full md:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
-            placeholder="Search by project or platform name..." 
+            placeholder="Search by project name..." 
             className="pl-10 bg-card border-muted focus:ring-primary h-11"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
