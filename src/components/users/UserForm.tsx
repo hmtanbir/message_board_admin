@@ -78,7 +78,6 @@ export function UserForm({ formData, setFormData, onSave, onCancel, submitLabel 
               <SelectContent className="bg-card border-border">
                 <SelectItem value="Active">Active</SelectItem>
                 <SelectItem value="Inactive">Inactive</SelectItem>
-                <SelectItem value="Pending">Pending</SelectItem>
               </SelectContent>
             </Select>
           </div>

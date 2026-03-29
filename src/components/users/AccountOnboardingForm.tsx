@@ -19,7 +19,7 @@ const onboardingSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  status: z.enum(['Active', 'Inactive', 'Pending']),
+  status: z.enum(['Active', 'Inactive']),
   preferences: z.object({
     darkTheme: z.boolean().default(false)
   }),
@@ -51,7 +51,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
       email: '',
       password: '',
       phone: '',
-      status: 'Pending',
+      status: 'Active',
       preferences: { darkTheme: false },
       project: { name: '' },
       platform: {
@@ -161,7 +161,6 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                           <SelectContent>
                             <SelectItem value="Active">Active</SelectItem>
                             <SelectItem value="Inactive">Inactive</SelectItem>
-                            <SelectItem value="Pending">Pending</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

@@ -10,7 +10,7 @@ export interface User {
   department: string;
   roles: UserRole[];
   permissions: string[];
-  status: 'Active' | 'Inactive' | 'Pending';
+  status: 'Active' | 'Inactive';
   preferences: {
     darkTheme: boolean;
   };

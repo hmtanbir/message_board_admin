@@ -37,7 +37,6 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
     switch (status) {
       case 'Active': return <Badge className="bg-secondary/20 text-secondary border-none">{status}</Badge>;
       case 'Inactive': return <Badge variant="outline" className="border-muted-foreground text-muted-foreground">{status}</Badge>;
-      case 'Pending': return <Badge className="bg-primary/20 text-primary border-none">{status}</Badge>;
       default: return <Badge>{status}</Badge>;
     }
   };
@@ -83,7 +82,6 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="Active">Active</SelectItem>
                 <SelectItem value="Inactive">Inactive</SelectItem>
-                <SelectItem value="Pending">Pending</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -11,6 +11,7 @@ export const MOCK_USERS: User[] = [
     permissions: ['read:users', 'write:code', 'deploy:prod'],
     status: 'Active',
     createdAt: '2023-10-01',
+    preferences: { darkTheme: false }
   },
   {
     id: '2',
@@ -22,6 +23,7 @@ export const MOCK_USERS: User[] = [
     permissions: ['read:all', 'edit:roadmap', 'manage:billing'],
     status: 'Active',
     createdAt: '2023-11-15',
+    preferences: { darkTheme: false }
   },
   {
     id: '3',
@@ -33,6 +35,7 @@ export const MOCK_USERS: User[] = [
     permissions: ['read:logs', 'manage:iam', 'write:security-audit'],
     status: 'Active',
     createdAt: '2024-01-20',
+    preferences: { darkTheme: false }
   },
   {
     id: '4',
@@ -42,8 +45,9 @@ export const MOCK_USERS: User[] = [
     department: 'Design',
     roles: ['User'],
     permissions: ['read:assets', 'comment:designs'],
-    status: 'Pending',
+    status: 'Active',
     createdAt: '2024-03-05',
+    preferences: { darkTheme: false }
   },
   {
     id: '5',
@@ -55,5 +59,6 @@ export const MOCK_USERS: User[] = [
     permissions: ['read:campaigns', 'write:copy'],
     status: 'Inactive',
     createdAt: '2023-08-12',
+    preferences: { darkTheme: false }
   },
 ];
