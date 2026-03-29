@@ -2,7 +2,7 @@ import { User } from './types';
 
 export const MOCK_USERS: User[] = [
   {
-    id: '1',
+    id: '69c8c4c987ac7740eae7',
     name: 'Alex Rivera',
     email: 'alex.rivera@example.com',
     jobTitle: 'Senior Software Engineer',
@@ -15,7 +15,7 @@ export const MOCK_USERS: User[] = [
     preferences: { darkTheme: false }
   },
   {
-    id: '2',
+    id: 'a1b2c3d4e5f6g7h8i9j0',
     name: 'Sarah Chen',
     email: 'sarah.chen@example.com',
     jobTitle: 'Product Manager',
@@ -28,7 +28,7 @@ export const MOCK_USERS: User[] = [
     preferences: { darkTheme: false }
   },
   {
-    id: '3',
+    id: 'f9e8d7c6b5a493827160',
     name: 'Marcus Thorne',
     email: 'm.thorne@example.com',
     jobTitle: 'Security Specialist',
@@ -41,7 +41,7 @@ export const MOCK_USERS: User[] = [
     preferences: { darkTheme: false }
   },
   {
-    id: '4',
+    id: 'bcdef0123456789abcde',
     name: 'Elena Gilbert',
     email: 'elena.g@example.com',
     jobTitle: 'Junior Designer',
@@ -54,7 +54,7 @@ export const MOCK_USERS: User[] = [
     preferences: { darkTheme: false }
   },
   {
-    id: '5',
+    id: '1a2b3c4d5e6f7a8b9c0d',
     name: 'Jordan Smith',
     email: 'j.smith@example.com',
     jobTitle: 'Marketing Lead',

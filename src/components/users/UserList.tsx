@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { User, UserRole, SubscriptionTier } from '@/lib/types'
-import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, Shield, CreditCard } from "lucide-react"
+import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, Shield, CreditCard, Hash } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -27,7 +27,8 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
       const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
+                           user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           user.id.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesRole = roleFilter === 'all' || user.roles.includes(roleFilter as UserRole);
       const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
       const matchesSubscription = subscriptionFilter === 'all' || user.subscription === subscriptionFilter;
@@ -58,7 +59,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
         <div className="relative w-full md:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
-            placeholder="Search accounts by name or email..." 
+            placeholder="Search accounts by name, email or ID..." 
             className="pl-10 bg-card border-muted focus:ring-primary h-11"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -123,7 +124,8 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
         <Table>
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="w-[300px] text-xs uppercase tracking-widest font-semibold py-4">Account</TableHead>
+              <TableHead className="w-[280px] text-xs uppercase tracking-widest font-semibold py-4">Account</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">User ID</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Subscription</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Roles</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
@@ -148,6 +150,11 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                       </div>
                     </div>
                   </div>
+                </TableCell>
+                <TableCell>
+                  <code className="text-[10px] font-mono bg-muted/50 px-2 py-1 rounded text-muted-foreground group-hover:text-foreground transition-colors">
+                    {user.id}
+                  </code>
                 </TableCell>
                 <TableCell>
                   {getSubscriptionBadge(user.subscription)}
@@ -186,7 +193,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-64 text-center">
+                <TableCell colSpan={6} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <div className="bg-muted p-4 rounded-full">
                       <Search className="h-8 w-8 text-muted-foreground opacity-50" />
