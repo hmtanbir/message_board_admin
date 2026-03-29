@@ -7,7 +7,7 @@ import { AccountOnboardingForm } from '@/components/users/AccountOnboardingForm'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
 import { Users, LayoutDashboard, LogOut, ChevronLeft, ChevronRight, Briefcase } from "lucide-react"
-import Link from 'link'
+import Link from 'next/link'
 
 export default function NewAccountPage() {
   const router = useRouter();
@@ -67,7 +67,7 @@ export default function NewAccountPage() {
           
           <h2 className="text-4xl font-headline font-bold text-foreground">Account Setup</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl text-lg">
-            Complete the multi-step process to provision a new organization account and associated project resources.
+            Complete the process to provision a new organization account and associated project resources.
           </p>
         </header>
 
