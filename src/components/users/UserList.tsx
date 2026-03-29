@@ -67,10 +67,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               <SelectContent className="bg-card border-border">
                 <SelectItem value="all">All Roles</SelectItem>
                 <SelectItem value="Admin">Admin</SelectItem>
-                <SelectItem value="Editor">Editor</SelectItem>
-                <SelectItem value="Viewer">Viewer</SelectItem>
-                <SelectItem value="Developer">Developer</SelectItem>
-                <SelectItem value="Auditor">Auditor</SelectItem>
+                <SelectItem value="User">User</SelectItem>
               </SelectContent>
             </Select>
           </div>
