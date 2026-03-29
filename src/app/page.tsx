@@ -1,9 +1,9 @@
+
 "use client"
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { UserList } from '@/components/users/UserList'
-import { UserDialog } from '@/components/users/UserDialogs'
 import { MOCK_USERS } from '@/lib/mock-data'
 import { User } from '@/lib/types'
 import { Toaster } from "@/components/ui/toaster"
@@ -13,8 +13,6 @@ import { Users, LayoutDashboard, LogOut, ChevronRight } from "lucide-react"
 export default function UserFlowAdmin() {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>(MOCK_USERS);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
   const { toast } = useToast();
 
   const handleAdd = () => {
@@ -22,8 +20,7 @@ export default function UserFlowAdmin() {
   };
 
   const handleEdit = (user: User) => {
-    setEditingUser(user);
-    setIsEditDialogOpen(true);
+    router.push(`/accounts/${user.id}/edit`);
   };
 
   const handleDelete = (id: string) => {
@@ -33,17 +30,6 @@ export default function UserFlowAdmin() {
       description: "The account has been successfully deleted.",
       variant: "default",
     });
-  };
-
-  const handleSaveEdit = (userData: Partial<User>) => {
-    if (editingUser) {
-      setUsers(users.map(u => u.id === editingUser.id ? { ...u, ...userData } as User : u));
-      toast({
-        title: "Profile Updated",
-        description: `${userData.name}'s profile has been updated.`,
-      });
-    }
-    setIsEditDialogOpen(false);
   };
 
   return (
@@ -92,13 +78,6 @@ export default function UserFlowAdmin() {
             onDelete={handleDelete} 
           />
         </section>
-
-        <UserDialog 
-          isOpen={isEditDialogOpen} 
-          onClose={() => setIsEditDialogOpen(false)} 
-          onSave={handleSaveEdit} 
-          initialUser={editingUser} 
-        />
         
         <Toaster />
       </main>
