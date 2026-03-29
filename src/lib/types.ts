@@ -1,4 +1,5 @@
 export type UserRole = 'Admin' | 'User';
+export type SubscriptionTier = 'Basic' | 'Standard' | 'Premium';
 
 export interface User {
   id: string;
@@ -9,6 +10,7 @@ export interface User {
   jobTitle: string;
   department: string;
   roles: UserRole[];
+  subscription: SubscriptionTier;
   permissions: string[];
   status: 'Active' | 'Inactive';
   preferences: {

@@ -5,8 +5,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { User, UserRole } from '@/lib/types'
-import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, Shield } from "lucide-react"
+import { User, UserRole, SubscriptionTier } from '@/lib/types'
+import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, Shield, CreditCard } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -22,6 +22,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [subscriptionFilter, setSubscriptionFilter] = useState<string>('all');
 
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
@@ -29,15 +30,25 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                            user.email.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesRole = roleFilter === 'all' || user.roles.includes(roleFilter as UserRole);
       const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-      return matchesSearch && matchesRole && matchesStatus;
+      const matchesSubscription = subscriptionFilter === 'all' || user.subscription === subscriptionFilter;
+      return matchesSearch && matchesRole && matchesStatus && matchesSubscription;
     });
-  }, [users, searchTerm, roleFilter, statusFilter]);
+  }, [users, searchTerm, roleFilter, statusFilter, subscriptionFilter]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'Active': return <Badge className="bg-secondary/20 text-secondary border-none">{status}</Badge>;
       case 'Inactive': return <Badge variant="outline" className="border-muted-foreground text-muted-foreground">{status}</Badge>;
       default: return <Badge>{status}</Badge>;
+    }
+  };
+
+  const getSubscriptionBadge = (tier: SubscriptionTier) => {
+    switch (tier) {
+      case 'Premium': return <Badge className="bg-primary text-background border-none font-bold">Premium</Badge>;
+      case 'Standard': return <Badge variant="secondary" className="bg-secondary/40 text-foreground border-none">Standard</Badge>;
+      case 'Basic': return <Badge variant="outline" className="border-muted-foreground/30 text-muted-foreground">Basic</Badge>;
+      default: return <Badge>{tier}</Badge>;
     }
   };
 
@@ -54,12 +65,28 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
           />
         </div>
         
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="flex-1 md:w-40">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <div className="w-40">
+            <Select value={subscriptionFilter} onValueChange={setSubscriptionFilter}>
+              <SelectTrigger className="bg-card border-muted h-11">
+                <div className="flex items-center gap-2 text-xs">
+                  <CreditCard className="h-3.5 w-3.5 text-muted-foreground" />
+                  <SelectValue placeholder="Plan" />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border">
+                <SelectItem value="all">All Plans</SelectItem>
+                <SelectItem value="Basic">Basic</SelectItem>
+                <SelectItem value="Standard">Standard</SelectItem>
+                <SelectItem value="Premium">Premium</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-40">
             <Select value={roleFilter} onValueChange={setRoleFilter}>
               <SelectTrigger className="bg-card border-muted h-11">
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-muted-foreground" />
+                <div className="flex items-center gap-2 text-xs">
+                  <Shield className="h-3.5 w-3.5 text-muted-foreground" />
                   <SelectValue placeholder="Role" />
                 </div>
               </SelectTrigger>
@@ -70,11 +97,11 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex-1 md:w-40">
+          <div className="w-40">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="bg-card border-muted h-11">
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-muted-foreground" />
+                <div className="flex items-center gap-2 text-xs">
+                  <Filter className="h-3.5 w-3.5 text-muted-foreground" />
                   <SelectValue placeholder="Status" />
                 </div>
               </SelectTrigger>
@@ -97,6 +124,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="w-[300px] text-xs uppercase tracking-widest font-semibold py-4">Account</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">Subscription</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Roles</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
               <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">Actions</TableHead>
@@ -108,7 +136,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border border-primary/20">
-                      <AvatarFallback className="bg-primary text-background font-bold">
+                      <AvatarFallback className="bg-primary text-background font-bold text-xs">
                         {user.name.split(' ').map(n => n[0]).join('')}
                       </AvatarFallback>
                     </Avatar>
@@ -120,6 +148,9 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                       </div>
                     </div>
                   </div>
+                </TableCell>
+                <TableCell>
+                  {getSubscriptionBadge(user.subscription)}
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
@@ -155,13 +186,13 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={4} className="h-64 text-center">
+                <TableCell colSpan={5} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <div className="bg-muted p-4 rounded-full">
                       <Search className="h-8 w-8 text-muted-foreground opacity-50" />
                     </div>
                     <p className="text-muted-foreground">No accounts found matching your criteria.</p>
-                    <Button variant="outline" onClick={() => { setSearchTerm(''); setRoleFilter('all'); setStatusFilter('all'); }}>
+                    <Button variant="outline" onClick={() => { setSearchTerm(''); setRoleFilter('all'); setStatusFilter('all'); setSubscriptionFilter('all'); }}>
                       Reset Filters
                     </Button>
                   </div>

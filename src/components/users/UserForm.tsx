@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { User, UserRole } from '@/lib/types'
+import { User, UserRole, SubscriptionTier } from '@/lib/types'
 import { SmartRoleTool } from './SmartRoleTool'
 import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
+import { X, CreditCard } from "lucide-react"
 
 interface UserFormProps {
   formData: Partial<User>;
@@ -65,6 +65,22 @@ export function UserForm({ formData, setFormData, onSave, onCancel, submitLabel 
               className="bg-background border-muted focus:ring-primary h-11"
               placeholder="john@example.com"
             />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="subscription" className="text-xs uppercase tracking-widest text-muted-foreground">Subscription Plan</Label>
+            <Select 
+              value={formData.subscription} 
+              onValueChange={(v: SubscriptionTier) => setFormData({ ...formData, subscription: v })}
+            >
+              <SelectTrigger className="bg-background border-muted h-11">
+                <SelectValue placeholder="Select Plan" />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border">
+                <SelectItem value="Basic">Basic</SelectItem>
+                <SelectItem value="Standard">Standard</SelectItem>
+                <SelectItem value="Premium">Premium</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="status" className="text-xs uppercase tracking-widest text-muted-foreground">Account Status</Label>

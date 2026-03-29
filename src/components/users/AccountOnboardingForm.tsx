@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { ChevronRight, ChevronLeft, CheckCircle2, User as UserIcon, Briefcase, Smartphone, Key, RefreshCw } from "lucide-react"
+import { ChevronRight, ChevronLeft, CheckCircle2, User as UserIcon, Briefcase, Smartphone, Key, RefreshCw, CreditCard } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const onboardingSchema = z.object({
@@ -20,6 +20,7 @@ const onboardingSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   status: z.enum(['Active', 'Inactive']),
+  subscription: z.enum(['Basic', 'Standard', 'Premium']),
   preferences: z.object({
     darkTheme: z.boolean().default(false)
   }),
@@ -40,10 +41,10 @@ interface AccountOnboardingFormProps {
   onCancel: () => void;
 }
 
-// Define fields per step for validation
 const STEP_FIELDS: Record<number, any[]> = {
-  1: ['name', 'email', 'password', 'phone', 'status'],
+  1: ['name', 'email', 'password', 'phone', 'status', 'subscription'],
   2: ['project.name'],
+  3: ['platform.name', 'platform.package_name', 'platform.platform_type']
 };
 
 export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFormProps) {
@@ -52,13 +53,14 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
 
   const form = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
-    mode: 'onChange', // Validate on change so errors disappear instantly
+    mode: 'onChange',
     defaultValues: {
       name: '',
       email: '',
       password: '',
       phone: '',
       status: 'Active',
+      subscription: 'Basic',
       preferences: { darkTheme: false },
       project: { name: '' },
       platform: {
@@ -76,7 +78,6 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
     for (let i = 0; i < length; i++) {
       password += charset.charAt(Math.floor(Math.random() * charset.length));
     }
-    // Set value and trigger validation to clear any existing password errors
     form.setValue('password', password, { shouldValidate: true });
   };
 
@@ -105,7 +106,6 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           
-          {/* STEP 1: ACCOUNT DETAILS */}
           {step === 1 && (
             <Card className="border-none shadow-none bg-transparent">
               <CardContent className="p-0 space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -113,7 +113,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
                     <UserIcon size={20} />
                   </div>
-                  <h3 className="text-2xl font-bold">Account Details</h3>
+                  <h3 className="text-2xl font-bold text-foreground">Account Details</h3>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -178,11 +178,33 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                   />
                   <FormField
                     control={form.control}
+                    name="subscription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Subscription Plan</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-11">
+                              <SelectValue placeholder="Select a plan" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Basic">Basic</SelectItem>
+                            <SelectItem value="Standard">Standard</SelectItem>
+                            <SelectItem value="Premium">Premium</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
                     name="status"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Initial Status</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger className="h-11">
                               <SelectValue placeholder="Select status" />
@@ -201,13 +223,13 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                     control={form.control}
                     name="preferences.darkTheme"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-card/50 mt-8">
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-card/50 mt-2">
                         <FormControl>
                           <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                         <div className="space-y-1 leading-none">
                           <FormLabel>Enable Dark Theme</FormLabel>
-                          <FormDescription>Set dark mode as the default experience for this account.</FormDescription>
+                          <FormDescription>Set dark mode as default.</FormDescription>
                         </div>
                       </FormItem>
                     )}
@@ -217,7 +239,6 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
             </Card>
           )}
 
-          {/* STEP 2: PROJECT */}
           {step === 2 && (
             <Card className="border-none shadow-none bg-transparent">
               <CardContent className="p-0 space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -225,7 +246,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                   <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-secondary">
                     <Briefcase size={20} />
                   </div>
-                  <h3 className="text-2xl font-bold">Project Information</h3>
+                  <h3 className="text-2xl font-bold text-foreground">Project Information</h3>
                 </div>
                 
                 <FormField
@@ -235,7 +256,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                     <FormItem>
                       <FormLabel>Project Name</FormLabel>
                       <FormControl><Input placeholder="Internal CRM" {...field} className="h-11" /></FormControl>
-                      <FormDescription>The main project this account will be associated with.</FormDescription>
+                      <FormDescription>Primary project association.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -244,7 +265,6 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
             </Card>
           )}
 
-          {/* STEP 3: PLATFORM */}
           {step === 3 && (
             <Card className="border-none shadow-none bg-transparent">
               <CardContent className="p-0 space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -252,7 +272,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                   <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent">
                     <Smartphone size={20} />
                   </div>
-                  <h3 className="text-2xl font-bold">Platform Configuration</h3>
+                  <h3 className="text-2xl font-bold text-foreground">Platform Configuration</h3>
                 </div>
                 
                 <div className="space-y-6">
@@ -261,8 +281,8 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                     name="platform.name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Platform Application Name</FormLabel>
-                        <FormControl><Input placeholder="Customer Mobile App" {...field} className="h-11" /></FormControl>
+                        <FormLabel>Application Name</FormLabel>
+                        <FormControl><Input placeholder="Mobile CRM" {...field} className="h-11" /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -272,7 +292,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                     name="platform.package_name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Package Name / Bundle ID</FormLabel>
+                        <FormLabel>Package ID</FormLabel>
                         <FormControl><Input placeholder="com.company.app" {...field} className="h-11" /></FormControl>
                         <FormMessage />
                       </FormItem>
@@ -285,8 +305,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                     render={() => (
                       <FormItem>
                         <div className="mb-4">
-                          <FormLabel className="text-base">Supported Platforms</FormLabel>
-                          <FormDescription>Select the target environments for this application.</FormDescription>
+                          <FormLabel className="text-base text-foreground">Supported Platforms</FormLabel>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           {['android', 'apple'].map((type) => (
@@ -311,7 +330,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                                         }}
                                       />
                                     </FormControl>
-                                    <FormLabel className="font-normal capitalize cursor-pointer flex-1">
+                                    <FormLabel className="font-normal capitalize cursor-pointer flex-1 text-foreground">
                                       {type}
                                     </FormLabel>
                                   </FormItem>
