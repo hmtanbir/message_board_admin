@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { use, useState, useEffect } from 'react'
@@ -62,7 +63,8 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
   const initialProjectData = {
     name: user.project?.name || '',
     package_name: user.platform?.package_name || '',
-    platform_type: user.platform?.platform_type || []
+    platform_type: user.platform?.platform_type || [],
+    userId: user.id
   };
 
   return (
