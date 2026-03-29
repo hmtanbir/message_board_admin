@@ -1,10 +1,11 @@
+
 "use client"
 
 import React, { useMemo, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { User } from '@/lib/types'
-import { Briefcase, Smartphone, Search, Apple } from "lucide-react"
+import { Briefcase, Smartphone, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 interface ProjectListProps {
@@ -109,7 +110,7 @@ export function ProjectList({ users }: ProjectListProps) {
                       <AndroidIcon className="h-5 w-5 text-secondary" />
                     )}
                     {user.platform?.platform_type.includes('apple') && (
-                      <Apple className="h-5 w-5 text-primary" />
+                      <Smartphone className="h-5 w-5 text-primary" />
                     )}
                   </div>
                 </TableCell>
