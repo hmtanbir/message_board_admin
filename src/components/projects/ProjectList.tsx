@@ -5,14 +5,17 @@ import React, { useMemo, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { User } from '@/lib/types'
-import { Briefcase, Search, MonitorSmartphone, Filter, CheckCircle2, XCircle, FolderPlus } from "lucide-react"
+import { Briefcase, Search, MonitorSmartphone, Filter, CheckCircle2, XCircle, FolderPlus, MoreHorizontal, Edit2, Trash2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 interface ProjectListProps {
   users: User[];
   onAdd: () => void;
+  onEdit: (user: User) => void;
+  onDelete: (id: string) => void;
 }
 
 /**
@@ -45,7 +48,7 @@ function AppleIcon({ className }: { className?: string }) {
   );
 }
 
-export function ProjectList({ users, onAdd }: ProjectListProps) {
+export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [envFilter, setEnvFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -134,6 +137,7 @@ export function ProjectList({ users, onAdd }: ProjectListProps) {
               <TableHead className="text-xs uppercase tracking-widest font-semibold">User ID</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold text-center">Environment</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
+              <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -171,10 +175,29 @@ export function ProjectList({ users, onAdd }: ProjectListProps) {
                 <TableCell>
                   {getStatusBadge(user.status)}
                 </TableCell>
+                <TableCell className="text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary">
+                        <MoreHorizontal className="h-5 w-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-card border-border">
+                      <DropdownMenuLabel>Project Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator className="bg-border" />
+                      <DropdownMenuItem onClick={() => onEdit(user)} className="cursor-pointer hover:bg-primary/10">
+                        <Edit2 className="mr-2 h-4 w-4" /> Edit Project
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onDelete(user.id)} className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10">
+                        <Trash2 className="mr-2 h-4 w-4" /> Remove Project
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={4} className="h-64 text-center">
+                <TableCell colSpan={5} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <p className="text-muted-foreground">No projects found matching your filters.</p>
                     <Button variant="outline" size="sm" onClick={() => { setSearchTerm(''); setEnvFilter('all'); setStatusFilter('all'); }}>

@@ -1,7 +1,7 @@
 
 "use client"
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -21,19 +21,26 @@ const projectSchema = z.object({
 type ProjectFormValues = z.infer<typeof projectSchema>
 
 interface ProjectFormProps {
+  initialData?: ProjectFormValues;
   onSave: (data: ProjectFormValues) => void;
   onCancel: () => void;
 }
 
-export function ProjectForm({ onSave, onCancel }: ProjectFormProps) {
+export function ProjectForm({ initialData, onSave, onCancel }: ProjectFormProps) {
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       name: '',
       package_name: '',
       platform_type: []
     }
   });
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset(initialData);
+    }
+  }, [initialData, form]);
 
   const onSubmit = (data: ProjectFormValues) => {
     onSave(data);
@@ -125,7 +132,7 @@ export function ProjectForm({ onSave, onCancel }: ProjectFormProps) {
             Cancel
           </Button>
           <Button type="submit" className="bg-primary text-background hover:bg-primary/90 font-bold px-10 h-10">
-            <CheckCircle2 className="mr-2 h-4 w-4" /> Initialize Project
+            <CheckCircle2 className="mr-2 h-4 w-4" /> {initialData ? 'Update Project' : 'Initialize Project'}
           </Button>
         </div>
       </form>

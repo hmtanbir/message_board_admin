@@ -7,15 +7,29 @@ import { ProjectList } from '@/components/projects/ProjectList'
 import { MOCK_USERS } from '@/lib/mock-data'
 import { User } from '@/lib/types'
 import { Toaster } from "@/components/ui/toaster"
+import { useToast } from "@/hooks/use-toast"
 import { Users, LayoutDashboard, LogOut, ChevronRight, Briefcase } from "lucide-react"
 import Link from 'next/link'
 
 export default function ProjectsPage() {
   const router = useRouter();
-  const [users] = useState<User[]>(MOCK_USERS);
+  const { toast } = useToast();
+  const [users, setUsers] = useState<User[]>(MOCK_USERS);
 
   const handleAdd = () => {
     router.push('/projects/new');
+  };
+
+  const handleEdit = (user: User) => {
+    router.push(`/projects/${user.id}/edit`);
+  };
+
+  const handleDelete = (id: string) => {
+    setUsers(users.filter(u => u.id !== id));
+    toast({
+      title: "Project Removed",
+      description: "The project has been successfully removed from inventory.",
+    });
   };
 
   return (
@@ -58,7 +72,12 @@ export default function ProjectsPage() {
         </header>
 
         <section className="animate-in fade-in slide-in-from-bottom duration-700 delay-200">
-          <ProjectList users={users} onAdd={handleAdd} />
+          <ProjectList 
+            users={users} 
+            onAdd={handleAdd} 
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         </section>
         
         <Toaster />
