@@ -7,7 +7,7 @@ import { MOCK_USERS } from '@/lib/mock-data'
 import { User } from '@/lib/types'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
-import { Users, LayoutDashboard, Settings, LogOut, ChevronRight } from "lucide-react"
+import { Users, LayoutDashboard, LogOut, ChevronRight } from "lucide-react"
 
 export default function UserFlowAdmin() {
   const [users, setUsers] = useState<User[]>(MOCK_USERS);
@@ -71,8 +71,6 @@ export default function UserFlowAdmin() {
           <nav className="space-y-2">
             <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" />
             <NavItem icon={<Users size={20} />} label="Account" active />
-            <NavItem icon={<Settings size={20} />} label="Permissions" />
-            <NavItem icon={<Settings size={20} />} label="System Logs" />
           </nav>
         </div>
         
