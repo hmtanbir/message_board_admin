@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { ChevronRight, ChevronLeft, CheckCircle2, User as UserIcon, Briefcase, Smartphone, RefreshCw } from "lucide-react"
+import { ChevronRight, ChevronLeft, CheckCircle2, User as UserIcon, Briefcase, MonitorSmartphone, RefreshCw } from "lucide-react"
 
 const onboardingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -272,7 +272,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
               <CardContent className="p-0 space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent">
-                    <Smartphone size={20} />
+                    <MonitorSmartphone size={20} />
                   </div>
                   <h3 className="text-2xl font-bold text-foreground">Platform Configuration</h3>
                 </div>

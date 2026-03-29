@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { ChevronRight, ChevronLeft, User as UserIcon, Briefcase, Smartphone, RefreshCw, CheckCircle2 } from "lucide-react"
+import { ChevronRight, ChevronLeft, User as UserIcon, Briefcase, MonitorSmartphone, RefreshCw, CheckCircle2 } from "lucide-react"
 import { User } from '@/lib/types'
 
 const userFormSchema = z.object({
@@ -295,7 +295,7 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
               <CardContent className="p-0 space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent">
-                    <Smartphone size={20} />
+                    <MonitorSmartphone size={20} />
                   </div>
                   <h3 className="text-2xl font-bold text-foreground">Platform Configuration</h3>
                 </div>
