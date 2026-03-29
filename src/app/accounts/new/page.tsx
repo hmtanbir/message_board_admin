@@ -7,7 +7,7 @@ import { AccountOnboardingForm } from '@/components/users/AccountOnboardingForm'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
 import { Users, LayoutDashboard, LogOut, ChevronLeft, ChevronRight, Briefcase } from "lucide-react"
-import Link from 'next/link'
+import Link from 'link'
 
 export default function NewAccountPage() {
   const router = useRouter();
@@ -71,7 +71,7 @@ export default function NewAccountPage() {
           </p>
         </header>
 
-        <section className="bg-card border border-border rounded-2xl p-10 shadow-2xl max-w-4xl animate-in fade-in slide-in-from-bottom duration-700 delay-200">
+        <section className="bg-card border border-border rounded-2xl p-10 shadow-2xl max-w-full lg:max-w-7xl animate-in fade-in slide-in-from-bottom duration-700 delay-200">
           <AccountOnboardingForm 
             onSave={handleSave} 
             onCancel={() => router.push('/')} 
