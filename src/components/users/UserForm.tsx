@@ -20,7 +20,7 @@ const userFormSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters").optional().or(z.literal('')),
   phone: z.string()
     .min(10, "Phone number must be at least 10 characters")
-    .regex(/^\+/, "Phone number must start with '+' (e.g. +880...)"),
+    .regex(/^\+/, "Phone number must start with '+' (e.g. +1...)"),
   status: z.enum(['Active', 'Inactive']),
   subscription: z.enum(['Basic', 'Standard', 'Premium']),
   preferences: z.object({
@@ -195,7 +195,7 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Phone Number</FormLabel>
-                        <FormControl><Input placeholder="+880123456789" {...field} className="h-11" /></FormControl>
+                        <FormControl><Input placeholder="+1 (555) 555555" {...field} className="h-11" /></FormControl>
                         <FormDescription>Must start with '+' followed by country code.</FormDescription>
                         <FormMessage />
                       </FormItem>
