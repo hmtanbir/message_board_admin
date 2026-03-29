@@ -1,37 +1,49 @@
 
 "use client"
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { UserList } from '@/components/users/UserList'
-import { MOCK_USERS } from '@/lib/mock-data'
-import { User } from '@/lib/types'
-import { Toaster } from "@/components/ui/toaster"
-import { useToast } from "@/hooks/use-toast"
-import { Users, LayoutDashboard, LogOut, ChevronRight, Briefcase } from "lucide-react"
+import React from 'react'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Users, Briefcase, ShieldCheck, TrendingUp, LayoutDashboard, LogOut, ChevronRight, BarChart3, PieChart } from "lucide-react"
 import Link from 'next/link'
+import { MOCK_USERS } from '@/lib/mock-data'
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent, 
+  ChartLegend, 
+  ChartLegendContent 
+} from "@/components/ui/chart"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Pie, PieChart as RePieChart, Cell } from "recharts"
 
-export default function UserFlowAdmin() {
-  const router = useRouter();
-  const [users, setUsers] = useState<User[]>(MOCK_USERS);
-  const { toast } = useToast();
+export default function DashboardPage() {
+  const totalUsers = MOCK_USERS.length;
+  const activeUsers = MOCK_USERS.filter(u => u.status === 'Active').length;
+  const premiumUsers = MOCK_USERS.filter(u => u.subscription === 'Premium').length;
+  const totalProjects = MOCK_USERS.filter(u => u.project).length;
 
-  const handleAdd = () => {
-    router.push('/accounts/new');
-  };
+  // Data for Department Bar Chart
+  const deptData = MOCK_USERS.reduce((acc: any[], user) => {
+    const existing = acc.find(d => d.name === user.department);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      acc.push({ name: user.department, count: 1 });
+    }
+    return acc;
+  }, []);
 
-  const handleEdit = (user: User) => {
-    router.push(`/accounts/${user.id}/edit`);
-  };
+  // Data for Subscription Pie Chart
+  const subData = MOCK_USERS.reduce((acc: any[], user) => {
+    const existing = acc.find(s => s.name === user.subscription);
+    if (existing) {
+      existing.value += 1;
+    } else {
+      acc.push({ name: user.subscription, value: 1 });
+    }
+    return acc;
+  }, []);
 
-  const handleDelete = (id: string) => {
-    setUsers(users.filter(u => u.id !== id));
-    toast({
-      title: "Account Removed",
-      description: "The account has been successfully deleted.",
-      variant: "default",
-    });
-  };
+  const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--chart-3))'];
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
@@ -46,8 +58,8 @@ export default function UserFlowAdmin() {
           </div>
           
           <nav className="space-y-2">
-            <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/" />
-            <NavItem icon={<Users size={20} />} label="Accounts" href="/" active />
+            <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/" active />
+            <NavItem icon={<Users size={20} />} label="Accounts" href="/accounts" />
             <NavItem icon={<Briefcase size={20} />} label="Projects" href="/projects" />
           </nav>
         </div>
@@ -61,30 +73,129 @@ export default function UserFlowAdmin() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 md:p-12">
+      <main className="flex-1 p-6 md:p-12 overflow-y-auto">
         <header className="mb-10 animate-in fade-in slide-in-from-left duration-500">
           <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2 uppercase tracking-widest font-medium">
-            Admin Console <ChevronRight size={14} /> Account
+            Admin Console <ChevronRight size={14} /> Analytics
           </div>
-          <h2 className="text-4xl font-headline font-bold text-foreground">Team Directory</h2>
+          <h2 className="text-4xl font-headline font-bold text-foreground">Command Center</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl text-lg">
-            Manage your organization's user accounts, roles, and access permissions. Utilize the AI-powered smart tool to maintain security best practices.
+            Real-time insights into your organization's user ecosystem and project health.
           </p>
         </header>
 
-        <section className="animate-in fade-in slide-in-from-bottom duration-700 delay-200">
-          <UserList 
-            users={users} 
-            onAdd={handleAdd} 
-            onEdit={handleEdit} 
-            onDelete={handleDelete} 
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-in fade-in slide-in-from-bottom duration-700 delay-100">
+          <StatCard 
+            title="Total Accounts" 
+            value={totalUsers} 
+            icon={<Users className="h-5 w-5 text-primary" />} 
+            description="Across all departments"
           />
-        </section>
-        
-        <Toaster />
+          <StatCard 
+            title="Active Users" 
+            value={activeUsers} 
+            icon={<TrendingUp className="h-5 w-5 text-secondary" />} 
+            description={`${((activeUsers/totalUsers)*100).toFixed(0)}% engagement rate`}
+          />
+          <StatCard 
+            title="Premium Tier" 
+            value={premiumUsers} 
+            icon={<ShieldCheck className="h-5 w-5 text-primary" />} 
+            description="High-value subscribers"
+          />
+          <StatCard 
+            title="Live Projects" 
+            value={totalProjects} 
+            icon={<Briefcase className="h-5 w-5 text-secondary" />} 
+            description="Active provisioning"
+          />
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom duration-700 delay-300">
+          {/* Bar Chart */}
+          <Card className="border-border bg-card/50 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                Departmental Distribution
+              </CardTitle>
+              <CardDescription>User counts grouped by functional department</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={{ count: { label: "Users", color: "hsl(var(--primary))" } }} className="h-[300px] w-full">
+                <BarChart data={deptData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  />
+                  <YAxis hide />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar 
+                    dataKey="count" 
+                    fill="hsl(var(--primary))" 
+                    radius={[4, 4, 0, 0]} 
+                    barSize={40}
+                  />
+                </BarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* Pie Chart */}
+          <Card className="border-border bg-card/50 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <PieChart className="h-5 w-5 text-secondary" />
+                Subscription Tiers
+              </CardTitle>
+              <CardDescription>Breakdown of account licensing levels</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={{}} className="h-[300px] w-full">
+                <RePieChart>
+                  <Pie
+                    data={subData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {subData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                </RePieChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </div>
   )
+}
+
+function StatCard({ title, value, icon, description }: { title: string, value: number, icon: React.ReactNode, description: string }) {
+  return (
+    <Card className="border-border bg-card/50 shadow-sm hover:border-primary/50 transition-colors">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className="text-3xl font-bold mb-1">{value}</div>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
+  );
 }
 
 function NavItem({ icon, label, href, active = false }: { icon: React.ReactNode, label: string, href: string, active?: boolean }) {

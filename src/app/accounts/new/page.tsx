@@ -14,7 +14,6 @@ export default function NewAccountPage() {
   const { toast } = useToast();
 
   const handleSave = (data: any) => {
-    // Colorful success toast
     toast({
       title: "🚀 Account Provisioned Successfully!",
       description: `${data.name} has been added to ${data.project.name}. Redirecting to directory...`,
@@ -22,7 +21,7 @@ export default function NewAccountPage() {
     });
     
     setTimeout(() => {
-      router.push('/');
+      router.push('/accounts');
     }, 2000);
   };
 
@@ -40,7 +39,7 @@ export default function NewAccountPage() {
           
           <nav className="space-y-2">
             <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/" />
-            <NavItem icon={<Users size={20} />} label="Accounts" href="/" active />
+            <NavItem icon={<Users size={20} />} label="Accounts" href="/accounts" active />
             <NavItem icon={<Briefcase size={20} />} label="Projects" href="/projects" />
           </nav>
         </div>
@@ -60,7 +59,7 @@ export default function NewAccountPage() {
             Admin Console <ChevronRight size={14} /> Account <ChevronRight size={14} /> Onboarding
           </div>
           
-          <Link href="/" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-6 font-semibold group">
+          <Link href="/accounts" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-6 font-semibold group">
             <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
             Exit Onboarding
           </Link>
@@ -71,10 +70,10 @@ export default function NewAccountPage() {
           </p>
         </header>
 
-        <section className="bg-card border border-border rounded-2xl p-10 shadow-2xl max-w-full lg:max-w-4xl animate-in fade-in slide-in-from-bottom duration-700 delay-200">
+        <section className="bg-card border border-border rounded-2xl p-10 shadow-2xl max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom duration-700 delay-200">
           <AccountOnboardingForm 
             onSave={handleSave} 
-            onCancel={() => router.push('/')} 
+            onCancel={() => router.push('/accounts')} 
           />
         </section>
         

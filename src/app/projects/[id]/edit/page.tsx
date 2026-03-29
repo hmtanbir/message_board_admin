@@ -79,7 +79,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           
           <nav className="space-y-2">
             <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/" />
-            <NavItem icon={<Users size={20} />} label="Accounts" href="/" />
+            <NavItem icon={<Users size={20} />} label="Accounts" href="/accounts" />
             <NavItem icon={<Briefcase size={20} />} label="Projects" href="/projects" active />
           </nav>
         </div>

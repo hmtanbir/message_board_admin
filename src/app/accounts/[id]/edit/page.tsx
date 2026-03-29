@@ -20,7 +20,6 @@ export default function EditAccountPage({ params }: { params: Promise<{ id: stri
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, this would be a Firestore fetch
     const foundUser = MOCK_USERS.find(u => u.id === id);
     if (foundUser) {
       setUser(foundUser);
@@ -36,7 +35,7 @@ export default function EditAccountPage({ params }: { params: Promise<{ id: stri
     });
     
     setTimeout(() => {
-      router.push('/');
+      router.push('/accounts');
     }, 1500);
   };
 
@@ -53,7 +52,7 @@ export default function EditAccountPage({ params }: { params: Promise<{ id: stri
       <div className="flex h-screen w-full flex-col items-center justify-center bg-background p-4 text-center">
         <h2 className="text-2xl font-bold mb-4">Account Not Found</h2>
         <p className="text-muted-foreground mb-6">The account ID you are looking for does not exist.</p>
-        <Link href="/">
+        <Link href="/accounts">
           <Button variant="default">Back to Directory</Button>
         </Link>
       </div>
@@ -74,7 +73,7 @@ export default function EditAccountPage({ params }: { params: Promise<{ id: stri
           
           <nav className="space-y-2">
             <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/" />
-            <NavItem icon={<Users size={20} />} label="Accounts" href="/" active />
+            <NavItem icon={<Users size={20} />} label="Accounts" href="/accounts" active />
             <NavItem icon={<Briefcase size={20} />} label="Projects" href="/projects" />
           </nav>
         </div>
@@ -94,7 +93,7 @@ export default function EditAccountPage({ params }: { params: Promise<{ id: stri
             Admin Console <ChevronRight size={14} /> Account <ChevronRight size={14} /> Management
           </div>
           
-          <Link href="/" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-6 font-semibold group">
+          <Link href="/accounts" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-6 font-semibold group">
             <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
             Back to Directory
           </Link>
@@ -105,11 +104,11 @@ export default function EditAccountPage({ params }: { params: Promise<{ id: stri
           </p>
         </header>
 
-        <section className="bg-card border border-border rounded-2xl p-10 shadow-2xl max-w-full lg:max-w-4xl animate-in fade-in slide-in-from-bottom duration-700 delay-200">
+        <section className="bg-card border border-border rounded-2xl p-10 shadow-2xl max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom duration-700 delay-200">
           <UserForm 
             initialUser={user} 
             onSave={handleSave} 
-            onCancel={() => router.push('/')} 
+            onCancel={() => router.push('/accounts')} 
           />
         </section>
         
