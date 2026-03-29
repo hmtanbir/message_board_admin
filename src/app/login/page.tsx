@@ -63,9 +63,6 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password" className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Access Code</Label>
-                  <Button variant="link" className="text-xs text-primary h-auto p-0 font-bold" type="button">
-                    Recovery?
-                  </Button>
                 </div>
                 <div className="relative group">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
