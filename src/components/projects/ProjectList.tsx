@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { User } from '@/lib/types'
-import { Briefcase, Search, Filter, CheckCircle2, FolderPlus, MoreHorizontal, Edit2, Trash2, AlertTriangle } from "lucide-react"
+import { Briefcase, Search, Filter, CheckCircle2, FolderPlus, MoreHorizontal, Edit2, Trash2, AlertTriangle, Calendar } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
@@ -62,6 +62,11 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
   const [envFilter, setEnvFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const filteredProjects = useMemo(() => {
     return users.filter(user => {
@@ -84,6 +89,15 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
       case 'Inactive': return <Badge variant="outline" className="border-muted-foreground text-muted-foreground">{status}</Badge>;
       default: return <Badge>{status}</Badge>;
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!isMounted) return dateString;
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
   };
 
   const handleDeleteConfirm = () => {
@@ -153,6 +167,7 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
               <TableHead className="text-xs uppercase tracking-widest font-semibold py-4">Project Name</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">User ID</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold text-center">Environment</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">Provisioned</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
               <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">Actions</TableHead>
             </TableRow>
@@ -190,6 +205,12 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
                   </div>
                 </TableCell>
                 <TableCell>
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    {formatDate(user.createdAt)}
+                  </div>
+                </TableCell>
+                <TableCell>
                   {getStatusBadge(user.status)}
                 </TableCell>
                 <TableCell className="text-right">
@@ -217,7 +238,7 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-64 text-center">
+                <TableCell colSpan={6} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <p className="text-muted-foreground">No projects found matching your filters.</p>
                     <Button variant="outline" size="sm" onClick={() => { setSearchTerm(''); setEnvFilter('all'); setStatusFilter('all'); }}>

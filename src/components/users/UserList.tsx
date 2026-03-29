@@ -1,12 +1,12 @@
 "use client"
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { User, SubscriptionTier } from '@/lib/types'
-import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, CreditCard, AlertTriangle } from "lucide-react"
+import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, CreditCard, AlertTriangle, Calendar } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -33,6 +33,11 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [subscriptionFilter, setSubscriptionFilter] = useState<string>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
@@ -60,6 +65,15 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
       case 'Basic': return <Badge variant="outline" className="border-muted-foreground/30 text-muted-foreground">Basic</Badge>;
       default: return <Badge>{tier}</Badge>;
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!isMounted) return dateString;
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
   };
 
   const handleDeleteConfirm = () => {
@@ -129,6 +143,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               <TableHead className="text-xs uppercase tracking-widest font-semibold">User ID</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Roles</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Subscription</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">Joined</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
               <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">Actions</TableHead>
             </TableRow>
@@ -170,6 +185,12 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                   {getSubscriptionBadge(user.subscription)}
                 </TableCell>
                 <TableCell>
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    {formatDate(user.createdAt)}
+                  </div>
+                </TableCell>
+                <TableCell>
                   {getStatusBadge(user.status)}
                 </TableCell>
                 <TableCell className="text-right">
@@ -197,7 +218,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={6} className="h-64 text-center">
+                <TableCell colSpan={7} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <div className="bg-muted p-4 rounded-full">
                       <Search className="h-8 w-8 text-muted-foreground opacity-50" />
