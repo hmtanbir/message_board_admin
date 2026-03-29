@@ -1,16 +1,18 @@
+
 "use client"
 
 import React, { useMemo, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { User } from '@/lib/types'
-import { Briefcase, Search, MonitorSmartphone, Filter, CheckCircle2, XCircle } from "lucide-react"
+import { Briefcase, Search, MonitorSmartphone, Filter, CheckCircle2, XCircle, FolderPlus } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 
 interface ProjectListProps {
   users: User[];
+  onAdd: () => void;
 }
 
 /**
@@ -43,7 +45,7 @@ function AppleIcon({ className }: { className?: string }) {
   );
 }
 
-export function ProjectList({ users }: ProjectListProps) {
+export function ProjectList({ users, onAdd }: ProjectListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [envFilter, setEnvFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -85,7 +87,7 @@ export function ProjectList({ users }: ProjectListProps) {
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div className="w-full md:w-48">
+          <div className="w-full md:w-40">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="bg-card border-muted h-11">
                 <div className="flex items-center gap-2 text-xs">
@@ -101,7 +103,7 @@ export function ProjectList({ users }: ProjectListProps) {
             </Select>
           </div>
 
-          <div className="w-full md:w-48">
+          <div className="w-full md:w-40">
             <Select value={envFilter} onValueChange={setEnvFilter}>
               <SelectTrigger className="bg-card border-muted h-11">
                 <div className="flex items-center gap-2 text-xs">
@@ -116,6 +118,11 @@ export function ProjectList({ users }: ProjectListProps) {
               </SelectContent>
             </Select>
           </div>
+
+          <Button onClick={onAdd} className="bg-primary text-background hover:bg-primary/90 font-bold shrink-0 h-11 px-6">
+            <FolderPlus className="mr-2 h-4 w-4" />
+            New Project
+          </Button>
         </div>
       </div>
 
