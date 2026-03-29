@@ -2,48 +2,38 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { UserList } from '@/components/users/UserList'
-import { UserDialog } from '@/components/users/UserDialogs'
-import { MOCK_USERS } from '@/lib/mock-data'
+import { UserForm } from '@/components/users/UserForm'
 import { User } from '@/lib/types'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
-import { Users, LayoutDashboard, LogOut, ChevronRight } from "lucide-react"
+import { Users, LayoutDashboard, LogOut, ChevronLeft, ChevronRight } from "lucide-react"
+import Link from 'next/link'
 
-export default function UserFlowAdmin() {
+export default function NewAccountPage() {
   const router = useRouter();
-  const [users, setUsers] = useState<User[]>(MOCK_USERS);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
   const { toast } = useToast();
+  const [formData, setFormData] = useState<Partial<User>>({
+    name: '',
+    email: '',
+    jobTitle: '',
+    department: '',
+    roles: [],
+    permissions: [],
+    status: 'Pending'
+  });
 
-  const handleAdd = () => {
-    router.push('/accounts/new');
-  };
-
-  const handleEdit = (user: User) => {
-    setEditingUser(user);
-    setIsEditDialogOpen(true);
-  };
-
-  const handleDelete = (id: string) => {
-    setUsers(users.filter(u => u.id !== id));
+  const handleSave = (userData: Partial<User>) => {
+    // In a real app, this would save to a database.
+    // For this prototype, we'll simulate the success and redirect.
     toast({
-      title: "Account Removed",
-      description: "The account has been successfully deleted.",
-      variant: "default",
+      title: "Account Created",
+      description: `${userData.name} has been added to the system.`,
     });
-  };
-
-  const handleSaveEdit = (userData: Partial<User>) => {
-    if (editingUser) {
-      setUsers(users.map(u => u.id === editingUser.id ? { ...u, ...userData } as User : u));
-      toast({
-        title: "Profile Updated",
-        description: `${userData.name}'s profile has been updated.`,
-      });
-    }
-    setIsEditDialogOpen(false);
+    
+    // Simulate delay for realism
+    setTimeout(() => {
+      router.push('/');
+    }, 1500);
   };
 
   return (
@@ -73,32 +63,32 @@ export default function UserFlowAdmin() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 md:p-12">
+      <main className="flex-1 p-6 md:p-12 overflow-y-auto">
         <header className="mb-10 animate-in fade-in slide-in-from-left duration-500">
-          <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2 uppercase tracking-widest font-medium">
-            Admin Console <ChevronRight size={14} /> Account
+          <div className="flex items-center gap-2 text-muted-foreground text-sm mb-4 uppercase tracking-widest font-medium">
+            Admin Console <ChevronRight size={14} /> Account <ChevronRight size={14} /> New
           </div>
-          <h2 className="text-4xl font-headline font-bold text-foreground">Team Directory</h2>
+          
+          <Link href="/" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-6 font-semibold group">
+            <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+            Back to Directory
+          </Link>
+          
+          <h2 className="text-4xl font-headline font-bold text-foreground">Create New Account</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl text-lg">
-            Manage your organization's user accounts, roles, and access permissions. Utilize the AI-powered smart tool to maintain security best practices.
+            Fill out the details below to provision a new organization account. Use the AI Role Assistant to ensure correct permissions.
           </p>
         </header>
 
-        <section className="animate-in fade-in slide-in-from-bottom duration-700 delay-200">
-          <UserList 
-            users={users} 
-            onAdd={handleAdd} 
-            onEdit={handleEdit} 
-            onDelete={handleDelete} 
+        <section className="bg-card border border-border rounded-2xl p-8 shadow-2xl max-w-5xl animate-in fade-in slide-in-from-bottom duration-700 delay-200">
+          <UserForm 
+            formData={formData} 
+            setFormData={setFormData} 
+            onSave={handleSave} 
+            onCancel={() => router.push('/')} 
+            submitLabel="Create Account"
           />
         </section>
-
-        <UserDialog 
-          isOpen={isEditDialogOpen} 
-          onClose={() => setIsEditDialogOpen(false)} 
-          onSave={handleSaveEdit} 
-          initialUser={editingUser} 
-        />
         
         <Toaster />
       </main>

@@ -48,8 +48,8 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
         <div className="relative w-full md:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
-            placeholder="Search users by name or email..." 
-            className="pl-10 bg-card border-muted focus:ring-primary"
+            placeholder="Search accounts by name or email..." 
+            className="pl-10 bg-card border-muted focus:ring-primary h-11"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -58,7 +58,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="flex-1 md:w-40">
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="bg-card border-muted">
+              <SelectTrigger className="bg-card border-muted h-11">
                 <div className="flex items-center gap-2">
                   <Shield className="h-4 w-4 text-muted-foreground" />
                   <SelectValue placeholder="Role" />
@@ -73,7 +73,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
           </div>
           <div className="flex-1 md:w-40">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-card border-muted">
+              <SelectTrigger className="bg-card border-muted h-11">
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-muted-foreground" />
                   <SelectValue placeholder="Status" />
@@ -87,9 +87,9 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={onAdd} className="bg-primary text-background hover:bg-primary/90 font-bold shrink-0">
+          <Button onClick={onAdd} className="bg-primary text-background hover:bg-primary/90 font-bold shrink-0 h-11 px-6">
             <UserPlus className="mr-2 h-4 w-4" />
-            New User
+            New Account
           </Button>
         </div>
       </div>
@@ -98,7 +98,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
         <Table>
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="w-[300px] text-xs uppercase tracking-widest font-semibold py-4">User</TableHead>
+              <TableHead className="w-[300px] text-xs uppercase tracking-widest font-semibold py-4">Account</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Roles & Permissions</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Department</TableHead>
@@ -158,13 +158,13 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="bg-card border-border">
-                      <DropdownMenuLabel>User Actions</DropdownMenuLabel>
+                      <DropdownMenuLabel>Account Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator className="bg-border" />
                       <DropdownMenuItem onClick={() => onEdit(user)} className="cursor-pointer hover:bg-primary/10">
                         <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onDelete(user.id)} className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10">
-                        <Trash2 className="mr-2 h-4 w-4" /> Remove User
+                        <Trash2 className="mr-2 h-4 w-4" /> Remove Account
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -177,7 +177,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                     <div className="bg-muted p-4 rounded-full">
                       <Search className="h-8 w-8 text-muted-foreground opacity-50" />
                     </div>
-                    <p className="text-muted-foreground">No users found matching your criteria.</p>
+                    <p className="text-muted-foreground">No accounts found matching your criteria.</p>
                     <Button variant="outline" onClick={() => { setSearchTerm(''); setRoleFilter('all'); setStatusFilter('all'); }}>
                       Reset Filters
                     </Button>
