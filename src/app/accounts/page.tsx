@@ -45,7 +45,7 @@ export default function AccountsPage() {
           </div>
           <h2 className="text-4xl font-headline font-bold text-foreground">Account Directory</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl text-lg">
-            Manage your organization's user accounts, roles, and access permissions. Utilize the AI-powered smart tool to maintain security best practices.
+            Manage your organization's user accounts, roles, and access permissions with streamlined administrative controls.
           </p>
         </header>
 

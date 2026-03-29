@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { User as UserIcon, Briefcase, RefreshCw, CheckCircle2, Globe, Palette } from "lucide-react"
+import { User as UserIcon, Briefcase, RefreshCw, CheckCircle2, Globe } from "lucide-react"
 
 const onboardingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -22,8 +22,6 @@ const onboardingSchema = z.object({
     .regex(/^\+/, "Phone number must start with '+' (e.g. +1...)"),
   status: z.enum(['Active', 'Inactive']),
   subscription: z.enum(['Basic', 'Standard', 'Premium']),
-  jobTitle: z.string().min(2, "Job title is required"),
-  department: z.string().min(2, "Department is required"),
   preferences: z.object({
     theme: z.enum(['Light', 'Dark']).default('Light'),
     language: z.enum(['English', 'French', 'Spanish', 'Chinese', 'Japanese']).default('English')
@@ -55,8 +53,6 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
       phone: '',
       status: 'Active',
       subscription: 'Basic',
-      jobTitle: '',
-      department: '',
       preferences: { theme: 'Light', language: 'English' },
       project: { name: '' },
       platform: {
@@ -117,30 +113,6 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                     </FormItem>
                   )}
                 />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="jobTitle"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Job Title</FormLabel>
-                        <FormControl><Input placeholder="Senior Analyst" {...field} className="h-10" /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="department"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Department</FormLabel>
-                        <FormControl><Input placeholder="Operations" {...field} className="h-10" /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
                 <FormField
                   control={form.control}
                   name="password"

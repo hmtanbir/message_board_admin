@@ -11,9 +11,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { User as UserIcon, Briefcase, RefreshCw, CheckCircle2, Globe, Shield } from "lucide-react"
+import { User as UserIcon, Briefcase, RefreshCw, CheckCircle2, Globe } from "lucide-react"
 import { User } from '@/lib/types'
-import { SmartRoleTool } from './SmartRoleTool'
 
 const userFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -24,8 +23,6 @@ const userFormSchema = z.object({
     .regex(/^\+/, "Phone number must start with '+' (e.g. +1...)"),
   status: z.enum(['Active', 'Inactive']),
   subscription: z.enum(['Basic', 'Standard', 'Premium']),
-  jobTitle: z.string().min(2, "Job title is required"),
-  department: z.string().min(2, "Department is required"),
   preferences: z.object({
     theme: z.enum(['Light', 'Dark']).default('Light'),
     language: z.enum(['English', 'French', 'Spanish', 'Chinese', 'Japanese']).default('English')
@@ -58,8 +55,6 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
       phone: initialUser?.phone || '',
       status: initialUser?.status || 'Active',
       subscription: initialUser?.subscription || 'Basic',
-      jobTitle: initialUser?.jobTitle || '',
-      department: initialUser?.department || '',
       preferences: { 
         theme: initialUser?.preferences?.theme || 'Light',
         language: initialUser?.preferences?.language || 'English'
@@ -81,8 +76,6 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
         phone: initialUser.phone || '',
         status: initialUser.status,
         subscription: initialUser.subscription,
-        jobTitle: initialUser.jobTitle || '',
-        department: initialUser.department || '',
         preferences: { 
           theme: initialUser.preferences?.theme || 'Light',
           language: initialUser.preferences?.language || 'English'
@@ -147,30 +140,6 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                     </FormItem>
                   )}
                 />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="jobTitle"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Job Title</FormLabel>
-                        <FormControl><Input placeholder="Software Engineer" {...field} className="h-10" /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="department"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Department</FormLabel>
-                        <FormControl><Input placeholder="Engineering" {...field} className="h-10" /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
                 <FormField
                   control={form.control}
                   name="password"
@@ -288,16 +257,6 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                       )}
                     />
                   </div>
-                </div>
-
-                <div className="mt-4 pt-4 border-t">
-                  <SmartRoleTool 
-                    jobTitle={form.watch('jobTitle')} 
-                    department={form.watch('department')} 
-                    onApply={(roles, perms) => {
-                      // Handled by AI flow
-                    }}
-                  />
                 </div>
               </div>
             </CardContent>
