@@ -127,7 +127,6 @@ export function ProjectList({ users }: ProjectListProps) {
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="text-xs uppercase tracking-widest font-semibold py-4">Project Name</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">User ID</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">Platform Name</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold text-center">Environment</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
             </TableRow>
@@ -151,12 +150,6 @@ export function ProjectList({ users }: ProjectListProps) {
                   </code>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
-                    <MonitorSmartphone className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">{user.platform?.name || 'N/A'}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
                   <div className="flex items-center justify-center gap-4">
                     {user.platform?.platform_type.includes('android') && (
                       <div className="p-1.5 bg-secondary/10 rounded-md" title="Android">
@@ -176,7 +169,7 @@ export function ProjectList({ users }: ProjectListProps) {
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-64 text-center">
+                <TableCell colSpan={4} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <p className="text-muted-foreground">No projects found matching your filters.</p>
                     <Button variant="outline" size="sm" onClick={() => { setSearchTerm(''); setEnvFilter('all'); setStatusFilter('all'); }}>
