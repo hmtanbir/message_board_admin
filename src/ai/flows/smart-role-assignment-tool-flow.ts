@@ -29,8 +29,8 @@ export type SmartRoleAssignmentToolInput = z.infer<
 
 const SmartRoleAssignmentToolOutputSchema = z.object({
   suggestedRoles: z
-    .array(z.enum(['Admin', 'User']))
-    .describe('A list of suggested user roles. Must be either "Admin" or "User".'),
+    .array(z.enum(['User']))
+    .describe('A list of suggested user roles. Must be "User".'),
   suggestedPermissions: z
     .array(z.string())
     .describe('A list of suggested permissions for the user.'),
@@ -54,17 +54,12 @@ const prompt = ai.definePrompt({
   name: 'smartRoleAssignmentPrompt',
   input: {schema: SmartRoleAssignmentToolInputSchema},
   output: {schema: SmartRoleAssignmentToolOutputSchema},
-  prompt: `You are an expert in user access management, security, and best practices for role-based access control (RBAC).
-Your task is to suggest appropriate user roles and fine-grained permissions based on the provided job title and/or department description.
+  prompt: `You are an expert in user access management and security.
+Your task is to suggest appropriate granular permissions for a standard "User" role based on the provided job title and/or department description.
 
-CRITICAL: You MUST only suggest roles from the following list: ['Admin', 'User'].
-- 'Admin': For users requiring elevated management privileges, organizational settings access, or security oversight.
-- 'User': For standard employees, contributors, and team members who need to perform daily tasks without administrative overhead.
+CRITICAL: The only supported role is 'User'. You must suggest this role and then focus on fine-grained permissions that match the user's responsibilities.
 
 Consider the principle of least privilege, ensuring users have only the necessary access to perform their duties.
-
-If a job title is provided, prioritize it. If a department description is provided, use it to infer broader access needs.
-If both are provided, use the job title for specific roles and permissions, and the department description to validate or refine broader access requirements.
 
 Input:
 {{#if jobTitle}}
@@ -74,7 +69,7 @@ Job Title: {{{jobTitle}}}
 Department Description: {{{departmentDescription}}}
 {{/if}}
 
-Provide the suggested roles and permissions, along with a clear reasoning for your choices. Focus on granular permissions (e.g., 'read:users', 'write:products', 'delete:reports', 'manage:billing').`,
+Provide the suggested permissions, along with a clear reasoning for your choices. Focus on granular permissions (e.g., 'read:users', 'write:products', 'delete:reports', 'manage:billing').`,
 });
 
 const smartRoleAssignmentToolFlow = ai.defineFlow(

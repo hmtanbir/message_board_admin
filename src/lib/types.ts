@@ -1,4 +1,4 @@
-export type UserRole = 'Admin' | 'User';
+export type UserRole = 'User';
 export type SubscriptionTier = 'Basic' | 'Standard' | 'Premium';
 
 export interface User {

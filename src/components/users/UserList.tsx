@@ -20,7 +20,6 @@ interface UserListProps {
 
 export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [subscriptionFilter, setSubscriptionFilter] = useState<string>('all');
 
@@ -29,12 +28,11 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
       const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                            user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            user.id.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesRole = roleFilter === 'all' || user.roles.includes(roleFilter as UserRole);
       const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
       const matchesSubscription = subscriptionFilter === 'all' || user.subscription === subscriptionFilter;
-      return matchesSearch && matchesRole && matchesStatus && matchesSubscription;
+      return matchesSearch && matchesStatus && matchesSubscription;
     });
-  }, [users, searchTerm, roleFilter, statusFilter, subscriptionFilter]);
+  }, [users, searchTerm, statusFilter, subscriptionFilter]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -80,21 +78,6 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                 <SelectItem value="Basic">Basic</SelectItem>
                 <SelectItem value="Standard">Standard</SelectItem>
                 <SelectItem value="Premium">Premium</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="w-40">
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="bg-card border-muted h-11">
-                <div className="flex items-center gap-2 text-xs">
-                  <Shield className="h-3.5 w-3.5 text-muted-foreground" />
-                  <SelectValue placeholder="Role" />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="bg-card border-border">
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="Admin">Admin</SelectItem>
-                <SelectItem value="User">User</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -199,7 +182,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                       <Search className="h-8 w-8 text-muted-foreground opacity-50" />
                     </div>
                     <p className="text-muted-foreground">No accounts found matching your criteria.</p>
-                    <Button variant="outline" onClick={() => { setSearchTerm(''); setRoleFilter('all'); setStatusFilter('all'); setSubscriptionFilter('all'); }}>
+                    <Button variant="outline" onClick={() => { setSearchTerm(''); setStatusFilter('all'); setSubscriptionFilter('all'); }}>
                       Reset Filters
                     </Button>
                   </div>
