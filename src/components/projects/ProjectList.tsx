@@ -12,7 +12,9 @@ interface ProjectListProps {
   users: User[];
 }
 
-// Custom Android SVG Icon
+/**
+ * Custom Android SVG Icon as Lucide does not support brand icons
+ */
 function AndroidIcon({ className }: { className?: string }) {
   return (
     <svg 
