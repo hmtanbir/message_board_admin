@@ -4,8 +4,9 @@ import React, { useMemo, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { User } from '@/lib/types'
-import { Briefcase, Search, MonitorSmartphone } from "lucide-react"
+import { Briefcase, Search, MonitorSmartphone, Filter } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface ProjectListProps {
   users: User[];
@@ -43,18 +44,24 @@ function AppleIcon({ className }: { className?: string }) {
 
 export function ProjectList({ users }: ProjectListProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [envFilter, setEnvFilter] = useState('all');
 
   const filteredProjects = useMemo(() => {
     return users.filter(user => {
       const projectName = user.project?.name || 'N/A';
       const platformName = user.platform?.name || 'N/A';
       const userId = user.id;
+      const platformTypes = user.platform?.platform_type || [];
       
-      return projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-             platformName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-             userId.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           platformName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           userId.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesEnv = envFilter === 'all' || platformTypes.includes(envFilter as any);
+      
+      return matchesSearch && matchesEnv;
     });
-  }, [users, searchTerm]);
+  }, [users, searchTerm, envFilter]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -75,6 +82,22 @@ export function ProjectList({ users }: ProjectListProps) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+        </div>
+
+        <div className="w-full md:w-64">
+          <Select value={envFilter} onValueChange={setEnvFilter}>
+            <SelectTrigger className="bg-card border-muted h-11">
+              <div className="flex items-center gap-2 text-xs">
+                <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+                <SelectValue placeholder="Environment" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="bg-card border-border">
+              <SelectItem value="all">All Environments</SelectItem>
+              <SelectItem value="android">Android Only</SelectItem>
+              <SelectItem value="apple">Apple Only</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -135,7 +158,10 @@ export function ProjectList({ users }: ProjectListProps) {
               <TableRow>
                 <TableCell colSpan={5} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
-                    <p className="text-muted-foreground">No projects found matching your search.</p>
+                    <p className="text-muted-foreground">No projects found matching your filters.</p>
+                    <Button variant="outline" size="sm" onClick={() => { setSearchTerm(''); setEnvFilter('all'); }}>
+                      Reset Filters
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
