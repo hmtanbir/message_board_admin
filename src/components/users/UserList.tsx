@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { User, UserRole, SubscriptionTier } from '@/lib/types'
-import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, Shield, CreditCard, Hash } from "lucide-react"
+import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, Shield, CreditCard } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -124,10 +124,10 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
         <Table>
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="w-[280px] text-xs uppercase tracking-widest font-semibold py-4">Account</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">User ID</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">Subscription</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold py-4">User ID</TableHead>
+              <TableHead className="w-[280px] text-xs uppercase tracking-widest font-semibold">Account</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Roles</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">Subscription</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
               <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">Actions</TableHead>
             </TableRow>
@@ -135,6 +135,11 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
           <TableBody>
             {filteredUsers.length > 0 ? filteredUsers.map((user) => (
               <TableRow key={user.id} className="border-border hover:bg-muted/20 transition-colors group">
+                <TableCell>
+                  <code className="text-[10px] font-mono bg-muted/50 px-2 py-1 rounded text-muted-foreground group-hover:text-foreground transition-colors">
+                    {user.id}
+                  </code>
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 border border-primary/20">
@@ -152,14 +157,6 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <code className="text-[10px] font-mono bg-muted/50 px-2 py-1 rounded text-muted-foreground group-hover:text-foreground transition-colors">
-                    {user.id}
-                  </code>
-                </TableCell>
-                <TableCell>
-                  {getSubscriptionBadge(user.subscription)}
-                </TableCell>
-                <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {user.roles.map(role => (
                       <Badge key={role} variant="secondary" className="bg-primary/10 text-primary border-none text-[10px] px-1.5 py-0">
@@ -167,6 +164,9 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                       </Badge>
                     ))}
                   </div>
+                </TableCell>
+                <TableCell>
+                  {getSubscriptionBadge(user.subscription)}
                 </TableCell>
                 <TableCell>
                   {getStatusBadge(user.status)}
