@@ -4,11 +4,33 @@ import React, { useMemo, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { User } from '@/lib/types'
-import { Briefcase, Smartphone, Search, Apple, Smartphone as AndroidIcon } from "lucide-react"
+import { Briefcase, Smartphone, Search, Apple } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 interface ProjectListProps {
   users: User[];
+}
+
+// Custom Android SVG Icon
+function AndroidIcon({ className }: { className?: string }) {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+    >
+      <path d="M17.5 12a5.5 5.5 0 1 0-11 0V17h11v-5z" />
+      <path d="M6 17v2a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-2" />
+      <path d="M9 8l-1.5-2.5" />
+      <path d="M15 8l1.5-2.5" />
+      <circle cx="9" cy="13" r=".5" fill="currentColor" />
+      <circle cx="15" cy="13" r=".5" fill="currentColor" />
+    </svg>
+  );
 }
 
 export function ProjectList({ users }: ProjectListProps) {
@@ -55,8 +77,8 @@ export function ProjectList({ users }: ProjectListProps) {
               <TableHead className="text-xs uppercase tracking-widest font-semibold py-4">Project Name</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">User ID</TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">Platform Name</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold text-center">Platform Type</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">Project Status</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold text-center">Type</TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -84,10 +106,10 @@ export function ProjectList({ users }: ProjectListProps) {
                 <TableCell>
                   <div className="flex items-center justify-center gap-3">
                     {user.platform?.platform_type.includes('android') && (
-                      <AndroidIcon className="h-4 w-4 text-secondary" title="Android" />
+                      <AndroidIcon className="h-5 w-5 text-secondary" />
                     )}
                     {user.platform?.platform_type.includes('apple') && (
-                      <Apple className="h-4 w-4 text-primary" title="Apple" />
+                      <Apple className="h-5 w-5 text-primary" />
                     )}
                   </div>
                 </TableCell>
