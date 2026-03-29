@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { ChevronRight, ChevronLeft, CheckCircle2, User as UserIcon, Briefcase, MonitorSmartphone, RefreshCw } from "lucide-react"
+import { ChevronRight, ChevronLeft, CheckCircle2, User as UserIcon, Briefcase, RefreshCw } from "lucide-react"
 
 const onboardingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -23,13 +23,13 @@ const onboardingSchema = z.object({
   status: z.enum(['Active', 'Inactive']),
   subscription: z.enum(['Basic', 'Standard', 'Premium']),
   preferences: z.object({
-    darkTheme: z.boolean().default(false)
+    darkTheme: z.boolean().default(false),
+    language: z.enum(['English', 'French', 'Spanish', 'Chinese', 'Japanese']).default('English')
   }),
   project: z.object({
     name: z.string().min(2, "Project name is required")
   }),
   platform: z.object({
-    name: z.string().min(2, "Platform name is required"),
     package_name: z.string().min(2, "Package name is required"),
     platform_type: z.array(z.string()).min(1, "Select at least one platform")
   })
@@ -43,14 +43,13 @@ interface AccountOnboardingFormProps {
 }
 
 const STEP_FIELDS: Record<number, string[]> = {
-  1: ['name', 'email', 'password', 'phone', 'status', 'subscription', 'preferences.darkTheme'],
-  2: ['project.name'],
-  3: ['platform.name', 'platform.package_name', 'platform.platform_type']
+  1: ['name', 'email', 'password', 'phone', 'status', 'subscription', 'preferences.darkTheme', 'preferences.language'],
+  2: ['project.name', 'platform.package_name', 'platform.platform_type']
 };
 
 export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFormProps) {
   const [step, setStep] = useState(1);
-  const totalSteps = 3;
+  const totalSteps = 2;
 
   const form = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
@@ -62,10 +61,9 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
       phone: '',
       status: 'Active',
       subscription: 'Basic',
-      preferences: { darkTheme: false },
+      preferences: { darkTheme: false, language: 'English' },
       project: { name: '' },
       platform: {
-        name: '',
         package_name: '',
         platform_type: []
       }
@@ -223,6 +221,30 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                   />
                   <FormField
                     control={form.control}
+                    name="preferences.language"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Preferred Language</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-11">
+                              <SelectValue placeholder="Select language" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="English">English</SelectItem>
+                            <SelectItem value="French">French</SelectItem>
+                            <SelectItem value="Spanish">Spanish</SelectItem>
+                            <SelectItem value="Chinese">Chinese</SelectItem>
+                            <SelectItem value="Japanese">Japanese</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
                     name="preferences.darkTheme"
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-card/50 mt-2">
@@ -251,40 +273,14 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                   <h3 className="text-2xl font-bold text-foreground">Project Information</h3>
                 </div>
                 
-                <FormField
-                  control={form.control}
-                  name="project.name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Project Name</FormLabel>
-                      <FormControl><Input placeholder="Internal CRM" {...field} className="h-11" /></FormControl>
-                      <FormDescription>Primary project association.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-          )}
-
-          {step === 3 && (
-            <Card className="border-none shadow-none bg-transparent">
-              <CardContent className="p-0 space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent">
-                    <MonitorSmartphone size={20} />
-                  </div>
-                  <h3 className="text-2xl font-bold text-foreground">Platform Configuration</h3>
-                </div>
-                
-                <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
-                    name="platform.name"
+                    name="project.name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Application Name</FormLabel>
-                        <FormControl><Input placeholder="Mobile CRM" {...field} className="h-11" /></FormControl>
+                        <FormLabel>Project Name</FormLabel>
+                        <FormControl><Input placeholder="Internal CRM" {...field} className="h-11" /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -300,12 +296,11 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                       </FormItem>
                     )}
                   />
-                  
                   <FormField
                     control={form.control}
                     name="platform.platform_type"
                     render={() => (
-                      <FormItem>
+                      <FormItem className="col-span-full">
                         <div className="mb-4">
                           <FormLabel className="text-base text-foreground">Supported Platforms</FormLabel>
                         </div>

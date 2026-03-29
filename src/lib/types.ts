@@ -1,5 +1,6 @@
 export type UserRole = 'User';
 export type SubscriptionTier = 'Basic' | 'Standard' | 'Premium';
+export type Language = 'English' | 'French' | 'Spanish' | 'Chinese' | 'Japanese';
 
 export interface User {
   id: string;
@@ -15,6 +16,7 @@ export interface User {
   status: 'Active' | 'Inactive';
   preferences: {
     darkTheme: boolean;
+    language: Language;
   };
   project?: {
     name: string;
