@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'UserFlow Admin',
+  title: 'Message Admin',
   description: 'Streamlined user management with AI-powered role suggestions.',
 };
 

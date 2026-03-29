@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react'
@@ -23,9 +22,9 @@ export function Sidebar({ activePage }: SidebarProps) {
       <div className="p-8">
         <div className="flex items-center gap-2 mb-10">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg">
-            <span className="text-background font-black text-xl">U</span>
+            <span className="text-background font-black text-xl">M</span>
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-primary">UserFlow<span className="text-foreground">Admin</span></h1>
+          <h1 className="text-xl font-bold tracking-tight text-primary">Message<span className="text-foreground">Admin</span></h1>
         </div>
         
         <nav className="space-y-2">
@@ -64,6 +63,8 @@ export function Sidebar({ activePage }: SidebarProps) {
 }
 
 function NavItem({ icon, label, href, active = false }: { icon: React.ReactNode, label: string, href: string, active?: boolean }) {
+  const Comp = active ? 'div' : Link;
+  
   return (
     <Link href={href} className={`flex items-center gap-4 w-full px-4 py-3 rounded-lg transition-all duration-200 group ${
       active ? 'bg-primary text-background shadow-md' : 'text-muted-foreground hover:bg-muted hover:text-foreground'

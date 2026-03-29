@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from 'react'
@@ -34,7 +33,7 @@ export default function LoginPage() {
           <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-2xl mb-4 group hover:rotate-6 transition-transform">
             <ShieldCheck className="text-background h-10 w-10" />
           </div>
-          <h1 className="text-4xl font-bold tracking-tighter text-primary">UserFlow<span className="text-foreground">Admin</span></h1>
+          <h1 className="text-4xl font-bold tracking-tighter text-primary">Message<span className="text-foreground">Admin</span></h1>
           <p className="text-muted-foreground mt-2 font-medium">Internal Command & Control Console</p>
         </div>
 
@@ -54,7 +53,7 @@ export default function LoginPage() {
                   <Input 
                     id="email" 
                     type="email" 
-                    placeholder="admin@userflow.internal" 
+                    placeholder="admin@message.internal" 
                     required 
                     className="pl-10 h-12 bg-background/50 border-muted focus:ring-primary focus:border-primary transition-all"
                   />
