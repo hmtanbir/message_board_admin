@@ -40,12 +40,19 @@ interface AccountOnboardingFormProps {
   onCancel: () => void;
 }
 
+// Define fields per step for validation
+const STEP_FIELDS: Record<number, any[]> = {
+  1: ['name', 'email', 'password', 'phone', 'status'],
+  2: ['project.name'],
+};
+
 export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFormProps) {
   const [step, setStep] = useState(1);
   const totalSteps = 3;
 
   const form = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
+    mode: 'onChange', // Validate on change so errors disappear instantly
     defaultValues: {
       name: '',
       email: '',
@@ -69,14 +76,12 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
     for (let i = 0; i < length; i++) {
       password += charset.charAt(Math.floor(Math.random() * charset.length));
     }
+    // Set value and trigger validation to clear any existing password errors
     form.setValue('password', password, { shouldValidate: true });
   };
 
   const nextStep = async () => {
-    let fieldsToValidate: any[] = [];
-    if (step === 1) fieldsToValidate = ['name', 'email', 'password', 'phone', 'status'];
-    if (step === 2) fieldsToValidate = ['project.name'];
-    
+    const fieldsToValidate = STEP_FIELDS[step] || [];
     const isValid = await form.trigger(fieldsToValidate);
     if (isValid) setStep(prev => Math.min(prev + 1, totalSteps));
   };
@@ -299,9 +304,10 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
                                       <Checkbox
                                         checked={field.value?.includes(type)}
                                         onCheckedChange={(checked) => {
-                                          return checked
-                                            ? field.onChange([...field.value, type])
-                                            : field.onChange(field.value?.filter((value) => value !== type))
+                                          const newValue = checked
+                                            ? [...field.value, type]
+                                            : field.value?.filter((value: string) => value !== type);
+                                          field.onChange(newValue);
                                         }}
                                       />
                                     </FormControl>
