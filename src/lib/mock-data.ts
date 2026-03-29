@@ -13,10 +13,10 @@ export const MOCK_USERS: User[] = [
     status: 'Active',
     createdAt: '2023-10-01',
     preferences: { darkTheme: false },
-    project: { name: 'Lumina Edge' },
+    project: { name: 'Titan Shield Pro' },
     platform: {
-      name: 'Lumina Mobile',
-      package_name: 'com.lumina.edge',
+      name: 'Titan Mobile SDK',
+      package_name: 'com.titan.shield',
       platform_type: ['android', 'apple']
     }
   },
@@ -32,10 +32,10 @@ export const MOCK_USERS: User[] = [
     status: 'Active',
     createdAt: '2023-11-15',
     preferences: { darkTheme: false },
-    project: { name: 'Nexus Core' },
+    project: { name: 'Nova Genesis' },
     platform: {
-      name: 'Nexus Dashboard',
-      package_name: 'com.nexus.core',
+      name: 'Nova Dashboard',
+      package_name: 'com.nova.genesis',
       platform_type: ['apple']
     }
   },
@@ -51,10 +51,10 @@ export const MOCK_USERS: User[] = [
     status: 'Active',
     createdAt: '2024-01-20',
     preferences: { darkTheme: false },
-    project: { name: 'Aether Portal' },
+    project: { name: 'Zenith Flow' },
     platform: {
-      name: 'Aether Secure',
-      package_name: 'com.aether.portal',
+      name: 'Zenith Guard',
+      package_name: 'com.zenith.flow',
       platform_type: ['android']
     }
   },
@@ -70,10 +70,10 @@ export const MOCK_USERS: User[] = [
     status: 'Active',
     createdAt: '2024-03-05',
     preferences: { darkTheme: false },
-    project: { name: 'Vantage Flow' },
+    project: { name: 'Prism Core' },
     platform: {
-      name: 'Vantage Preview',
-      package_name: 'com.vantage.flow',
+      name: 'Prism Design System',
+      package_name: 'com.prism.core',
       platform_type: ['apple']
     }
   },
@@ -89,10 +89,10 @@ export const MOCK_USERS: User[] = [
     status: 'Inactive',
     createdAt: '2023-08-12',
     preferences: { darkTheme: false },
-    project: { name: 'Horizon Sync' },
+    project: { name: 'Aether Network' },
     platform: {
-      name: 'Horizon Connect',
-      package_name: 'com.horizon.sync',
+      name: 'Aether Client',
+      package_name: 'com.aether.network',
       platform_type: ['android', 'apple']
     }
   },
