@@ -34,7 +34,7 @@ export default function LoginPage() {
             <ShieldCheck className="text-background h-10 w-10" />
           </div>
           <h1 className="text-4xl font-bold tracking-tighter text-primary">Message<span className="text-foreground">Admin</span></h1>
-          <p className="text-muted-foreground mt-2 font-medium">Internal Command & Control Console</p>
+          <p className="text-muted-foreground mt-2 font-medium">Message Board Admin Console</p>
         </div>
 
         <Card className="border-border bg-card/50 shadow-2xl backdrop-blur-xl border-primary/10">
