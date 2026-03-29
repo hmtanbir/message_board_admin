@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react'
@@ -53,7 +54,7 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
 
   const form = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
-    mode: 'onChange',
+    mode: 'onTouched',
     defaultValues: {
       name: '',
       email: '',
@@ -89,6 +90,11 @@ export function AccountOnboardingForm({ onSave, onCancel }: AccountOnboardingFor
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
   const onSubmit = (data: OnboardingValues) => {
+    // BUG FIX: Prevent automatic submission on earlier steps via Enter key
+    if (step < totalSteps) {
+      nextStep();
+      return;
+    }
     onSave(data);
   };
 

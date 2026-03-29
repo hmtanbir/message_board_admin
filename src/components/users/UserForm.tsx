@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useEffect } from 'react'
@@ -13,6 +14,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { ChevronRight, ChevronLeft, User as UserIcon, Briefcase, RefreshCw, CheckCircle2 } from "lucide-react"
 import { User } from '@/lib/types'
+import { SmartRoleTool } from './SmartRoleTool'
 
 const userFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -55,7 +57,7 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
-    mode: 'onChange',
+    mode: 'onTouched',
     defaultValues: {
       name: initialUser?.name || '',
       email: initialUser?.email || '',
@@ -75,7 +77,6 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
     }
   });
 
-  // Reset form when initialUser changes
   useEffect(() => {
     if (initialUser) {
       form.reset({
@@ -95,9 +96,8 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
           platform_type: initialUser.platform?.platform_type || []
         }
       });
-      setStep(1);
     }
-  }, [initialUser, form]);
+  }, [initialUser?.id, form]);
 
   const generatePassword = () => {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
@@ -118,6 +118,12 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
   const onSubmit = (data: UserFormValues) => {
+    // BUG FIX: Only allow submission on the final step.
+    // Otherwise, validation is triggered and we move to next step.
+    if (step < totalSteps) {
+      nextStep();
+      return;
+    }
     onSave(data);
   };
 
