@@ -70,7 +70,7 @@ export default function UserFlowAdmin() {
           
           <nav className="space-y-2">
             <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" />
-            <NavItem icon={<Users size={20} />} label="User Management" active />
+            <NavItem icon={<Users size={20} />} label="Account" active />
             <NavItem icon={<Settings size={20} />} label="Permissions" />
             <NavItem icon={<Settings size={20} />} label="System Logs" />
           </nav>
@@ -88,7 +88,7 @@ export default function UserFlowAdmin() {
       <main className="flex-1 p-6 md:p-12">
         <header className="mb-10 animate-in fade-in slide-in-from-left duration-500">
           <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2 uppercase tracking-widest font-medium">
-            Admin Console <ChevronRight size={14} /> User Management
+            Admin Console <ChevronRight size={14} /> Account
           </div>
           <h2 className="text-4xl font-headline font-bold text-foreground">Team Directory</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl text-lg">
