@@ -1,25 +1,55 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { api } from '@/lib/api'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { LogIn, ShieldCheck, Mail, Lock, Loader2 } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export default function LoginPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Basic logout logic if navigated here via a logout route?
+    // Let's just clear token on mount of login page to be safe, creating auto-logout
+    localStorage.removeItem('auth_token');
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
-    // Simulated authentication process
-    setTimeout(() => {
-      router.push('/');
-    }, 1500);
+    try {
+      const response = await api.post('/sessions', { 
+        user: { email, password } 
+      });
+      
+      const token = response.token || (response.data && response.data.token) || response;
+      localStorage.setItem('auth_token', typeof token === 'string' ? token : JSON.stringify(token));
+      
+      toast({
+        title: "Authorization Successful",
+        description: "Welcome back to the MessageAdmin console.",
+      });
+      
+      router.push('/projects');
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Authorization Failed",
+        description: err.message || 'Invalid username/password',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -55,6 +85,8 @@ export default function LoginPage() {
                     type="email" 
                     placeholder="admin@message.internal" 
                     required 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="pl-10 h-12 bg-background/50 border-muted focus:ring-primary focus:border-primary transition-all"
                   />
                 </div>
@@ -70,6 +102,8 @@ export default function LoginPage() {
                     type="password" 
                     placeholder="••••••••••••"
                     required 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 h-12 bg-background/50 border-muted focus:ring-primary focus:border-primary transition-all"
                   />
                 </div>

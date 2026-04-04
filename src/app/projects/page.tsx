@@ -4,8 +4,8 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ProjectList } from '@/components/projects/ProjectList'
-import { MOCK_USERS } from '@/lib/mock-data'
-import { User } from '@/lib/types'
+import { Project, ApiResponse } from '@/lib/types'
+import { api } from '@/lib/api'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
 import { ChevronRight } from "lucide-react"
@@ -14,22 +14,44 @@ import { Sidebar } from '@/components/layout/Sidebar'
 export default function ProjectsPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [users, setUsers] = useState<User[]>(MOCK_USERS);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const res: ApiResponse<Project[]> = await api.get('/projects');
+      setProjects(res.data || []);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAdd = () => {
     router.push('/projects/new');
   };
 
-  const handleEdit = (user: User) => {
-    router.push(`/projects/${user.id}/edit`);
+  const handleEdit = (project: Project) => {
+    router.push(`/projects/${project.id}/edit`);
   };
 
-  const handleDelete = (id: string) => {
-    setUsers(users.filter(u => u.id !== id));
-    toast({
-      title: "Project Removed",
-      description: "The project has been successfully removed from inventory.",
-    });
+  const handleDelete = async (id: number) => {
+    try {
+      await api.delete(`/projects/${id}`);
+      setProjects(projects.filter(p => p.id !== id));
+      toast({
+        title: "Project Removed",
+        description: "The project has been successfully removed from inventory.",
+      });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   return (
@@ -50,7 +72,8 @@ export default function ProjectsPage() {
 
         <section className="animate-in fade-in slide-in-from-bottom duration-700 delay-200">
           <ProjectList 
-            users={users} 
+            projects={projects} 
+            loading={loading}
             onAdd={handleAdd} 
             onEdit={handleEdit}
             onDelete={handleDelete}

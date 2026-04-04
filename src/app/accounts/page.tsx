@@ -4,8 +4,8 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { UserList } from '@/components/users/UserList'
-import { MOCK_USERS } from '@/lib/mock-data'
-import { User } from '@/lib/types'
+import { Account, ApiResponse } from '@/lib/types'
+import { api } from '@/lib/api'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
 import { ChevronRight } from "lucide-react"
@@ -13,24 +13,46 @@ import { Sidebar } from '@/components/layout/Sidebar'
 
 export default function AccountsPage() {
   const router = useRouter();
-  const [users, setUsers] = useState<User[]>(MOCK_USERS);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  React.useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  const fetchAccounts = async () => {
+    try {
+      setLoading(true);
+      const res: ApiResponse<Account[]> = await api.get('/accounts');
+      setAccounts(res.data || []);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAdd = () => {
     router.push('/accounts/new');
   };
 
-  const handleEdit = (user: User) => {
-    router.push(`/accounts/${user.id}/edit`);
+  const handleEdit = (account: Account) => {
+    router.push(`/accounts/${account.id}/edit`);
   };
 
-  const handleDelete = (id: string) => {
-    setUsers(users.filter(u => u.id !== id));
-    toast({
-      title: "Account Removed",
-      description: "The account has been successfully deleted.",
-      variant: "default",
-    });
+  const handleDelete = async (id: number) => {
+    try {
+      await api.delete(`/accounts/${id}`);
+      setAccounts(accounts.filter(a => a.id !== id));
+      toast({
+        title: "Account Removed",
+        description: "The account has been successfully deleted.",
+        variant: "default",
+      });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   return (
@@ -51,7 +73,8 @@ export default function AccountsPage() {
 
         <section className="animate-in fade-in slide-in-from-bottom duration-700 delay-200">
           <UserList 
-            users={users} 
+            accounts={accounts} 
+            loading={loading}
             onAdd={handleAdd} 
             onEdit={handleEdit} 
             onDelete={handleDelete} 
