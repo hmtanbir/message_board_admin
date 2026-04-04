@@ -1,8 +1,19 @@
-"use client"
+"use client";
 
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect } from "react";
 
-import { Search, UserPlus, MoreHorizontal, Edit2, Trash2, Filter, Mail, CreditCard, AlertTriangle, Calendar } from "lucide-react"
+import {
+  Search,
+  UserPlus,
+  MoreHorizontal,
+  Edit2,
+  Trash2,
+  Filter,
+  Mail,
+  CreditCard,
+  AlertTriangle,
+  Calendar,
+} from "lucide-react";
 
 import {
   AlertDialog,
@@ -13,17 +24,35 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { type User, type SubscriptionTier } from '@/lib/types'
-
-
+} from "@/components/ui/alert-dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { type User, type SubscriptionTier } from "@/lib/types";
 
 interface UserListProps {
   users: User[];
@@ -33,9 +62,9 @@ interface UserListProps {
 }
 
 export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [subscriptionFilter, setSubscriptionFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [subscriptionFilter, setSubscriptionFilter] = useState<string>("all");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -44,39 +73,79 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   }, []);
 
   const filteredUsers = useMemo(() => {
-    return users.filter(user => {
-      const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           user.id.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-      const matchesSubscription = subscriptionFilter === 'all' || user.subscription === subscriptionFilter;
+    return users.filter((user) => {
+      const matchesSearch =
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.id.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus =
+        statusFilter === "all" || user.status === statusFilter;
+      const matchesSubscription =
+        subscriptionFilter === "all" ||
+        user.subscription === subscriptionFilter;
       return matchesSearch && matchesStatus && matchesSubscription;
     });
   }, [users, searchTerm, statusFilter, subscriptionFilter]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'Active': return <Badge className="bg-secondary/20 text-secondary border-none">{status}</Badge>;
-      case 'Inactive': return <Badge variant="outline" className="border-muted-foreground text-muted-foreground">{status}</Badge>;
-      default: return <Badge>{status}</Badge>;
+      case "Active":
+        return (
+          <Badge className="bg-secondary/20 text-secondary border-none">
+            {status}
+          </Badge>
+        );
+      case "Inactive":
+        return (
+          <Badge
+            variant="outline"
+            className="border-muted-foreground text-muted-foreground"
+          >
+            {status}
+          </Badge>
+        );
+      default:
+        return <Badge>{status}</Badge>;
     }
   };
 
   const getSubscriptionBadge = (tier: SubscriptionTier) => {
     switch (tier) {
-      case 'Premium': return <Badge className="bg-primary text-background border-none font-bold">Premium</Badge>;
-      case 'Standard': return <Badge variant="secondary" className="bg-secondary/40 text-foreground border-none">Standard</Badge>;
-      case 'Basic': return <Badge variant="outline" className="border-muted-foreground/30 text-muted-foreground">Basic</Badge>;
-      default: return <Badge>{tier}</Badge>;
+      case "Premium":
+        return (
+          <Badge className="bg-primary text-background border-none font-bold">
+            Premium
+          </Badge>
+        );
+      case "Standard":
+        return (
+          <Badge
+            variant="secondary"
+            className="bg-secondary/40 text-foreground border-none"
+          >
+            Standard
+          </Badge>
+        );
+      case "Basic":
+        return (
+          <Badge
+            variant="outline"
+            className="border-muted-foreground/30 text-muted-foreground"
+          >
+            Basic
+          </Badge>
+        );
+      default:
+        return <Badge>{tier}</Badge>;
     }
   };
 
   const formatDate = (dateString: string) => {
     if (!isMounted) return dateString;
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
@@ -92,17 +161,20 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search accounts by name, email or ID..." 
+          <Input
+            placeholder="Search accounts by name, email or ID..."
             className="pl-10 bg-card border-muted focus:ring-primary h-11"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
+
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           <div className="w-40">
-            <Select value={subscriptionFilter} onValueChange={setSubscriptionFilter}>
+            <Select
+              value={subscriptionFilter}
+              onValueChange={setSubscriptionFilter}
+            >
               <SelectTrigger className="bg-card border-muted h-11">
                 <div className="flex items-center gap-2 text-xs">
                   <CreditCard className="h-3.5 w-3.5 text-muted-foreground" />
@@ -132,7 +204,10 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={onAdd} className="bg-primary text-background hover:bg-primary/90 font-bold shrink-0 h-11 px-6">
+          <Button
+            onClick={onAdd}
+            className="bg-primary text-background hover:bg-primary/90 font-bold shrink-0 h-11 px-6"
+          >
             <UserPlus className="mr-2 h-4 w-4" />
             New Account
           </Button>
@@ -143,92 +218,137 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
         <Table>
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="w-[280px] text-xs uppercase tracking-widest font-semibold py-4">Account</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">User ID</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">Roles</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">Subscription</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">Joined</TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">Status</TableHead>
-              <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">Actions</TableHead>
+              <TableHead className="w-[280px] text-xs uppercase tracking-widest font-semibold py-4">
+                Account
+              </TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">
+                User ID
+              </TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">
+                Roles
+              </TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">
+                Subscription
+              </TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">
+                Joined
+              </TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">
+                Status
+              </TableHead>
+              <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUsers.length > 0 ? filteredUsers.map((user) => (
-              <TableRow key={user.id} className="border-border hover:bg-muted/20 transition-colors group">
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 border border-primary/20">
-                      <AvatarFallback className="bg-primary text-background font-bold text-xs">
-                        {user.name.split(' ').map(n => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-sm group-hover:text-primary transition-colors">{user.name}</span>
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <Mail className="h-3 w-3" />
-                        {user.email}
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
+                <TableRow
+                  key={user.id}
+                  className="border-border hover:bg-muted/20 transition-colors group"
+                >
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10 border border-primary/20">
+                        <AvatarFallback className="bg-primary text-background font-bold text-xs">
+                          {user.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-sm group-hover:text-primary transition-colors">
+                          {user.name}
+                        </span>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <Mail className="h-3 w-3" />
+                          {user.email}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <code className="text-[10px] font-mono bg-muted/50 px-2 py-1 rounded text-muted-foreground group-hover:text-foreground transition-colors">
-                    {user.id}
-                  </code>
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {user.roles.map(role => (
-                      <Badge key={role} variant="secondary" className="bg-primary/10 text-primary border-none text-[10px] px-1.5 py-0">
-                        {role}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {getSubscriptionBadge(user.subscription)}
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
-                    {formatDate(user.createdAt)}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {getStatusBadge(user.status)}
-                </TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary">
-                        <MoreHorizontal className="h-5 w-5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-card border-border">
-                      <DropdownMenuLabel>Account Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-border" />
-                      <DropdownMenuItem onClick={() => onEdit(user)} className="cursor-pointer hover:bg-primary/10">
-                        <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => setDeleteId(user.id)} 
-                        className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
+                  </TableCell>
+                  <TableCell>
+                    <code className="text-[10px] font-mono bg-muted/50 px-2 py-1 rounded text-muted-foreground group-hover:text-foreground transition-colors">
+                      {user.id}
+                    </code>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {user.roles.map((role) => (
+                        <Badge
+                          key={role}
+                          variant="secondary"
+                          className="bg-primary/10 text-primary border-none text-[10px] px-1.5 py-0"
+                        >
+                          {role}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {getSubscriptionBadge(user.subscription)}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3" />
+                      {formatDate(user.createdAt)}
+                    </div>
+                  </TableCell>
+                  <TableCell>{getStatusBadge(user.status)}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="hover:bg-primary/10 hover:text-primary"
+                        >
+                          <MoreHorizontal className="h-5 w-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="bg-card border-border"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" /> Remove Account
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            )) : (
+                        <DropdownMenuLabel>Account Actions</DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-border" />
+                        <DropdownMenuItem
+                          onClick={() => onEdit(user)}
+                          className="cursor-pointer hover:bg-primary/10"
+                        >
+                          <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setDeleteId(user.id)}
+                          className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" /> Remove Account
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
               <TableRow>
                 <TableCell colSpan={7} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <div className="bg-muted p-4 rounded-full">
                       <Search className="h-8 w-8 text-muted-foreground opacity-50" />
                     </div>
-                    <p className="text-muted-foreground">No accounts found matching your criteria.</p>
-                    <Button variant="outline" onClick={() => { setSearchTerm(''); setStatusFilter('all'); setSubscriptionFilter('all'); }}>
+                    <p className="text-muted-foreground">
+                      No accounts found matching your criteria.
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSearchTerm("");
+                        setStatusFilter("all");
+                        setSubscriptionFilter("all");
+                      }}
+                    >
                       Reset Filters
                     </Button>
                   </div>
@@ -239,22 +359,31 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
         </Table>
       </div>
 
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+      >
         <AlertDialogContent className="bg-card border-border">
           <AlertDialogHeader>
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-destructive/10 rounded-full">
                 <AlertTriangle className="h-6 w-6 text-destructive" />
               </div>
-              <AlertDialogTitle className="text-xl font-bold">Confirm Account Deletion</AlertDialogTitle>
+              <AlertDialogTitle className="text-xl font-bold">
+                Confirm Account Deletion
+              </AlertDialogTitle>
             </div>
             <AlertDialogDescription className="text-muted-foreground">
-              Are you sure you want to remove this account? This action is irreversible and will immediately revoke all platform access and project associations for the user.
+              Are you sure you want to remove this account? This action is
+              irreversible and will immediately revoke all platform access and
+              project associations for the user.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:gap-0">
-            <AlertDialogCancel className="border-border hover:bg-muted hover:text-foreground">Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogCancel className="border-border hover:bg-muted hover:text-foreground">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
               onClick={handleDeleteConfirm}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold"
             >
@@ -264,5 +393,5 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

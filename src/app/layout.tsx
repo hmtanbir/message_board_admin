@@ -1,18 +1,18 @@
-import {Inter} from 'next/font/google';
+import { Inter } from "next/font/google";
 
-import type {Metadata} from 'next';
+import type { Metadata } from "next";
 
-import './globals.css';
+import "./globals.css";
 
 const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: 'Message Admin',
-  description: 'Streamlined user management with AI-powered role suggestions.',
+  title: "Message Admin",
+  description: "Streamlined user management with AI-powered role suggestions.",
 };
 
 export default function RootLayout({
@@ -22,7 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+      <body
+        className={`${inter.className} antialiased`}
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>

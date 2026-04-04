@@ -1,7 +1,12 @@
-export type UserRole = 'User';
-export type SubscriptionTier = 'Basic' | 'Standard' | 'Premium';
-export type Language = 'English' | 'French' | 'Spanish' | 'Chinese' | 'Japanese';
-export type Theme = 'Light' | 'Dark';
+export type UserRole = "User";
+export type SubscriptionTier = "Basic" | "Standard" | "Premium";
+export type Language =
+  | "English"
+  | "French"
+  | "Spanish"
+  | "Chinese"
+  | "Japanese";
+export type Theme = "Light" | "Dark";
 
 export interface User {
   id: string;
@@ -14,7 +19,7 @@ export interface User {
   roles: UserRole[];
   subscription: SubscriptionTier;
   permissions: string[];
-  status: 'Active' | 'Inactive';
+  status: "Active" | "Inactive";
   preferences: {
     theme: Theme;
     language: Language;
@@ -25,7 +30,7 @@ export interface User {
   platform?: {
     name: string;
     package_name: string;
-    platform_type: ('android' | 'apple')[];
+    platform_type: ("android" | "apple")[];
   };
   createdAt: string;
 }

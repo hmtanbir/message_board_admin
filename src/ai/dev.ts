@@ -1,5 +1,5 @@
-import { config } from 'dotenv';
+import { config } from "dotenv";
 
-import '@/ai/flows/smart-role-assignment-tool-flow.ts';
+import "@/ai/flows/smart-role-assignment-tool-flow.ts";
 
 config();
