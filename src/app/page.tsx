@@ -56,7 +56,7 @@ export default function DashboardPage() {
         <main className="flex-1 p-6 md:p-12">
           <div className="animate-pulse space-y-8">
             <div className="h-20 bg-muted/20 rounded-lg w-1/3" />
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[1, 2, 3, 4].map(i => <div key={i} className="h-32 bg-muted/20 rounded-xl" />)}
             </div>
           </div>
@@ -110,9 +110,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom duration-700 delay-300">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Subscription Chart */}
-          <Card className="border-border bg-card/50 shadow-sm">
+          <Card className="border-border bg-card/50 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom duration-700 delay-200">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
                 <PieChartIcon className="h-5 w-5 text-primary" />
@@ -121,30 +121,32 @@ export default function DashboardPage() {
               <CardDescription>Breakdown of account licensing levels</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={{}} className="mx-auto h-[350px] w-full">
-                <PieChart>
-                  <Pie
-                    data={subData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {subData.map((entry: { name: string; value: number }, index: number) => (
-                      <Cell key={`cell-sub-${entry.name}`} fill={SUB_COLORS[index % SUB_COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <ChartLegend content={<ChartLegendContent payload={[]} />} />
-                </PieChart>
-              </ChartContainer>
+              <div className="h-[350px] w-full">
+                <ChartContainer config={{}} className="h-full w-full">
+                  <PieChart>
+                    <Pie
+                      data={subData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {subData.map((entry: { name: string; value: number }, index: number) => (
+                        <Cell key={`cell-sub-${entry.name}`} fill={SUB_COLORS[index % SUB_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent payload={[]} />} />
+                  </PieChart>
+                </ChartContainer>
+              </div>
             </CardContent>
           </Card>
 
           {/* User Status Chart */}
-          <Card className="border-border bg-card/50 shadow-sm">
+          <Card className="border-border bg-card/50 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom duration-700 delay-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
                 <Activity className="h-5 w-5 text-secondary" />
@@ -153,25 +155,27 @@ export default function DashboardPage() {
               <CardDescription>Ratio of active vs. inactive accounts</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={{}} className="mx-auto h-[350px] w-full">
-                <PieChart>
-                  <Pie
-                    data={statusData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {statusData.map((entry: { name: string; value: number }, index: number) => (
-                      <Cell key={`cell-status-${entry.name}`} fill={STATUS_COLORS[index % STATUS_COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <ChartLegend content={<ChartLegendContent payload={[]} />} />
-                </PieChart>
-              </ChartContainer>
+              <div className="h-[350px] w-full">
+                <ChartContainer config={{}} className="h-full w-full">
+                  <PieChart>
+                    <Pie
+                      data={statusData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {statusData.map((entry: { name: string; value: number }, index: number) => (
+                        <Cell key={`cell-status-${entry.name}`} fill={STATUS_COLORS[index % STATUS_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent payload={[]} />} />
+                  </PieChart>
+                </ChartContainer>
+              </div>
             </CardContent>
           </Card>
         </div>
