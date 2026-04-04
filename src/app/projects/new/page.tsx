@@ -1,19 +1,22 @@
 "use client"
 
 import React from 'react'
+
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
+import { ChevronLeft, ChevronRight } from "lucide-react"
+
+import { Sidebar } from '@/components/layout/Sidebar'
 import { ProjectForm } from '@/components/projects/ProjectForm'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import Link from 'next/link'
-import { Sidebar } from '@/components/layout/Sidebar'
 
 export default function NewProjectPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSave = (data: any) => {
+  const handleSave = (data: { name: string; package_name: string; platform_type: string[]; userId: string }) => {
     toast({
       title: "🛠️ Project Initialized",
       description: `${data.name} has been added to the inventory. Redirecting...`,

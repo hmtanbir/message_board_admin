@@ -8,8 +8,9 @@
  * - SmartRoleAssignmentToolOutput - The return type for the smartRoleAssignmentTool function.
  */
 
-import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+
+import {ai} from '@/ai/genkit';
 
 const SmartRoleAssignmentToolInputSchema = z.object({
   jobTitle: z
@@ -80,6 +81,9 @@ const smartRoleAssignmentToolFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    return output!;
+    if (!output) {
+      throw new Error('Smart role assignment prompt returned no output.');
+    }
+    return output;
   }
 );

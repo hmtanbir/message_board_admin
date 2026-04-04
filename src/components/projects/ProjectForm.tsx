@@ -2,17 +2,19 @@
 "use client"
 
 import React, { useEffect, useState, useMemo } from 'react'
-import { useForm } from 'react-hook-form'
+
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Briefcase, CheckCircle2, Search, ChevronsUpDown, Check, User as UserIcon } from "lucide-react"
+import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Briefcase, CheckCircle2, Search, ChevronsUpDown, Check, User as UserIcon } from "lucide-react"
 import { MOCK_USERS } from '@/lib/mock-data'
 import { cn } from '@/lib/utils'
 
@@ -123,11 +125,14 @@ export function ProjectForm({ initialData, onSave, onCancel }: ProjectFormProps)
                         <ScrollArea className="h-64">
                           <div className="p-1">
                             {filteredUsers.length === 0 ? (
-                              <div className="py-6 text-center text-sm text-muted-foreground italic">No results found for "{userSearch}"</div>
+                              <div className="py-6 text-center text-sm text-muted-foreground italic">No results found for &quot;{userSearch}&quot;</div>
                             ) : (
                               filteredUsers.map((user) => (
                                 <div
                                   key={user.id}
+                                  role="option"
+                                  aria-selected={field.value === user.id}
+                                  tabIndex={0}
                                   className={cn(
                                     "flex items-center justify-between px-3 py-2.5 text-sm rounded-md cursor-pointer hover:bg-primary/10 transition-colors group",
                                     field.value === user.id && "bg-primary/5"
@@ -135,6 +140,13 @@ export function ProjectForm({ initialData, onSave, onCancel }: ProjectFormProps)
                                   onClick={() => {
                                     form.setValue("userId", user.id);
                                     setIsPopoverOpen(false);
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      form.setValue("userId", user.id);
+                                      setIsPopoverOpen(false);
+                                    }
                                   }}
                                 >
                                   <div className="flex flex-col min-w-0">

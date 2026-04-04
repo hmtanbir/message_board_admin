@@ -2,16 +2,19 @@
 "use client"
 
 import React, { use, useState, useEffect } from 'react'
+
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+
+import { Sidebar } from '@/components/layout/Sidebar'
 import { ProjectForm } from '@/components/projects/ProjectForm'
+import { Button } from '@/components/ui/button'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
-import Link from 'next/link'
 import { MOCK_USERS } from '@/lib/mock-data'
-import { User } from '@/lib/types'
-import { Button } from '@/components/ui/button'
-import { Sidebar } from '@/components/layout/Sidebar'
+import { type User } from '@/lib/types'
 
 export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -28,7 +31,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     setLoading(false);
   }, [id]);
 
-  const handleSave = (data: any) => {
+  const handleSave = (data: { name: string; package_name: string; platform_type: string[]; userId: string }) => {
     toast({
       title: "🛠️ Project Updated",
       description: `${data.name} has been modified successfully.`,

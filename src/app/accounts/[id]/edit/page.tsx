@@ -2,16 +2,19 @@
 "use client"
 
 import React, { use, useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { UserForm } from '@/components/users/UserForm'
-import { Toaster } from "@/components/ui/toaster"
-import { useToast } from "@/hooks/use-toast"
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+
 import Link from 'next/link'
-import { MOCK_USERS } from '@/lib/mock-data'
-import { User } from '@/lib/types'
-import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation'
+
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+
 import { Sidebar } from '@/components/layout/Sidebar';
+import { Button } from '@/components/ui/button';
+import { Toaster } from "@/components/ui/toaster"
+import { UserForm } from '@/components/users/UserForm'
+import { useToast } from "@/hooks/use-toast"
+import { MOCK_USERS } from '@/lib/mock-data'
+import { type User } from '@/lib/types'
 
 export default function EditAccountPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();

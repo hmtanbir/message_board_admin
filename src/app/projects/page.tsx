@@ -2,14 +2,17 @@
 "use client"
 
 import React, { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
+
+import { ChevronRight } from "lucide-react"
+
+import { Sidebar } from '@/components/layout/Sidebar'
 import { ProjectList } from '@/components/projects/ProjectList'
-import { MOCK_USERS } from '@/lib/mock-data'
-import { User } from '@/lib/types'
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast"
-import { ChevronRight } from "lucide-react"
-import { Sidebar } from '@/components/layout/Sidebar'
+import { MOCK_USERS } from '@/lib/mock-data'
+import { type User } from '@/lib/types'
 
 export default function ProjectsPage() {
   const router = useRouter();

@@ -1,14 +1,9 @@
 "use client"
 
 import React, { useMemo, useState, useEffect } from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { User } from '@/lib/types'
+
 import { Briefcase, Search, Filter, CheckCircle2, FolderPlus, MoreHorizontal, Edit2, Trash2, AlertTriangle, Calendar } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +14,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { type User } from '@/lib/types'
+
+
 
 interface ProjectListProps {
   users: User[];
@@ -76,7 +80,7 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
       
       const matchesSearch = projectName.toLowerCase().includes(searchTerm.toLowerCase());
       
-      const matchesEnv = envFilter === 'all' || platformTypes.includes(envFilter as any);
+      const matchesEnv = envFilter === 'all' || platformTypes.includes(envFilter as "android" | "apple");
       const matchesStatus = statusFilter === 'all' || status === statusFilter;
       
       return matchesSearch && matchesEnv && matchesStatus;
@@ -192,16 +196,12 @@ export function ProjectList({ users, onAdd, onEdit, onDelete }: ProjectListProps
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-center gap-4">
-                    {user.platform?.platform_type.includes('android') && (
-                      <div className="p-1.5 bg-secondary/10 rounded-md" title="Android">
+                    {user.platform?.platform_type.includes('android') ? <div className="p-1.5 bg-secondary/10 rounded-md" title="Android">
                         <AndroidIcon className="h-5 w-5 text-secondary" />
-                      </div>
-                    )}
-                    {user.platform?.platform_type.includes('apple') && (
-                      <div className="p-1.5 bg-primary/10 rounded-md" title="Apple">
+                      </div> : null}
+                    {user.platform?.platform_type.includes('apple') ? <div className="p-1.5 bg-primary/10 rounded-md" title="Apple">
                         <AppleIcon className="h-5 w-5 text-primary" />
-                      </div>
-                    )}
+                      </div> : null}
                   </div>
                 </TableCell>
                 <TableCell>

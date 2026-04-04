@@ -2,19 +2,24 @@
 "use client"
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
-import { AccountOnboardingForm } from '@/components/users/AccountOnboardingForm'
-import { Toaster } from "@/components/ui/toaster"
-import { useToast } from "@/hooks/use-toast"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
+import { ChevronLeft, ChevronRight } from "lucide-react"
+
 import { Sidebar } from '@/components/layout/Sidebar'
+import { Toaster } from "@/components/ui/toaster"
+import { AccountOnboardingForm } from '@/components/users/AccountOnboardingForm'
+import { useToast } from "@/hooks/use-toast"
+
+
 
 export default function NewAccountPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSave = (data: any) => {
+  const handleSave = (data: { name: string; project: { name: string } }) => {
     toast({
       title: "🚀 Account Provisioned Successfully!",
       description: `${data.name} has been added to ${data.project.name}. Redirecting to directory...`,

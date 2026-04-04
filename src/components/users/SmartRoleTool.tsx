@@ -1,11 +1,13 @@
 "use client"
 
 import React, { useState } from 'react'
-import { Button } from "@/components/ui/button"
+
 import { Sparkles, Loader2, CheckCircle2 } from "lucide-react"
-import { smartRoleAssignmentTool, SmartRoleAssignmentToolOutput } from "@/ai/flows/smart-role-assignment-tool-flow"
-import { Badge } from "@/components/ui/badge"
+
+import { smartRoleAssignmentTool, type SmartRoleAssignmentToolOutput } from "@/ai/flows/smart-role-assignment-tool-flow"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 interface SmartRoleToolProps {
   jobTitle: string;
@@ -48,12 +50,11 @@ export function SmartRoleTool({ jobTitle, department, onApply }: SmartRoleToolPr
         </Button>
       </div>
 
-      {suggestion && (
-        <div className="animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
+      {suggestion ? <div className="animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
           <Alert className="bg-background/50 border-primary/20">
             <AlertTitle className="text-primary text-xs uppercase tracking-wider">Reasoning</AlertTitle>
             <AlertDescription className="text-sm text-muted-foreground italic">
-              "{suggestion.reasoning}"
+              &quot;{suggestion.reasoning}&quot;
             </AlertDescription>
           </Alert>
 
@@ -86,8 +87,7 @@ export function SmartRoleTool({ jobTitle, department, onApply }: SmartRoleToolPr
             <CheckCircle2 className="mr-2 h-4 w-4" />
             Apply AI Suggestions
           </Button>
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

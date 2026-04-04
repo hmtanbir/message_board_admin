@@ -1,8 +1,10 @@
 "use client"
 
 import React from 'react'
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { User } from '@/lib/types'
+import { type User } from '@/lib/types'
+
 import { UserForm } from './UserForm'
 
 interface UserDialogProps {

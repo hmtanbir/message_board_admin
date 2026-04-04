@@ -2,17 +2,19 @@
 "use client"
 
 import React, { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { User as UserIcon, Briefcase, RefreshCw, CheckCircle2, Globe } from "lucide-react"
-import { User } from '@/lib/types'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { type User } from '@/lib/types'
 
 const userFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -24,15 +26,16 @@ const userFormSchema = z.object({
   status: z.enum(['Active', 'Inactive']),
   subscription: z.enum(['Basic', 'Standard', 'Premium']),
   preferences: z.object({
-    theme: z.enum(['Light', 'Dark']).default('Light'),
-    language: z.enum(['English', 'French', 'Spanish', 'Chinese', 'Japanese']).default('English')
+    theme: z.enum(['Light', 'Dark']),
+    language: z.enum(['English', 'French', 'Spanish', 'Chinese', 'Japanese'])
   }),
   project: z.object({
     name: z.string().min(2, "Project name is required")
   }),
   platform: z.object({
+    name: z.string().optional(),
     package_name: z.string().min(2, "Package name is required"),
-    platform_type: z.array(z.string()).min(1, "Select at least one platform")
+    platform_type: z.array(z.enum(['android', 'apple'])).min(1, "Select at least one platform")
   })
 })
 
@@ -61,6 +64,7 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
       },
       project: { name: initialUser?.project?.name || '' },
       platform: {
+        name: initialUser?.platform?.name || '',
         package_name: initialUser?.platform?.package_name || '',
         platform_type: initialUser?.platform?.platform_type || []
       }
@@ -82,11 +86,13 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
         },
         project: { name: initialUser.project?.name || '' },
         platform: {
+          name: initialUser.platform?.name || '',
           package_name: initialUser.platform?.package_name || '',
           platform_type: initialUser.platform?.platform_type || []
         }
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialUser?.id, form]);
 
   const generatePassword = () => {
@@ -100,7 +106,7 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
   };
 
   const onSubmit = (data: UserFormValues) => {
-    onSave(data);
+    onSave(data as unknown as Partial<User>);
   };
 
   return (
@@ -304,7 +310,7 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                         <FormDescription className="text-[10px]">Select all active platforms for this account.</FormDescription>
                       </div>
                       <div className="grid grid-cols-1 gap-3">
-                        {['android', 'apple'].map((type) => (
+                        {(['android', 'apple'] as const).map((type) => (
                           <FormField
                             key={type}
                             control={form.control}
@@ -320,7 +326,7 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                                     onCheckedChange={(checked) => {
                                       const newValue = checked
                                         ? [...field.value, type]
-                                        : field.value?.filter((value: string) => value !== type);
+                                        : field.value?.filter((value: 'android' | 'apple') => value !== type);
                                       field.onChange(newValue);
                                     }}
                                   />

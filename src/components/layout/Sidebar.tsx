@@ -1,8 +1,10 @@
 "use client"
 
 import React from 'react'
+
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
 import { Users, LayoutDashboard, LogOut, Briefcase } from "lucide-react"
 
 interface SidebarProps {
@@ -63,7 +65,7 @@ export function Sidebar({ activePage }: SidebarProps) {
 }
 
 function NavItem({ icon, label, href, active = false }: { icon: React.ReactNode, label: string, href: string, active?: boolean }) {
-  const Comp = active ? 'div' : Link;
+  const _Comp = active ? 'div' : Link;
   
   return (
     <Link href={href} className={`flex items-center gap-4 w-full px-4 py-3 rounded-lg transition-all duration-200 group ${
@@ -73,7 +75,7 @@ function NavItem({ icon, label, href, active = false }: { icon: React.ReactNode,
         {icon}
       </span>
       <span className="font-semibold">{label}</span>
-      {active && <div className="ml-auto w-1.5 h-1.5 bg-background rounded-full" />}
+      {active ? <div className="ml-auto w-1.5 h-1.5 bg-background rounded-full" /> : null}
     </Link>
   );
 }
