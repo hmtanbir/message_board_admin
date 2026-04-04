@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react'
@@ -122,7 +121,7 @@ export default function DashboardPage() {
               <CardDescription>Breakdown of account licensing levels</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={{}} className="mx-auto aspect-square min-h-[300px] w-full">
+              <ChartContainer config={{}} className="mx-auto h-[350px] w-full">
                 <PieChart>
                   <Pie
                     data={subData}
@@ -154,7 +153,7 @@ export default function DashboardPage() {
               <CardDescription>Ratio of active vs. inactive accounts</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={{}} className="mx-auto aspect-square min-h-[300px] w-full">
+              <ChartContainer config={{}} className="mx-auto h-[350px] w-full">
                 <PieChart>
                   <Pie
                     data={statusData}
