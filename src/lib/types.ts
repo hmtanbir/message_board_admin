@@ -1,11 +1,7 @@
-export type UserRole = "User";
+export type UserRole = "admin" | "user";
+export type UserStatus = "Active" | "Inactive";
 export type SubscriptionTier = "Basic" | "Standard" | "Premium";
-export type Language =
-  | "English"
-  | "French"
-  | "Spanish"
-  | "Chinese"
-  | "Japanese";
+export type Language = "en" | "fr";
 export type Theme = "Light" | "Dark";
 
 export interface User {
@@ -14,23 +10,20 @@ export interface User {
   email: string;
   password?: string;
   phone?: string;
-  jobTitle: string;
-  department: string;
-  roles: UserRole[];
+  role: UserRole;
   subscription: SubscriptionTier;
-  permissions: string[];
-  status: "Active" | "Inactive";
+  status: UserStatus;
+  appwrite_user_id: string;
   preferences: {
     theme: Theme;
     language: Language;
   };
   project?: {
     name: string;
-  };
-  platform?: {
-    name: string;
     package_name: string;
-    platform_type: ("android" | "apple")[];
+    android: boolean;
+    apple: boolean;
   };
-  createdAt: string;
+  created_at: string;
+  updated_at: string;
 }

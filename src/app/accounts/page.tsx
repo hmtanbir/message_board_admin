@@ -10,13 +10,33 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { UserList } from "@/components/users/UserList";
 import { useToast } from "@/hooks/use-toast";
-import { MOCK_USERS } from "@/lib/mock-data";
+import { api } from "@/lib/api";
 import { type User } from "@/lib/types";
 
 export default function AccountsPage() {
   const router = useRouter();
-  const [users, setUsers] = useState<User[]>(MOCK_USERS);
+  const [users, setUsers] = useState<User[]>([]);
   const { toast } = useToast();
+
+  React.useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await api.get("/accounts") as { data?: User[] } | User[] | null;
+        if (response && "data" in response && Array.isArray(response.data)) {
+          setUsers(response.data);
+        } else if (Array.isArray(response)) {
+          setUsers(response);
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to load accounts",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchUsers();
+  }, [toast]);
 
   const handleAdd = () => {
     router.push("/accounts/new");
