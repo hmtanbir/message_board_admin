@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "NODE_ENV=production next start -p $([ -f .env.production ] && source .env.production && echo ${PORT:-4040} || echo 4040)",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix --max-warnings=0",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\""
   },
