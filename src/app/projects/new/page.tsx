@@ -1,27 +1,35 @@
-"use client"
+"use client";
 
-import React from 'react'
-import { useRouter } from 'next/navigation'
-import { ProjectForm } from '@/components/projects/ProjectForm'
-import { Toaster } from "@/components/ui/toaster"
-import { useToast } from "@/hooks/use-toast"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import Link from 'next/link'
-import { Sidebar } from '@/components/layout/Sidebar'
+import React from "react";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import { Sidebar } from "@/components/layout/Sidebar";
+import { ProjectForm } from "@/components/projects/ProjectForm";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/hooks/use-toast";
 
 export default function NewProjectPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSave = (data: any) => {
+  const handleSave = (data: {
+    name: string;
+    package_name: string;
+    platform_type: string[];
+    userId: string;
+  }) => {
     toast({
       title: "🛠️ Project Initialized",
       description: `${data.name} has been added to the inventory. Redirecting...`,
       className: "bg-secondary text-background border-secondary",
     });
-    
+
     setTimeout(() => {
-      router.push('/projects');
+      router.push("/projects");
     }, 2000);
   };
 
@@ -33,29 +41,39 @@ export default function NewProjectPage() {
       <main className="flex-1 p-6 md:p-12 overflow-y-auto">
         <header className="mb-10 animate-in fade-in slide-in-from-left duration-500 max-w-2xl mx-auto">
           <div className="flex items-center gap-2 text-muted-foreground text-sm mb-4 uppercase tracking-widest font-medium">
-            Admin Console <ChevronRight size={14} /> Project <ChevronRight size={14} /> Creation
+            Admin Console <ChevronRight size={14} /> Project{" "}
+            <ChevronRight size={14} /> Creation
           </div>
-          
-          <Link href="/projects" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-6 font-semibold group">
-            <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+
+          <Link
+            href="/projects"
+            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-6 font-semibold group"
+          >
+            <ChevronLeft
+              size={20}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
             Back to Inventory
           </Link>
-          
-          <h2 className="text-4xl font-headline font-bold text-foreground">New Project</h2>
+
+          <h2 className="text-4xl font-headline font-bold text-foreground">
+            New Project
+          </h2>
           <p className="text-muted-foreground mt-2 text-lg">
-            Define the core parameters and target platforms for a new organizational project.
+            Define the core parameters and target platforms for a new
+            organizational project.
           </p>
         </header>
 
         <section className="animate-in fade-in slide-in-from-bottom duration-700 delay-200">
-          <ProjectForm 
-            onSave={handleSave} 
-            onCancel={() => router.push('/projects')} 
+          <ProjectForm
+            onSave={handleSave}
+            onCancel={() => router.push("/projects")}
           />
         </section>
-        
+
         <Toaster />
       </main>
     </div>
-  )
+  );
 }
