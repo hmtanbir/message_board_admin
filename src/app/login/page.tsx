@@ -17,19 +17,50 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulated authentication process
-    setTimeout(() => {
+    try {
+      const response = (await api.post("/sessions", {
+        user: { email, password },
+      })) as { data?: { token?: string }; message?: string };
+
+      if (response && response.data) {
+        localStorage.setItem(
+          "auth_token",
+          response.data.token || JSON.stringify(response.data),
+        );
+      }
+
       router.push("/");
-    }, 1500);
+
+      toast({
+        title: "Authentication Successful",
+        description:
+          response.message || "Welcome to MessageAdmin. Redirecting...",
+        variant: "success",
+      });
+    } catch (error: unknown) {
+      setLoading(false);
+      const errorMessage =
+        error instanceof Error ? error.message : "Invalid credentials";
+      toast({
+        title: "Authentication Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -76,6 +107,8 @@ export default function LoginPage() {
                     type="email"
                     placeholder="admin@message.internal"
                     required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="pl-10 h-12 bg-background/50 border-muted focus:ring-primary focus:border-primary transition-all"
                   />
                 </div>
@@ -96,6 +129,8 @@ export default function LoginPage() {
                     type="password"
                     placeholder="••••••••••••"
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 h-12 bg-background/50 border-muted focus:ring-primary focus:border-primary transition-all"
                   />
                 </div>

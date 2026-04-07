@@ -1,5 +1,8 @@
 import { Inter } from "next/font/google";
 
+import { AuthGuard } from "@/components/auth/AuthGuard";
+import { Toaster } from "@/components/ui/toaster";
+
 import type { Metadata } from "next";
 
 import "./globals.css";
@@ -26,7 +29,8 @@ export default function RootLayout({
         className={`${inter.className} antialiased`}
         suppressHydrationWarning
       >
-        {children}
+        <AuthGuard>{children}</AuthGuard>
+        <Toaster />
       </body>
     </html>
   );

@@ -7,15 +7,24 @@ import { useRouter } from "next/navigation";
 
 import { Users, LayoutDashboard, LogOut, Briefcase } from "lucide-react";
 
+import { useToast } from "@/hooks/use-toast";
+
 interface SidebarProps {
   activePage: "dashboard" | "accounts" | "projects";
 }
 
 export function Sidebar({ activePage }: SidebarProps) {
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleLogout = () => {
-    // Simulated session clearance
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user_data");
+    toast({
+      title: "Logged Out",
+      description: "You have been securely logged out.",
+      variant: "info",
+    });
     router.push("/login");
   };
 
