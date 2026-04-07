@@ -16,6 +16,32 @@ import {
 } from "@/components/ui/chart"
 import { MOCK_USERS } from '@/lib/mock-data'
 
+// Suppress Recharts React 19 defaultProps warning in terminal / console
+if (typeof console !== 'undefined') {
+  const originalConsoleError = console.error;
+  console.error = (...args: unknown[]) => {
+    if (
+      typeof args[0] === 'string' &&
+      args[0].includes('Support for defaultProps will be removed from function components')
+    ) {
+      return;
+    }
+    originalConsoleError(...args);
+  };
+
+  const originalConsoleWarn = console.warn;
+  console.warn = (...args: unknown[]) => {
+    if (
+      typeof args[0] === 'string' &&
+      args[0].includes('The width') &&
+      args[0].includes('should be greater than 0')
+    ) {
+      return;
+    }
+    originalConsoleWarn(...args);
+  };
+}
+
 
 export default function DashboardPage() {
   const [mounted, setMounted] = React.useState(false);
