@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -10,6 +10,7 @@ import {
   ChevronsUpDown,
   Check,
   User as UserIcon,
+  Loader2,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -33,7 +34,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MOCK_USERS } from "@/lib/mock-data";
+import { api } from "@/lib/api";
+import { type Account } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const projectSchema = z.object({
@@ -49,15 +51,19 @@ interface ProjectFormProps {
   initialData?: ProjectFormValues;
   onSave: (data: ProjectFormValues) => void;
   onCancel: () => void;
+  isSaving?: boolean;
 }
 
 export function ProjectForm({
   initialData,
   onSave,
   onCancel,
+  isSaving = false,
 }: ProjectFormProps) {
   const [userSearch, setUserSearch] = useState("");
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [loadingAccounts, setLoadingAccounts] = useState(true);
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
@@ -69,6 +75,30 @@ export function ProjectForm({
     },
   });
 
+  const fetchAccounts = useCallback(async () => {
+    try {
+      setLoadingAccounts(true);
+      const response = (await api.get("/accounts?role=user")) as
+        | { data?: Account[] }
+        | Account[]
+        | null;
+
+      if (response && "data" in response && Array.isArray(response.data)) {
+        setAccounts(response.data);
+      } else if (Array.isArray(response)) {
+        setAccounts(response);
+      }
+    } catch (error) {
+      console.error("Failed to fetch accounts:", error);
+    } finally {
+      setLoadingAccounts(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAccounts();
+  }, [fetchAccounts]);
+
   useEffect(() => {
     if (initialData) {
       form.reset(initialData);
@@ -76,19 +106,21 @@ export function ProjectForm({
   }, [initialData, form]);
 
   const filteredUsers = useMemo(() => {
-    if (!userSearch) return MOCK_USERS;
-    return MOCK_USERS.filter(
-      (user) =>
-        user.name.toLowerCase().includes(userSearch.toLowerCase()) ||
-        user.email.toLowerCase().includes(userSearch.toLowerCase()),
+    if (!userSearch) return accounts;
+    return accounts.filter(
+      (account) =>
+        account.name.toLowerCase().includes(userSearch.toLowerCase()) ||
+        account.email.toLowerCase().includes(userSearch.toLowerCase()),
     );
-  }, [userSearch]);
+  }, [userSearch, accounts]);
 
   const onSubmit = (data: ProjectFormValues) => {
     onSave(data);
   };
 
-  const selectedUser = MOCK_USERS.find((u) => u.id === form.watch("userId"));
+  const selectedUser = accounts.find(
+    (u) => String(u.id) === form.watch("userId"),
+  );
 
   return (
     <Form {...form}>
@@ -117,13 +149,19 @@ export function ProjectForm({
                           <Button
                             variant="outline"
                             role="combobox"
+                            disabled={loadingAccounts}
                             className={cn(
                               "w-full justify-between h-11 bg-background border-muted font-normal",
                               !field.value && "text-muted-foreground",
                             )}
                           >
                             <div className="flex items-center gap-2 truncate">
-                              {selectedUser ? (
+                              {loadingAccounts ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                  <span>Loading accounts...</span>
+                                </>
+                              ) : selectedUser ? (
                                 <>
                                   <UserIcon className="h-4 w-4 text-primary" />
                                   <span className="font-medium text-foreground">
@@ -158,27 +196,35 @@ export function ProjectForm({
                           <div className="p-1">
                             {filteredUsers.length === 0 ? (
                               <div className="py-6 text-center text-sm text-muted-foreground italic">
-                                No results found for &quot;{userSearch}&quot;
+                                {loadingAccounts
+                                  ? "Loading accounts..."
+                                  : `No results found for "${userSearch}"`}
                               </div>
                             ) : (
-                              filteredUsers.map((user) => (
+                              filteredUsers.map((account) => (
                                 <div
-                                  key={user.id}
+                                  key={account.id}
                                   role="option"
-                                  aria-selected={field.value === user.id}
+                                  aria-selected={
+                                    field.value === String(account.id)
+                                  }
                                   tabIndex={0}
                                   className={cn(
                                     "flex items-center justify-between px-3 py-2.5 text-sm rounded-md cursor-pointer hover:bg-primary/10 transition-colors group",
-                                    field.value === user.id && "bg-primary/5",
+                                    field.value === String(account.id) &&
+                                      "bg-primary/5",
                                   )}
                                   onClick={() => {
-                                    form.setValue("userId", user.id);
+                                    form.setValue("userId", String(account.id));
                                     setIsPopoverOpen(false);
                                   }}
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter" || e.key === " ") {
                                       e.preventDefault();
-                                      form.setValue("userId", user.id);
+                                      form.setValue(
+                                        "userId",
+                                        String(account.id),
+                                      );
                                       setIsPopoverOpen(false);
                                     }
                                   }}
@@ -187,18 +233,18 @@ export function ProjectForm({
                                     <span
                                       className={cn(
                                         "font-medium group-hover:text-primary transition-colors",
-                                        field.value === user.id
+                                        field.value === String(account.id)
                                           ? "text-primary"
                                           : "text-foreground",
                                       )}
                                     >
-                                      {user.name}
+                                      {account.name}
                                     </span>
                                     <span className="text-[10px] text-muted-foreground truncate">
-                                      {user.email}
+                                      {account.email}
                                     </span>
                                   </div>
-                                  {field.value === user.id && (
+                                  {field.value === String(account.id) && (
                                     <Check className="h-4 w-4 text-primary shrink-0" />
                                   )}
                                 </div>
@@ -314,16 +360,27 @@ export function ProjectForm({
             type="button"
             variant="ghost"
             onClick={onCancel}
+            disabled={isSaving}
             className="px-6 h-11 text-sm"
           >
             Cancel
           </Button>
           <Button
             type="submit"
+            disabled={isSaving}
             className="bg-primary text-background hover:bg-primary/90 font-bold px-10 h-11 shadow-lg shadow-primary/20"
           >
-            <CheckCircle2 className="mr-2 h-4 w-4" />{" "}
-            {initialData ? "Update Project" : "Initialize Project"}
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="mr-2 h-4 w-4" />{" "}
+                {initialData ? "Update Project" : "Initialize Project"}
+              </>
+            )}
           </Button>
         </div>
       </form>

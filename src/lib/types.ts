@@ -28,3 +28,28 @@ export interface User {
   created_at: string;
   updated_at: string;
 }
+
+export interface Project {
+  id: number;
+  name: string;
+  package_name: string;
+  android: boolean;
+  apple: boolean;
+  appwrite_project_id: string;
+  user_id: number;
+  appwrite_user_id: string;
+  user_name?: string;
+  user_email?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Account {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  appwrite_user_id: string;
+  created_at: string;
+  updated_at: string;
+}

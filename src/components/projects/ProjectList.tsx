@@ -12,6 +12,7 @@ import {
   Trash2,
   AlertTriangle,
   Calendar,
+  Loader2,
 } from "lucide-react";
 
 import {
@@ -49,13 +50,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { type User } from "@/lib/types";
+import { type Project } from "@/lib/types";
 
 interface ProjectListProps {
-  users: User[];
+  projects: Project[];
+  loading?: boolean;
   onAdd: () => void;
-  onEdit: (user: User) => void;
-  onDelete: (id: string) => void;
+  onEdit: (project: Project) => void;
+  onDelete: (appwriteProjectId: string) => void;
 }
 
 /**
@@ -81,7 +83,8 @@ function AppleIcon({ className }: { className?: string }) {
 }
 
 export function ProjectList({
-  users,
+  projects,
+  loading = false,
   onAdd,
   onEdit,
   onDelete,
@@ -97,25 +100,18 @@ export function ProjectList({
   }, []);
 
   const filteredProjects = useMemo(() => {
-    return users.filter((user) => {
-      const projectName = user.project?.name || "N/A";
-      const android = user.project?.android || false;
-      const apple = user.project?.apple || false;
-
-
-      const matchesSearch = projectName
+    return projects.filter((project) => {
+      const matchesSearch = project.name
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
 
       const matchesEnv =
         envFilter === "all" ||
-        (envFilter === "android" && android) ||
-        (envFilter === "apple" && apple);
+        (envFilter === "android" && project.android) ||
+        (envFilter === "apple" && project.apple);
       return matchesSearch && matchesEnv;
     });
-  }, [users, searchTerm, envFilter]);
-
-
+  }, [projects, searchTerm, envFilter]);
 
   const formatDate = (dateString: string) => {
     if (!isMounted) return dateString;
@@ -147,8 +143,6 @@ export function ProjectList({
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-
-
           <div className="w-full md:w-40">
             <Select value={envFilter} onValueChange={setEnvFilter}>
               <SelectTrigger className="bg-card border-muted h-11">
@@ -185,28 +179,40 @@ export function ProjectList({
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
                 Project Name
               </TableHead>
-
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">
+                Owner
+              </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold text-center">
                 Environment
               </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
                 Provisioned
               </TableHead>
-
               <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">
                 Actions
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredProjects.length > 0 ? (
-              filteredProjects.map((user) => (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6} className="h-64 text-center">
+                  <div className="flex flex-col items-center justify-center space-y-3">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-muted-foreground">
+                      Loading projects...
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : filteredProjects.length > 0 ? (
+              filteredProjects.map((project) => (
                 <TableRow
-                  key={user.id}
+                  key={project.appwrite_project_id}
                   className="border-border hover:bg-muted/20 transition-colors group"
                 >
-                   <TableCell className="font-mono text-xs text-muted-foreground">
-                    {user.id}
+                  <TableCell className="font-mono text-xs text-muted-foreground">
+                    {project.appwrite_project_id}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -215,17 +221,27 @@ export function ProjectList({
                       </div>
                       <div className="flex flex-col min-w-0">
                         <span className="font-bold text-foreground group-hover:text-primary transition-colors text-base truncate">
-                          {user.project?.name || "Unassigned"}
+                          {project.name}
                         </span>
-                        <span className="text-xs text-muted-foreground truncate" title={user.email}>
-                          {user.email}
+                        <span className="text-xs text-muted-foreground font-mono truncate">
+                          {project.package_name}
                         </span>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-sm font-medium text-foreground truncate">
+                        {project.user_name || "N/A"}
+                      </span>
+                      <span className="text-xs text-muted-foreground truncate">
+                        {project.user_email || ""}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex items-center justify-center gap-4">
-                      {user.project?.android ? (
+                      {project.android ? (
                         <div
                           className="p-1.5 bg-secondary/10 rounded-md"
                           title="Android"
@@ -233,7 +249,7 @@ export function ProjectList({
                           <AndroidIcon className="h-5 w-5 text-secondary" />
                         </div>
                       ) : null}
-                      {user.project?.apple ? (
+                      {project.apple ? (
                         <div
                           className="p-1.5 bg-primary/10 rounded-md"
                           title="Apple"
@@ -246,7 +262,7 @@ export function ProjectList({
                   <TableCell>
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Calendar className="h-3 w-3" />
-                      {formatDate(user.created_at)}
+                      {formatDate(project.created_at)}
                     </div>
                   </TableCell>
 
@@ -268,13 +284,13 @@ export function ProjectList({
                         <DropdownMenuLabel>Project Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator className="bg-border" />
                         <DropdownMenuItem
-                          onClick={() => onEdit(user)}
+                          onClick={() => onEdit(project)}
                           className="cursor-pointer hover:bg-primary/10"
                         >
                           <Edit2 className="mr-2 h-4 w-4" /> Edit Project
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => setDeleteId(user.id)}
+                          onClick={() => setDeleteId(project.appwrite_project_id)}
                           className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
                         >
                           <Trash2 className="mr-2 h-4 w-4" /> Remove Project
@@ -286,7 +302,7 @@ export function ProjectList({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-64 text-center">
+                <TableCell colSpan={6} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <p className="text-muted-foreground">
                       No projects found matching your filters.

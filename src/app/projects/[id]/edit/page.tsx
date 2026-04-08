@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useState, useEffect } from "react";
+import React, { use, useState, useEffect, useCallback } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,8 +12,8 @@ import { ProjectForm } from "@/components/projects/ProjectForm";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
-import { MOCK_USERS } from "@/lib/mock-data";
-import { type User } from "@/lib/types";
+import { api } from "@/lib/api";
+import { type Project } from "@/lib/types";
 
 export default function EditProjectPage({
   params,
@@ -23,32 +23,79 @@ export default function EditProjectPage({
   const router = useRouter();
   const { toast } = useToast();
   const { id } = use(params);
-  const [user, setUser] = useState<User | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const fetchProject = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = (await api.get(`/projects/${id}`)) as
+        | { data?: Project }
+        | Project
+        | null;
+
+      if (response && "data" in response && response.data) {
+        setProject(response.data as Project);
+      } else if (response && "name" in (response as Project)) {
+        setProject(response as Project);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to load project",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [id, toast]);
 
   useEffect(() => {
-    const foundUser = MOCK_USERS.find((u) => u.id === id);
-    if (foundUser) {
-      setUser(foundUser);
-    }
-    setLoading(false);
-  }, [id]);
+    fetchProject();
+  }, [fetchProject]);
 
-  const handleSave = (data: {
+  const handleSave = async (data: {
     name: string;
     package_name: string;
     platform_type: string[];
     userId: string;
   }) => {
-    toast({
-      title: "🛠️ Project Updated",
-      description: `${data.name} has been modified successfully.`,
-      className: "bg-secondary text-background border-secondary",
-    });
+    try {
+      setIsSaving(true);
 
-    setTimeout(() => {
-      router.push("/projects");
-    }, 1500);
+      const payload = {
+        project: {
+          user_id: data.userId,
+          name: data.name,
+          package_name: data.package_name,
+          android: data.platform_type.includes("android"),
+          apple: data.platform_type.includes("apple"),
+        },
+      };
+
+      await api.patch(`/projects/${id}`, payload);
+
+      toast({
+        title: "🛠️ Project Updated",
+        description: `${data.name} has been modified successfully.`,
+        className: "bg-secondary text-background border-secondary",
+      });
+
+      setTimeout(() => {
+        router.push("/projects");
+      }, 1500);
+    } catch (error) {
+      toast({
+        title: "Update Failed",
+        description:
+          error instanceof Error ? error.message : "Failed to update project",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (loading) {
@@ -59,7 +106,7 @@ export default function EditProjectPage({
     );
   }
 
-  if (!user) {
+  if (!project) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-background p-4 text-center">
         <h2 className="text-2xl font-bold mb-4">Project Not Found</h2>
@@ -74,14 +121,14 @@ export default function EditProjectPage({
   }
 
   const platform_type: string[] = [];
-  if (user.project?.android) platform_type.push("android");
-  if (user.project?.apple) platform_type.push("apple");
+  if (project.android) platform_type.push("android");
+  if (project.apple) platform_type.push("apple");
 
   const initialProjectData = {
-    name: user.project?.name || "",
-    package_name: user.project?.package_name || "",
+    name: project.name || "",
+    package_name: project.package_name || "",
     platform_type,
-    userId: user.appwrite_user_id || user.id,
+    userId: String(project.user_id),
   };
 
   return (
@@ -112,7 +159,7 @@ export default function EditProjectPage({
           </h2>
           <p className="text-muted-foreground mt-2 text-lg">
             Update parameters and target platforms for{" "}
-            <strong>{user.project?.name}</strong>.
+            <strong>{project.name}</strong>.
           </p>
         </header>
 
@@ -121,6 +168,7 @@ export default function EditProjectPage({
             initialData={initialProjectData}
             onSave={handleSave}
             onCancel={() => router.push("/projects")}
+            isSaving={isSaving}
           />
         </section>
 
