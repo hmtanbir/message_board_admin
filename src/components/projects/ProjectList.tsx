@@ -6,7 +6,6 @@ import {
   Briefcase,
   Search,
   Filter,
-  CheckCircle2,
   FolderPlus,
   MoreHorizontal,
   Edit2,
@@ -90,7 +89,7 @@ export function ProjectList({
 }: ProjectListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [envFilter, setEnvFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
+
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -103,7 +102,7 @@ export function ProjectList({
       const projectName = user.project?.name || "N/A";
       const android = user.project?.android || false;
       const apple = user.project?.apple || false;
-      const status = user.status;
+
 
       const matchesSearch = projectName
         .toLowerCase()
@@ -113,33 +112,11 @@ export function ProjectList({
         envFilter === "all" ||
         (envFilter === "android" && android) ||
         (envFilter === "apple" && apple);
-      const matchesStatus = statusFilter === "all" || status === statusFilter;
-
-      return matchesSearch && matchesEnv && matchesStatus;
+      return matchesSearch && matchesEnv;
     });
-  }, [users, searchTerm, envFilter, statusFilter]);
+  }, [users, searchTerm, envFilter]);
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Active":
-        return (
-          <Badge className="bg-secondary/20 text-secondary border-none">
-            {status}
-          </Badge>
-        );
-      case "Inactive":
-        return (
-          <Badge
-            variant="outline"
-            className="border-muted-foreground text-muted-foreground"
-          >
-            {status}
-          </Badge>
-        );
-      default:
-        return <Badge>{status}</Badge>;
-    }
-  };
+
 
   const formatDate = (dateString: string) => {
     if (!isMounted) return dateString;
@@ -171,21 +148,7 @@ export function ProjectList({
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div className="w-full md:w-40">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-card border-muted h-11">
-                <div className="flex items-center gap-2 text-xs">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-muted-foreground" />
-                  <SelectValue placeholder="Status" />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="bg-card border-border">
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+
 
           <div className="w-full md:w-40">
             <Select value={envFilter} onValueChange={setEnvFilter}>
@@ -229,9 +192,7 @@ export function ProjectList({
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
                 Provisioned
               </TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">
-                Status
-              </TableHead>
+
               <TableHead className="text-right text-xs uppercase tracking-widest font-semibold">
                 Actions
               </TableHead>
@@ -288,7 +249,7 @@ export function ProjectList({
                       {formatDate(user.created_at)}
                     </div>
                   </TableCell>
-                  <TableCell>{getStatusBadge(user.status)}</TableCell>
+
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -325,7 +286,7 @@ export function ProjectList({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="h-64 text-center">
+                <TableCell colSpan={5} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <p className="text-muted-foreground">
                       No projects found matching your filters.
@@ -336,7 +297,6 @@ export function ProjectList({
                       onClick={() => {
                         setSearchTerm("");
                         setEnvFilter("all");
-                        setStatusFilter("all");
                       }}
                     >
                       Reset Filters
