@@ -24,7 +24,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -181,6 +180,9 @@ export function ProjectList({
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="text-xs uppercase tracking-widest font-semibold py-4">
+                Project ID
+              </TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">
                 Project Name
               </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
@@ -205,6 +207,9 @@ export function ProjectList({
                   key={user.id}
                   className="border-border hover:bg-muted/20 transition-colors group"
                 >
+                   <TableCell className="font-mono text-xs text-muted-foreground">
+                    {user.id}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-primary/10 rounded-lg">
@@ -286,7 +291,7 @@ export function ProjectList({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-64 text-center">
+                <TableCell colSpan={6} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <p className="text-muted-foreground">
                       No projects found matching your filters.
