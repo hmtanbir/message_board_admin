@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,21 +11,81 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { AccountOnboardingForm } from "@/components/users/AccountOnboardingForm";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
+
+// Map display values to API-expected lowercase values
+const LANGUAGE_MAP: Record<string, string> = {
+  English: "en",
+  French: "fr",
+  Spanish: "es",
+  Chinese: "zh",
+  Japanese: "ja",
+};
+
+const THEME_MAP: Record<string, string> = {
+  Light: "light",
+  Dark: "dark",
+};
 
 export default function NewAccountPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSave = (data: { name: string; project: { name: string } }) => {
-    toast({
-      title: "🚀 Account Provisioned Successfully!",
-      description: `${data.name} has been added to ${data.project.name}. Redirecting to directory...`,
-      className: "bg-secondary text-background border-secondary",
-    });
+  const handleSave = async (data: {
+    name: string;
+    email: string;
+    password: string;
+    phone: string;
+    status: string;
+    preferences: { theme: string; language: string };
+    project: { name: string };
+    platform: { package_name: string; platform_type: string[] };
+  }) => {
+    setIsSubmitting(true);
 
-    setTimeout(() => {
-      router.push("/accounts");
-    }, 2000);
+    try {
+      const payload = {
+        account: {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          phone: data.phone,
+          status: data.status.toLowerCase(),
+          project: {
+            name: data.project.name,
+            package_name: data.platform.package_name,
+            android: data.platform.platform_type.includes("android"),
+            apple: data.platform.platform_type.includes("apple"),
+          },
+          preferences: {
+            theme: THEME_MAP[data.preferences.theme] || "light",
+            language: LANGUAGE_MAP[data.preferences.language] || "en",
+          },
+        },
+      };
+
+      await api.post("/accounts", payload);
+
+      toast({
+        title: "🚀 Account Provisioned Successfully!",
+        description: `${data.name} has been onboarded with project "${data.project.name}". Redirecting to directory…`,
+        className: "bg-secondary text-background border-secondary",
+      });
+
+      setTimeout(() => {
+        router.push("/accounts");
+      }, 1500);
+    } catch (error: unknown) {
+      setIsSubmitting(false);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create account";
+      toast({
+        title: "Account Provisioning Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -64,6 +124,7 @@ export default function NewAccountPage() {
           <AccountOnboardingForm
             onSave={handleSave}
             onCancel={() => router.push("/accounts")}
+            isSubmitting={isSubmitting}
           />
         </section>
 
