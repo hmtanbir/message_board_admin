@@ -185,9 +185,7 @@ export function ProjectList({
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
                 Project Name
               </TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">
-                User Email
-              </TableHead>
+
               <TableHead className="text-xs uppercase tracking-widest font-semibold text-center">
                 Environment
               </TableHead>
@@ -215,17 +213,14 @@ export function ProjectList({
                       <div className="p-2 bg-primary/10 rounded-lg">
                         <Briefcase className="h-4 w-4 text-primary" />
                       </div>
-                      <span className="font-bold text-foreground group-hover:text-primary transition-colors text-base">
-                        {user.project?.name || "Unassigned"}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="max-w-[180px]">
-                    <div
-                      className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors truncate"
-                      title={user.email}
-                    >
-                      {user.email}
+                      <div className="flex flex-col min-w-0">
+                        <span className="font-bold text-foreground group-hover:text-primary transition-colors text-base truncate">
+                          {user.project?.name || "Unassigned"}
+                        </span>
+                        <span className="text-xs text-muted-foreground truncate" title={user.email}>
+                          {user.email}
+                        </span>
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -291,7 +286,7 @@ export function ProjectList({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="h-64 text-center">
+                <TableCell colSpan={5} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <p className="text-muted-foreground">
                       No projects found matching your filters.
