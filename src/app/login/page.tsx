@@ -32,15 +32,16 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = (await api.post("/sessions", {
-        user: { email, password },
-      })) as { data?: { token?: string }; message?: string };
+      const response = (await api.post(
+        "/sessions",
+        {
+          user: { email, password },
+        },
+        { skipDecryption: true }
+      )) as { data?: string; message?: string };
 
       if (response && response.data) {
-        localStorage.setItem(
-          "auth_token",
-          response.data.token || JSON.stringify(response.data),
-        );
+        localStorage.setItem("auth_token", response.data);
       }
 
       router.push("/");

@@ -12,8 +12,22 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import { UserForm } from "@/components/users/UserForm";
 import { useToast } from "@/hooks/use-toast";
-import { MOCK_USERS } from "@/lib/mock-data";
+import { api } from "@/lib/api";
 import { type User } from "@/lib/types";
+
+// Map display values to API-expected lowercase values
+const LANGUAGE_MAP: Record<string, string> = {
+  English: "en",
+  French: "fr",
+  Spanish: "es",
+  Chinese: "zh",
+  Japanese: "ja",
+};
+
+const THEME_MAP: Record<string, string> = {
+  Light: "light",
+  Dark: "dark",
+};
 
 export default function EditAccountPage({
   params,
@@ -25,25 +39,92 @@ export default function EditAccountPage({
   const { id } = use(params);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const foundUser = MOCK_USERS.find((u) => u.id === id);
-    if (foundUser) {
-      setUser(foundUser);
+    const fetchUser = async () => {
+      try {
+        const response = (await api.get(`/accounts/${id}`)) as {
+          data?: User;
+        } | User | null;
+
+        if (response && "data" in response && response.data) {
+          setUser(response.data);
+        } else if (response && "name" in response) {
+          setUser(response as User);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description:
+            error instanceof Error
+              ? error.message
+              : "Failed to load account details",
+          variant: "destructive",
+        });
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [id, toast]);
+
+  const handleSave = async (data: {
+    name?: string;
+    phone?: string;
+    password?: string;
+    status?: string;
+    subscription?: string;
+    preferences?: { theme?: string; language?: string };
+  }) => {
+    if (!user) return;
+    setIsSubmitting(true);
+
+    try {
+      // Build payload with only editable fields
+      const payload: Record<string, unknown> = {};
+
+      if (data.name) payload.name = data.name;
+      if (data.phone) payload.phone = data.phone;
+      if (data.password) payload.password = data.password;
+      if (data.status) payload.status = data.status.toLowerCase();
+
+      if (data.preferences) {
+        payload.preferences = {
+          theme: THEME_MAP[data.preferences.theme || ""] || data.preferences.theme,
+          language:
+            LANGUAGE_MAP[data.preferences.language || ""] ||
+            data.preferences.language,
+        };
+      }
+
+      await api.patch(`/accounts/${user.appwrite_user_id}`, {
+        account: payload,
+      });
+
+      toast({
+        title: "✅ Profile Updated Successfully!",
+        description: `${data.name}'s account has been updated. Redirecting to directory…`,
+        className: "bg-secondary text-background border-secondary",
+      });
+
+      setTimeout(() => {
+        router.push("/accounts");
+      }, 1500);
+    } catch (error: unknown) {
+      setIsSubmitting(false);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update account";
+      toast({
+        title: "Update Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
-    setLoading(false);
-  }, [id]);
-
-  const handleSave = (data: Partial<User>) => {
-    toast({
-      title: "Profile Updated",
-      description: `${data.name}'s profile has been updated successfully.`,
-      className: "bg-primary text-background border-primary",
-    });
-
-    setTimeout(() => {
-      router.push("/accounts");
-    }, 1500);
   };
 
   if (loading) {
@@ -105,6 +186,7 @@ export default function EditAccountPage({
             initialUser={user}
             onSave={handleSave}
             onCancel={() => router.push("/accounts")}
+            isSubmitting={isSubmitting}
           />
         </section>
 

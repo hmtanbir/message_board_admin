@@ -73,11 +73,15 @@ export default function EditProjectPage({
     );
   }
 
+  const platform_type: string[] = [];
+  if (user.project?.android) platform_type.push("android");
+  if (user.project?.apple) platform_type.push("apple");
+
   const initialProjectData = {
     name: user.project?.name || "",
-    package_name: user.platform?.package_name || "",
-    platform_type: user.platform?.platform_type || [],
-    userId: user.id,
+    package_name: user.project?.package_name || "",
+    platform_type,
+    userId: user.appwrite_user_id || user.id,
   };
 
   return (

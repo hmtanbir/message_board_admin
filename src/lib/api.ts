@@ -95,10 +95,16 @@ export async function decryptPayload(base64Payload: string): Promise<unknown> {
 // Main API Client
 export interface ApiOptions extends RequestInit {
   data?: unknown;
+  skipDecryption?: boolean;
 }
 
 export async function apiClient(endpoint: string, options: ApiOptions = {}) {
-  const { data, headers: customHeaders, ...fetchOptions } = options;
+  const {
+    data,
+    headers: customHeaders,
+    skipDecryption = false,
+    ...fetchOptions
+  } = options;
   const url = `${BASE_URL}${endpoint}`;
 
   const headers = new Headers(customHeaders);
@@ -146,6 +152,7 @@ export async function apiClient(endpoint: string, options: ApiOptions = {}) {
   // Handle transparent decryption first, so we can read encrypted error messages!
   if (
     ENCRYPTION_ENABLED &&
+    !skipDecryption &&
     jsonResponse &&
     typeof jsonResponse === "object" &&
     "data" in jsonResponse &&

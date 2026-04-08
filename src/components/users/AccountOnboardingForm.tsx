@@ -9,6 +9,8 @@ import {
   RefreshCw,
   CheckCircle2,
   Globe,
+  Loader2,
+  Phone,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -40,8 +42,10 @@ const onboardingSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   phone: z
     .string()
-    .min(10, "Phone number must be at least 10 characters")
-    .regex(/^\+/, "Phone number must start with '+' (e.g. +1...)"),
+    .refine(
+      (val) => val === "" || (val.length >= 10 && /^\+/.test(val)),
+      { message: "Phone must be 10+ chars starting with '+' (e.g. +1...)" },
+    ),
   status: z.enum(["Active", "Inactive"]),
   subscription: z.enum(["Basic", "Standard", "Premium"]),
   preferences: z.object({
@@ -62,13 +66,15 @@ const onboardingSchema = z.object({
 type OnboardingValues = z.infer<typeof onboardingSchema>;
 
 interface AccountOnboardingFormProps {
-  onSave: (data: OnboardingValues) => void;
+  onSave: (data: OnboardingValues) => void | Promise<void>;
   onCancel: () => void;
+  isSubmitting?: boolean;
 }
 
 export function AccountOnboardingForm({
   onSave,
   onCancel,
+  isSubmitting = false,
 }: AccountOnboardingFormProps) {
   const form = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
@@ -149,6 +155,30 @@ export function AccountOnboardingForm({
                           className="h-10"
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <FormControl>
+                          <Input
+                            placeholder="+1234567890"
+                            type="tel"
+                            {...field}
+                            className="h-10 pl-10"
+                          />
+                        </FormControl>
+                      </div>
+                      <FormDescription className="text-[10px]">
+                        Optional. Must start with &apos;+&apos; followed by country code.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -405,14 +435,25 @@ export function AccountOnboardingForm({
             variant="ghost"
             onClick={onCancel}
             className="px-6 h-10 text-sm"
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
           <Button
             type="submit"
             className="bg-primary text-background hover:bg-primary/90 font-bold px-10 h-10"
+            disabled={isSubmitting}
           >
-            <CheckCircle2 className="mr-2 h-4 w-4" /> Provision Account
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating Account…
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="mr-2 h-4 w-4" /> Provision Account
+              </>
+            )}
           </Button>
         </div>
       </form>

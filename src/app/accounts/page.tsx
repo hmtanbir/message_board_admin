@@ -10,29 +10,59 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { UserList } from "@/components/users/UserList";
 import { useToast } from "@/hooks/use-toast";
-import { MOCK_USERS } from "@/lib/mock-data";
+import { api } from "@/lib/api";
 import { type User } from "@/lib/types";
 
 export default function AccountsPage() {
   const router = useRouter();
-  const [users, setUsers] = useState<User[]>(MOCK_USERS);
+  const [users, setUsers] = useState<User[]>([]);
   const { toast } = useToast();
+
+  React.useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await api.get("/accounts?role=user") as { data?: User[] } | User[] | null;
+        if (response && "data" in response && Array.isArray(response.data)) {
+          setUsers(response.data);
+        } else if (Array.isArray(response)) {
+          setUsers(response);
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to load accounts",
+          variant: "destructive"
+        });
+      }
+    };
+    fetchUsers();
+  }, [toast]);
 
   const handleAdd = () => {
     router.push("/accounts/new");
   };
 
   const handleEdit = (user: User) => {
-    router.push(`/accounts/${user.id}/edit`);
+    router.push(`/accounts/${user.appwrite_user_id}/edit`);
   };
 
-  const handleDelete = (id: string) => {
-    setUsers(users.filter((u) => u.id !== id));
-    toast({
-      title: "Account Removed",
-      description: "The account has been successfully deleted.",
-      variant: "default",
-    });
+  const handleDelete = async (id: string) => {
+    try {
+      await api.delete(`/accounts/${id}`);
+      
+      setUsers(users.filter((u) => u.appwrite_user_id !== id));
+      toast({
+        title: "Account Removed",
+        description: "The account has been successfully deleted.",
+        variant: "default",
+      });
+    } catch (error) {
+      toast({
+        title: "Deletion Failed",
+        description: error instanceof Error ? error.message : "Failed to delete account",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

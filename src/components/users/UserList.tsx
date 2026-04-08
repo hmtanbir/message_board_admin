@@ -13,6 +13,7 @@ import {
   CreditCard,
   AlertTriangle,
   Calendar,
+  Loader2,
 } from "lucide-react";
 
 import {
@@ -58,7 +59,7 @@ interface UserListProps {
   users: User[];
   onAdd: () => void;
   onEdit: (user: User) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => void | Promise<void>;
 }
 
 export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
@@ -66,6 +67,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [subscriptionFilter, setSubscriptionFilter] = useState<string>("all");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -75,11 +77,11 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchesSearch =
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.id.toLowerCase().includes(searchTerm.toLowerCase());
+        (user.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (user.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        String(user.appwrite_user_id || "").toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus =
-        statusFilter === "all" || user.status === statusFilter;
+        statusFilter === "all" || (user.status || "").toLowerCase() === statusFilter.toLowerCase();
       const matchesSubscription =
         subscriptionFilter === "all" ||
         user.subscription === subscriptionFilter;
@@ -88,24 +90,24 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   }, [users, searchTerm, statusFilter, subscriptionFilter]);
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Active":
+    switch (status?.toLowerCase()) {
+      case "active":
         return (
           <Badge className="bg-secondary/20 text-secondary border-none">
-            {status}
+            Active
           </Badge>
         );
-      case "Inactive":
+      case "inactive":
         return (
           <Badge
             variant="outline"
             className="border-muted-foreground text-muted-foreground"
           >
-            {status}
+            Inactive
           </Badge>
         );
       default:
-        return <Badge>{status}</Badge>;
+        return <Badge>{status || "Unknown"}</Badge>;
     }
   };
 
@@ -149,10 +151,15 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
     });
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (deleteId) {
-      onDelete(deleteId);
-      setDeleteId(null);
+      setIsDeleting(true);
+      try {
+        await onDelete(deleteId);
+      } finally {
+        setIsDeleting(false);
+        setDeleteId(null);
+      }
     }
   };
 
@@ -189,6 +196,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               </SelectContent>
             </Select>
           </div>
+
           <div className="w-40">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="bg-card border-muted h-11">
@@ -245,14 +253,14 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
                 <TableRow
-                  key={user.id}
+                  key={user.appwrite_user_id}
                   className="border-border hover:bg-muted/20 transition-colors group"
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10 border border-primary/20">
                         <AvatarFallback className="bg-primary text-background font-bold text-xs">
-                          {user.name
+                          {(user.name || "U")
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
@@ -260,31 +268,29 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                       </Avatar>
                       <div className="flex flex-col">
                         <span className="font-semibold text-sm group-hover:text-primary transition-colors">
-                          {user.name}
+                          {user.name || "Unknown User"}
                         </span>
                         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                           <Mail className="h-3 w-3" />
-                          {user.email}
+                          {user.email || "No email"}
                         </div>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <code className="text-[10px] font-mono bg-muted/50 px-2 py-1 rounded text-muted-foreground group-hover:text-foreground transition-colors">
-                      {user.id}
+                      {user.appwrite_user_id || "N/A"}
                     </code>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
-                      {user.roles.map((role) => (
-                        <Badge
-                          key={role}
-                          variant="secondary"
-                          className="bg-primary/10 text-primary border-none text-[10px] px-1.5 py-0"
-                        >
-                          {role}
-                        </Badge>
-                      ))}
+                      <Badge
+                        key={user.role}
+                        variant="secondary"
+                        className="bg-primary/10 text-primary border-none text-[10px] px-1.5 py-0"
+                      >
+                        {user.role}
+                      </Badge>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -293,41 +299,43 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                   <TableCell>
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Calendar className="h-3 w-3" />
-                      {formatDate(user.createdAt)}
+                      {formatDate(user.created_at)}
                     </div>
                   </TableCell>
                   <TableCell>{getStatusBadge(user.status)}</TableCell>
                   <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="hover:bg-primary/10 hover:text-primary"
+                    {user.role?.toLowerCase() !== "admin" && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-primary/10 hover:text-primary"
+                          >
+                            <MoreHorizontal className="h-5 w-5" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-card border-border"
                         >
-                          <MoreHorizontal className="h-5 w-5" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="bg-card border-border"
-                      >
-                        <DropdownMenuLabel>Account Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-border" />
-                        <DropdownMenuItem
-                          onClick={() => onEdit(user)}
-                          className="cursor-pointer hover:bg-primary/10"
-                        >
-                          <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setDeleteId(user.id)}
-                          className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" /> Remove Account
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                          <DropdownMenuLabel>Account Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator className="bg-border" />
+                          <DropdownMenuItem
+                            onClick={() => onEdit(user)}
+                            className="cursor-pointer hover:bg-primary/10"
+                          >
+                            <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => setDeleteId(String(user.appwrite_user_id))}
+                            className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" /> Remove Account
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </TableCell>
                 </TableRow>
               ))
@@ -385,9 +393,17 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
+              disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold"
             >
-              Confirm Deletion
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Confirm Deletion"
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

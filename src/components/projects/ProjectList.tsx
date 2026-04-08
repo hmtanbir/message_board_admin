@@ -101,7 +101,8 @@ export function ProjectList({
   const filteredProjects = useMemo(() => {
     return users.filter((user) => {
       const projectName = user.project?.name || "N/A";
-      const platformTypes = user.platform?.platform_type || [];
+      const android = user.project?.android || false;
+      const apple = user.project?.apple || false;
       const status = user.status;
 
       const matchesSearch = projectName
@@ -110,7 +111,8 @@ export function ProjectList({
 
       const matchesEnv =
         envFilter === "all" ||
-        platformTypes.includes(envFilter as "android" | "apple");
+        (envFilter === "android" && android) ||
+        (envFilter === "apple" && apple);
       const matchesStatus = statusFilter === "all" || status === statusFilter;
 
       return matchesSearch && matchesEnv && matchesStatus;
@@ -259,7 +261,7 @@ export function ProjectList({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-4">
-                      {user.platform?.platform_type.includes("android") ? (
+                      {user.project?.android ? (
                         <div
                           className="p-1.5 bg-secondary/10 rounded-md"
                           title="Android"
@@ -267,7 +269,7 @@ export function ProjectList({
                           <AndroidIcon className="h-5 w-5 text-secondary" />
                         </div>
                       ) : null}
-                      {user.platform?.platform_type.includes("apple") ? (
+                      {user.project?.apple ? (
                         <div
                           className="p-1.5 bg-primary/10 rounded-md"
                           title="Apple"
@@ -280,7 +282,7 @@ export function ProjectList({
                   <TableCell>
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Calendar className="h-3 w-3" />
-                      {formatDate(user.createdAt)}
+                      {formatDate(user.created_at)}
                     </div>
                   </TableCell>
                   <TableCell>{getStatusBadge(user.status)}</TableCell>
