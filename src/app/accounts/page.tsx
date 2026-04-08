@@ -43,7 +43,7 @@ export default function AccountsPage() {
   };
 
   const handleEdit = (user: User) => {
-    router.push(`/accounts/${user.id}/edit`);
+    router.push(`/accounts/${user.appwrite_user_id}/edit`);
   };
 
   const handleDelete = (id: string) => {

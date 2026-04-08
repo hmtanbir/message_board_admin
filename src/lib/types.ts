@@ -1,7 +1,7 @@
 export type UserRole = "admin" | "user";
 export type UserStatus = "Active" | "Inactive";
 export type SubscriptionTier = "Basic" | "Standard" | "Premium";
-export type Language = "en" | "fr";
+export type Language = "en" | "fr" | "es" | "zh" | "ja";
 export type Theme = "Dark" | "Light";
 
 export interface User {
