@@ -221,7 +221,7 @@ export function ProjectList({
                 Project Name
               </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
-                User ID
+                User Email
               </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold text-center">
                 Environment
@@ -254,10 +254,13 @@ export function ProjectList({
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <code className="text-[10px] font-mono bg-muted/50 px-2 py-1 rounded text-muted-foreground group-hover:text-foreground transition-colors border border-border/50">
-                      {user.id}
-                    </code>
+                  <TableCell className="max-w-[180px]">
+                    <div
+                      className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors truncate"
+                      title={user.email}
+                    >
+                      {user.email}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-4">
