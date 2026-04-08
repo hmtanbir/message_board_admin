@@ -46,13 +46,23 @@ export default function AccountsPage() {
     router.push(`/accounts/${user.appwrite_user_id}/edit`);
   };
 
-  const handleDelete = (id: string) => {
-    setUsers(users.filter((u) => u.id !== id));
-    toast({
-      title: "Account Removed",
-      description: "The account has been successfully deleted.",
-      variant: "default",
-    });
+  const handleDelete = async (id: string) => {
+    try {
+      await api.delete(`/accounts/${id}`);
+      
+      setUsers(users.filter((u) => u.appwrite_user_id !== id));
+      toast({
+        title: "Account Removed",
+        description: "The account has been successfully deleted.",
+        variant: "default",
+      });
+    } catch (error) {
+      toast({
+        title: "Deletion Failed",
+        description: error instanceof Error ? error.message : "Failed to delete account",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

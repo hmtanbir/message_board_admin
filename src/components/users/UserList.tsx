@@ -13,6 +13,7 @@ import {
   CreditCard,
   AlertTriangle,
   Calendar,
+  Loader2,
 } from "lucide-react";
 
 import {
@@ -58,7 +59,7 @@ interface UserListProps {
   users: User[];
   onAdd: () => void;
   onEdit: (user: User) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => void | Promise<void>;
 }
 
 export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
@@ -66,6 +67,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [subscriptionFilter, setSubscriptionFilter] = useState<string>("all");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -149,10 +151,15 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
     });
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (deleteId) {
-      onDelete(deleteId);
-      setDeleteId(null);
+      setIsDeleting(true);
+      try {
+        await onDelete(deleteId);
+      } finally {
+        setIsDeleting(false);
+        setDeleteId(null);
+      }
     }
   };
 
@@ -321,7 +328,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                             <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => setDeleteId(String(user.id))}
+                            onClick={() => setDeleteId(String(user.appwrite_user_id))}
                             className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
                           >
                             <Trash2 className="mr-2 h-4 w-4" /> Remove Account
@@ -386,9 +393,17 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
+              disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold"
             >
-              Confirm Deletion
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Confirm Deletion"
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
