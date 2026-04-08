@@ -156,24 +156,30 @@ export function ProjectForm({
                             )}
                           >
                             <div className="flex items-center gap-2 truncate">
-                              {loadingAccounts ? (
-                                <>
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                  <span>Loading accounts...</span>
-                                </>
-                              ) : selectedUser ? (
-                                <>
-                                  <UserIcon className="h-4 w-4 text-primary" />
-                                  <span className="font-medium text-foreground">
-                                    {selectedUser.name}
-                                  </span>
-                                  <span className="text-muted-foreground text-xs">
-                                    ({selectedUser.email})
-                                  </span>
-                                </>
-                              ) : (
-                                "Assign project to a user..."
-                              )}
+                              {(() => {
+                                if (loadingAccounts) {
+                                  return (
+                                    <>
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                      <span>Loading accounts...</span>
+                                    </>
+                                  );
+                                }
+                                if (selectedUser) {
+                                  return (
+                                    <>
+                                      <UserIcon className="h-4 w-4 text-primary" />
+                                      <span className="font-medium text-foreground">
+                                        {selectedUser.name}
+                                      </span>
+                                      <span className="text-muted-foreground text-xs">
+                                        ({selectedUser.email})
+                                      </span>
+                                    </>
+                                  );
+                                }
+                                return "Assign project to a user...";
+                              })()}
                             </div>
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>

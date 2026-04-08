@@ -194,133 +194,143 @@ export function ProjectList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-64 text-center">
-                  <div className="flex flex-col items-center justify-center space-y-3">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <p className="text-muted-foreground">
-                      Loading projects...
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : filteredProjects.length > 0 ? (
-              filteredProjects.map((project) => (
-                <TableRow
-                  key={project.appwrite_project_id}
-                  className="border-border hover:bg-muted/20 transition-colors group"
-                >
-                  <TableCell className="font-mono text-xs text-muted-foreground">
-                    {project.appwrite_project_id}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <Briefcase className="h-4 w-4 text-primary" />
+            {(() => {
+              if (loading) {
+                return (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-64 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-3">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        <p className="text-muted-foreground">
+                          Loading projects...
+                        </p>
                       </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="font-bold text-foreground group-hover:text-primary transition-colors text-base truncate">
-                          {project.name}
-                        </span>
-                        <span className="text-xs text-muted-foreground font-mono truncate">
-                          {project.package_name}
-                        </span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-medium text-foreground truncate">
-                        {project.user_name || "N/A"}
-                      </span>
-                      <span className="text-xs text-muted-foreground truncate">
-                        {project.user_email || ""}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-center gap-4">
-                      {project.android ? (
-                        <div
-                          className="p-1.5 bg-secondary/10 rounded-md"
-                          title="Android"
-                        >
-                          <AndroidIcon className="h-5 w-5 text-secondary" />
-                        </div>
-                      ) : null}
-                      {project.apple ? (
-                        <div
-                          className="p-1.5 bg-primary/10 rounded-md"
-                          title="Apple"
-                        >
-                          <AppleIcon className="h-5 w-5 text-primary" />
-                        </div>
-                      ) : null}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3" />
-                      {formatDate(project.created_at)}
-                    </div>
-                  </TableCell>
+                    </TableCell>
+                  </TableRow>
+                );
+              }
 
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="hover:bg-primary/10 hover:text-primary"
+              if (filteredProjects.length > 0) {
+                return filteredProjects.map((project) => (
+                  <TableRow
+                    key={project.appwrite_project_id}
+                    className="border-border hover:bg-muted/20 transition-colors group"
+                  >
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {project.appwrite_project_id}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <Briefcase className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-bold text-foreground group-hover:text-primary transition-colors text-base truncate">
+                            {project.name}
+                          </span>
+                          <span className="text-xs text-muted-foreground font-mono truncate">
+                            {project.package_name}
+                          </span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium text-foreground truncate">
+                          {project.user_name || "N/A"}
+                        </span>
+                        <span className="text-xs text-muted-foreground truncate">
+                          {project.user_email || ""}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-center gap-4">
+                        {project.android ? (
+                          <div
+                            className="p-1.5 bg-secondary/10 rounded-md"
+                            title="Android"
+                          >
+                            <AndroidIcon className="h-5 w-5 text-secondary" />
+                          </div>
+                        ) : null}
+                        {project.apple ? (
+                          <div
+                            className="p-1.5 bg-primary/10 rounded-md"
+                            title="Apple"
+                          >
+                            <AppleIcon className="h-5 w-5 text-primary" />
+                          </div>
+                        ) : null}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(project.created_at)}
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-primary/10 hover:text-primary"
+                          >
+                            <MoreHorizontal className="h-5 w-5" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-card border-border"
                         >
-                          <MoreHorizontal className="h-5 w-5" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="bg-card border-border"
+                          <DropdownMenuLabel>Project Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator className="bg-border" />
+                          <DropdownMenuItem
+                            onClick={() => onEdit(project)}
+                            className="cursor-pointer hover:bg-primary/10"
+                          >
+                            <Edit2 className="mr-2 h-4 w-4" /> Edit Project
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              setDeleteId(project.appwrite_project_id)
+                            }
+                            className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" /> Remove Project
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ));
+              }
+
+              return (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-64 text-center">
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                      <p className="text-muted-foreground">
+                        No projects found matching your filters.
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSearchTerm("");
+                          setEnvFilter("all");
+                        }}
                       >
-                        <DropdownMenuLabel>Project Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-border" />
-                        <DropdownMenuItem
-                          onClick={() => onEdit(project)}
-                          className="cursor-pointer hover:bg-primary/10"
-                        >
-                          <Edit2 className="mr-2 h-4 w-4" /> Edit Project
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setDeleteId(project.appwrite_project_id)}
-                          className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" /> Remove Project
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        Reset Filters
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} className="h-64 text-center">
-                  <div className="flex flex-col items-center justify-center space-y-3">
-                    <p className="text-muted-foreground">
-                      No projects found matching your filters.
-                    </p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSearchTerm("");
-                        setEnvFilter("all");
-                      }}
-                    >
-                      Reset Filters
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
+              );
+            })()}
           </TableBody>
         </Table>
       </div>
