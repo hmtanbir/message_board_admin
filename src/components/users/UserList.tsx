@@ -13,7 +13,6 @@ import {
   CreditCard,
   AlertTriangle,
   Calendar,
-  Shield,
 } from "lucide-react";
 
 import {
@@ -66,7 +65,6 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [subscriptionFilter, setSubscriptionFilter] = useState<string>("all");
-  const [roleFilter, setRoleFilter] = useState<string>("all");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -85,12 +83,9 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
       const matchesSubscription =
         subscriptionFilter === "all" ||
         user.subscription === subscriptionFilter;
-      const matchesRole =
-        roleFilter === "all" || (user.role || "").toLowerCase() === roleFilter.toLowerCase();
-        
-      return matchesSearch && matchesStatus && matchesSubscription && matchesRole;
+      return matchesSearch && matchesStatus && matchesSubscription;
     });
-  }, [users, searchTerm, statusFilter, subscriptionFilter, roleFilter]);
+  }, [users, searchTerm, statusFilter, subscriptionFilter]);
 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -194,21 +189,7 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
               </SelectContent>
             </Select>
           </div>
-          <div className="w-40">
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="bg-card border-muted h-11">
-                <div className="flex items-center gap-2 text-xs">
-                  <Shield className="h-3.5 w-3.5 text-muted-foreground" />
-                  <SelectValue placeholder="Role" />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="bg-card border-border">
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="user">User</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+
           <div className="w-40">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="bg-card border-muted h-11">
@@ -367,7 +348,6 @@ export function UserList({ users, onAdd, onEdit, onDelete }: UserListProps) {
                         setSearchTerm("");
                         setStatusFilter("all");
                         setSubscriptionFilter("all");
-                        setRoleFilter("all");
                       }}
                     >
                       Reset Filters

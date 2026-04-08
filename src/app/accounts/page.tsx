@@ -21,7 +21,7 @@ export default function AccountsPage() {
   React.useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get("/accounts") as { data?: User[] } | User[] | null;
+        const response = await api.get("/accounts?role=user") as { data?: User[] } | User[] | null;
         if (response && "data" in response && Array.isArray(response.data)) {
           setUsers(response.data);
         } else if (Array.isArray(response)) {
