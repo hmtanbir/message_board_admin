@@ -23,6 +23,7 @@ export interface User {
     package_name: string;
     android: boolean;
     apple: boolean;
+    user_id: string;
   };
   created_at: string;
   updated_at: string;
