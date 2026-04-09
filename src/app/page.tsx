@@ -10,7 +10,6 @@ import {
   ChevronRight,
   PieChart as PieChartIcon,
   Activity,
-  AlertCircle,
 } from "lucide-react";
 import { PieChart, Pie, Cell } from "recharts";
 
