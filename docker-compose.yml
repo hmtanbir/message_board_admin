@@ -1,0 +1,40 @@
+services:
+  app:
+    image: hmtanbir/mba:1.0.0
+    platform: linux/amd64 # Specific platform for production stability
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+        - NEXT_PUBLIC_API_PAYLOAD_ENCRYPTION_ENABLED=${NEXT_PUBLIC_API_PAYLOAD_ENCRYPTION_ENABLED}
+        - NEXT_PUBLIC_API_GATEWAY_KEY=${NEXT_PUBLIC_API_GATEWAY_KEY}
+        - NEXT_PUBLIC_API_ENCRYPTION_KEY=${NEXT_PUBLIC_API_ENCRYPTION_KEY}
+    container_name: message_board_admin
+    restart: unless-stopped
+    ports:
+      - "9001:9001"
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+      - PORT=9001
+      # Explicitly setting these ensures they are available to the container runtime
+      - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+      - NEXT_PUBLIC_API_PAYLOAD_ENCRYPTION_ENABLED=${NEXT_PUBLIC_API_PAYLOAD_ENCRYPTION_ENABLED}
+      - NEXT_PUBLIC_API_GATEWAY_KEY=${NEXT_PUBLIC_API_GATEWAY_KEY}
+      - NEXT_PUBLIC_API_ENCRYPTION_KEY=${NEXT_PUBLIC_API_ENCRYPTION_KEY}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  default:
+    name: message_board_network
