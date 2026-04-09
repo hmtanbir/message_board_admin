@@ -40,6 +40,7 @@ export interface Project {
   appwrite_user_id: string;
   user_name?: string;
   user_email?: string;
+  status: string;
   created_at: string;
   updated_at: string;
 }

@@ -25,6 +25,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -51,6 +52,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { type Project } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 interface ProjectListProps {
   projects: Project[];
@@ -239,9 +241,24 @@ export function ProjectList({
                         <span className="text-sm font-medium text-foreground truncate">
                           {project.user_name || "N/A"}
                         </span>
-                        <span className="text-xs text-muted-foreground truncate">
-                          {project.user_email || ""}
-                        </span>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-xs text-muted-foreground truncate">
+                            {project.user_email || ""}
+                          </span>
+                          {!!project.status && (
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                "text-[10px] px-1.5 py-0 h-3.5 uppercase tracking-tighter font-bold",
+                                project.status === "active"
+                                  ? "bg-green-500/10 text-green-500 border-green-500/20"
+                                  : "bg-red-500/10 text-red-500 border-red-500/20",
+                              )}
+                            >
+                              {project.status}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
