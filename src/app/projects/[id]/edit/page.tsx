@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useState, useEffect, useCallback } from "react";
+import React, { use, useState, useEffect, useCallback, useMemo } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,6 +26,21 @@ export default function EditProjectPage({
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
+  const initialProjectData = useMemo(() => {
+    if (!project) return undefined;
+    const platform_type: string[] = [];
+    if (project.android) platform_type.push("android");
+    if (project.apple) platform_type.push("apple");
+
+    return {
+      name: project.name || "",
+      package_name: project.package_name || "",
+      platform_type,
+      userId: String(project.user_id),
+    };
+  }, [project]);
+
 
   const fetchProject = useCallback(async () => {
     try {
@@ -75,7 +90,17 @@ export default function EditProjectPage({
         },
       };
 
-      await api.patch(`/projects/${id}`, payload);
+      const response = (await api.patch(`/projects/${id}`, payload)) as
+        | { data?: Project }
+        | Project
+        | null;
+
+      if (response && "data" in response && response.data) {
+        setProject(response.data as Project);
+      } else if (response && "name" in (response as Project)) {
+        setProject(response as Project);
+      }
+
 
       toast({
         title: "🛠️ Project Updated",
@@ -120,16 +145,7 @@ export default function EditProjectPage({
     );
   }
 
-  const platform_type: string[] = [];
-  if (project.android) platform_type.push("android");
-  if (project.apple) platform_type.push("apple");
 
-  const initialProjectData = {
-    name: project.name || "",
-    package_name: project.package_name || "",
-    platform_type,
-    userId: String(project.user_id),
-  };
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
