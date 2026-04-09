@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,26 +11,53 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { ProjectForm } from "@/components/projects/ProjectForm";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
 
 export default function NewProjectPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = (data: {
+  const handleSave = async (data: {
     name: string;
     package_name: string;
     platform_type: string[];
     userId: string;
   }) => {
-    toast({
-      title: "🛠️ Project Initialized",
-      description: `${data.name} has been added to the inventory. Redirecting...`,
-      className: "bg-secondary text-background border-secondary",
-    });
+    try {
+      setIsSaving(true);
 
-    setTimeout(() => {
-      router.push("/projects");
-    }, 2000);
+      const payload = {
+        project: {
+          user_id: data.userId,
+          name: data.name,
+          package_name: data.package_name,
+          android: data.platform_type.includes("android"),
+          apple: data.platform_type.includes("apple"),
+        },
+      };
+
+      await api.post("/projects", payload);
+
+      toast({
+        title: "🛠️ Project Initialized",
+        description: `${data.name} has been added to the inventory. Redirecting...`,
+        className: "bg-secondary text-background border-secondary",
+      });
+
+      setTimeout(() => {
+        router.push("/projects");
+      }, 1500);
+    } catch (error) {
+      toast({
+        title: "Creation Failed",
+        description:
+          error instanceof Error ? error.message : "Failed to create project",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -69,6 +96,7 @@ export default function NewProjectPage() {
           <ProjectForm
             onSave={handleSave}
             onCancel={() => router.push("/projects")}
+            isSaving={isSaving}
           />
         </section>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -10,28 +10,72 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { ProjectList } from "@/components/projects/ProjectList";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
-import { MOCK_USERS } from "@/lib/mock-data";
-import { type User } from "@/lib/types";
+import { api } from "@/lib/api";
+import { type Project } from "@/lib/types";
 
 export default function ProjectsPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [users, setUsers] = useState<User[]>(MOCK_USERS);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProjects = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = (await api.get("/projects")) as
+        | { data?: Project[] }
+        | Project[]
+        | null;
+
+      if (response && "data" in response && Array.isArray(response.data)) {
+        setProjects(response.data);
+      } else if (Array.isArray(response)) {
+        setProjects(response);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to load projects",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   const handleAdd = () => {
     router.push("/projects/new");
   };
 
-  const handleEdit = (user: User) => {
-    router.push(`/projects/${user.id}/edit`);
+  const handleEdit = (project: Project) => {
+    router.push(`/projects/${project.appwrite_project_id}/edit`);
   };
 
-  const handleDelete = (id: string) => {
-    setUsers(users.filter((u) => u.id !== id));
-    toast({
-      title: "Project Removed",
-      description: "The project has been successfully removed from inventory.",
-    });
+  const handleDelete = async (appwriteProjectId: string) => {
+    try {
+      await api.delete(`/projects/${appwriteProjectId}`);
+
+      setProjects(
+        projects.filter((p) => p.appwrite_project_id !== appwriteProjectId),
+      );
+      toast({
+        title: "Project Removed",
+        description:
+          "The project has been successfully removed from inventory.",
+      });
+    } catch (error) {
+      toast({
+        title: "Deletion Failed",
+        description:
+          error instanceof Error ? error.message : "Failed to delete project",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -55,7 +99,8 @@ export default function ProjectsPage() {
 
         <section className="animate-in fade-in slide-in-from-bottom duration-700 delay-200">
           <ProjectList
-            users={users}
+            projects={projects}
+            loading={loading}
             onAdd={handleAdd}
             onEdit={handleEdit}
             onDelete={handleDelete}

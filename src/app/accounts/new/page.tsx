@@ -38,6 +38,7 @@ export default function NewAccountPage() {
     password: string;
     phone: string;
     status: string;
+    subscription: string;
     preferences: { theme: string; language: string };
     project: { name: string };
     platform: { package_name: string; platform_type: string[] };
@@ -52,6 +53,7 @@ export default function NewAccountPage() {
           password: data.password,
           phone: data.phone,
           status: data.status.toLowerCase(),
+          subscription: data.subscription.toLowerCase(),
           project: {
             name: data.project.name,
             package_name: data.platform.package_name,

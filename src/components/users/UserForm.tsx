@@ -52,6 +52,12 @@ const THEME_TO_DISPLAY: Record<string, string> = {
   Dark: "Dark",
 };
 
+const SUBSCRIPTION_TO_DISPLAY: Record<string, string> = {
+  basic: "Basic",
+  standard: "Standard",
+  premium: "Premium",
+};
+
 const userFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
@@ -95,6 +101,15 @@ function deriveThemeDisplay(theme: string): "Light" | "Dark" {
   return (THEME_TO_DISPLAY[theme] || "Light") as "Light" | "Dark";
 }
 
+function deriveSubscriptionDisplay(
+  sub: string,
+): "Basic" | "Standard" | "Premium" {
+  return (SUBSCRIPTION_TO_DISPLAY[sub?.toLowerCase()] || "Basic") as
+    | "Basic"
+    | "Standard"
+    | "Premium";
+}
+
 export function UserForm({
   initialUser,
   onSave,
@@ -110,7 +125,7 @@ export function UserForm({
       password: "",
       phone: initialUser?.phone || "",
       status: deriveStatusDisplay(initialUser?.status || "Active"),
-      subscription: initialUser?.subscription || "Basic",
+      subscription: deriveSubscriptionDisplay(initialUser?.subscription || "Basic"),
       preferences: {
         theme: deriveThemeDisplay(initialUser?.preferences?.theme || "Light"),
         language: deriveLanguageDisplay(initialUser?.preferences?.language || "en"),
@@ -126,7 +141,7 @@ export function UserForm({
         password: "",
         phone: initialUser.phone || "",
         status: deriveStatusDisplay(initialUser.status),
-        subscription: initialUser.subscription || "Basic",
+        subscription: deriveSubscriptionDisplay(initialUser.subscription || "Basic"),
         preferences: {
           theme: deriveThemeDisplay(initialUser.preferences?.theme || "Light"),
           language: deriveLanguageDisplay(initialUser.preferences?.language || "en"),
