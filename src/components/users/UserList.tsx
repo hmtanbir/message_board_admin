@@ -91,7 +91,7 @@ export function UserList({ users, currentPage = 1, totalPages = 1, perPage = 10,
         statusFilter === "all" || (user.status || "").toLowerCase() === statusFilter.toLowerCase();
       const matchesSubscription =
         subscriptionFilter === "all" ||
-        user.subscription === subscriptionFilter;
+        (user.subscription || "").toLowerCase() === subscriptionFilter.toLowerCase();
       return matchesSearch && matchesStatus && matchesSubscription;
     });
   }, [users, searchTerm, statusFilter, subscriptionFilter]);
@@ -119,14 +119,14 @@ export function UserList({ users, currentPage = 1, totalPages = 1, perPage = 10,
   };
 
   const getSubscriptionBadge = (tier: SubscriptionTier) => {
-    switch (tier) {
-      case "Premium":
+    switch (tier?.toLowerCase()) {
+      case "premium":
         return (
           <Badge className="bg-primary text-background border-none font-bold">
             Premium
           </Badge>
         );
-      case "Standard":
+      case "standard":
         return (
           <Badge
             variant="secondary"
@@ -135,7 +135,7 @@ export function UserList({ users, currentPage = 1, totalPages = 1, perPage = 10,
             Standard
           </Badge>
         );
-      case "Basic":
+      case "basic":
         return (
           <Badge
             variant="outline"
