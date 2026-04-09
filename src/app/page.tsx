@@ -210,6 +210,7 @@ export default function DashboardPage() {
                       outerRadius={100}
                       paddingAngle={5}
                       dataKey="value"
+                      nameKey="name"
                     >
                       {subData.map(
                         (
@@ -256,6 +257,7 @@ export default function DashboardPage() {
                       outerRadius={100}
                       paddingAngle={5}
                       dataKey="value"
+                      nameKey="name"
                     >
                       {statusData.map(
                         (

@@ -318,13 +318,13 @@ const ChartLegendContent = React.forwardRef<
         )}
       >
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {payload.map((item: any) => {
+        {payload.map((item: any, index: number) => {
           const key = `${nameKey || item.dataKey || "value"}`;
           const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
           return (
             <div
-              key={item.value}
+              key={`legend-${index}`}
               className={cn(
                 "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground",
               )}
