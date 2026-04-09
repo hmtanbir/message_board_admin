@@ -11,8 +11,8 @@ export interface User {
   password?: string;
   phone?: string;
   role: UserRole;
-  subscription: SubscriptionTier;
   status: UserStatus;
+  subscription: SubscriptionTier;
   appwrite_user_id: string;
   preferences: {
     theme: Theme;
