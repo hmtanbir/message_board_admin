@@ -92,6 +92,8 @@ export default function EditAccountPage({
       if (data.phone) payload.phone = data.phone;
       if (data.password) payload.password = data.password;
       if (data.status) payload.status = data.status.toLowerCase();
+      if (data.subscription)
+        {payload.subscription = data.subscription.toLowerCase();}
 
       if (data.preferences) {
         payload.preferences = {

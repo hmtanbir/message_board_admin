@@ -52,6 +52,7 @@ export default function NewAccountPage() {
           password: data.password,
           phone: data.phone,
           status: data.status.toLowerCase(),
+          subscription: data.subscription.toLowerCase(),
           project: {
             name: data.project.name,
             package_name: data.platform.package_name,
