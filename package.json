@@ -11,7 +11,13 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "test": "vitest run && playwright test",
+    "test:unit": "vitest",
+    "test:unit:run": "vitest run",
+    "test:feature": "playwright test",
+    "test:feature:ui": "playwright test --ui",
+    "test:feature:report": "playwright show-report"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.31.0",
@@ -56,10 +62,16 @@
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@next/eslint-plugin-next": "^16.2.2",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4.2.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.19.17",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/ui": "^4.1.4",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
@@ -70,9 +82,12 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "genkit-cli": "^1.31.0",
     "globals": "^17.4.0",
+    "jsdom": "^29.0.2",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.58.0"
+    "typescript-eslint": "^8.58.0",
+    "vitest": "^4.1.4"
   }
 }
