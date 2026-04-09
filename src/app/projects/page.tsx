@@ -21,11 +21,13 @@ export default function ProjectsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  const fetchProjects = useCallback(async (page: number, limit: number) => {
+  const fetchProjects = useCallback(async (page: number, limit: number, status: string) => {
     try {
       setLoading(true);
-      const response = (await api.get(`/projects?page=${page}&per_page=${limit}`)) as
+      const statusParam = status !== "all" ? `&status=${status}` : "";
+      const response = (await api.get(`/projects?page=${page}&per_page=${limit}${statusParam}`)) as
         | PaginatedResponse<Project>
         | Project[]
         | null;
@@ -50,8 +52,8 @@ export default function ProjectsPage() {
   }, [toast]);
 
   useEffect(() => {
-    fetchProjects(currentPage, perPage);
-  }, [fetchProjects, currentPage, perPage]);
+    fetchProjects(currentPage, perPage, statusFilter);
+  }, [fetchProjects, currentPage, perPage, statusFilter]);
 
   const handleAdd = () => {
     router.push("/projects/new");
@@ -109,8 +111,13 @@ export default function ProjectsPage() {
             currentPage={currentPage}
             totalPages={totalPages}
             perPage={perPage}
+            statusFilter={statusFilter}
             onPageChange={setCurrentPage}
             onPerPageChange={setPerPage}
+            onStatusFilterChange={(status) => {
+              setStatusFilter(status);
+              setCurrentPage(1);
+            }}
             onAdd={handleAdd}
             onEdit={handleEdit}
             onDelete={handleDelete}

@@ -62,8 +62,10 @@ interface ProjectListProps {
   currentPage?: number;
   totalPages?: number;
   perPage?: number;
+  statusFilter?: string;
   onPageChange?: (page: number) => void;
   onPerPageChange?: (perPage: number) => void;
+  onStatusFilterChange?: (status: string) => void;
   onAdd: () => void;
   onEdit: (project: Project) => void;
   onDelete: (appwriteProjectId: string) => void;
@@ -97,8 +99,10 @@ export function ProjectList({
   currentPage = 1,
   totalPages = 1,
   perPage = 10,
+  statusFilter = "all",
   onPageChange,
   onPerPageChange,
+  onStatusFilterChange,
   onAdd,
   onEdit,
   onDelete,
@@ -169,6 +173,22 @@ export function ProjectList({
                 <SelectItem value="all">All Environments</SelectItem>
                 <SelectItem value="android">Android Only</SelectItem>
                 <SelectItem value="apple">Apple Only</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-full md:w-36">
+            <Select value={statusFilter} onValueChange={onStatusFilterChange}>
+              <SelectTrigger className="bg-card border-muted h-11">
+                <div className="flex items-center gap-2 text-xs">
+                  <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+                  <SelectValue placeholder="Status" />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border">
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active Only</SelectItem>
+                <SelectItem value="inactive">Inactive Only</SelectItem>
               </SelectContent>
             </Select>
           </div>
