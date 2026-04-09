@@ -1,70 +1,136 @@
+"use client";
 
-"use client"
+import React, { useEffect } from "react";
 
-import React, { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { User as UserIcon, Briefcase, RefreshCw, CheckCircle2, Globe } from "lucide-react"
-import { User } from '@/lib/types'
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  User as UserIcon,
+  RefreshCw,
+  CheckCircle2,
+  Globe,
+  Loader2,
+  Phone,
+  Lock,
+} from "lucide-react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { type User } from "@/lib/types";
+
+// Maps for converting between display values and API values
+const LANGUAGE_TO_DISPLAY: Record<string, string> = {
+  en: "English",
+  fr: "French",
+  es: "Spanish",
+  zh: "Chinese",
+  ja: "Japanese",
+};
+
+const THEME_TO_DISPLAY: Record<string, string> = {
+  light: "Light",
+  dark: "Dark",
+  Light: "Light",
+  Dark: "Dark",
+};
+
+const SUBSCRIPTION_TO_DISPLAY: Record<string, string> = {
+  basic: "Basic",
+  standard: "Standard",
+  premium: "Premium",
+};
 
 const userFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters").optional().or(z.literal('')),
-  phone: z.string()
-    .min(10, "Phone number must be at least 10 characters")
-    .regex(/^\+/, "Phone number must start with '+' (e.g. +1...)"),
-  status: z.enum(['Active', 'Inactive']),
-  subscription: z.enum(['Basic', 'Standard', 'Premium']),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .optional()
+    .or(z.literal("")),
+  phone: z
+    .string()
+    .refine(
+      (val) => val === "" || (val.length >= 10 && /^\+/.test(val)),
+      { message: "Phone must be 10+ chars starting with '+' (e.g. +1...)" },
+    ),
+  status: z.enum(["Active", "Inactive"]),
+  subscription: z.enum(["Basic", "Standard", "Premium"]),
   preferences: z.object({
-    theme: z.enum(['Light', 'Dark']).default('Light'),
-    language: z.enum(['English', 'French', 'Spanish', 'Chinese', 'Japanese']).default('English')
+    theme: z.enum(["Light", "Dark"]),
+    language: z.enum(["English", "French", "Spanish", "Chinese", "Japanese"]),
   }),
-  project: z.object({
-    name: z.string().min(2, "Project name is required")
-  }),
-  platform: z.object({
-    package_name: z.string().min(2, "Package name is required"),
-    platform_type: z.array(z.string()).min(1, "Select at least one platform")
-  })
-})
+});
 
-type UserFormValues = z.infer<typeof userFormSchema>
+type UserFormValues = z.infer<typeof userFormSchema>;
 
 interface UserFormProps {
   initialUser?: User | null;
-  onSave: (data: Partial<User>) => void;
+  onSave: (data: Partial<User>) => void | Promise<void>;
   onCancel: () => void;
+  isSubmitting?: boolean;
 }
 
-export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
+function deriveStatusDisplay(status: string): "Active" | "Inactive" {
+  return status?.toLowerCase() === "active" ? "Active" : "Inactive";
+}
+
+function deriveLanguageDisplay(lang: string): "English" | "French" | "Spanish" | "Chinese" | "Japanese" {
+  return (LANGUAGE_TO_DISPLAY[lang] || "English") as "English" | "French" | "Spanish" | "Chinese" | "Japanese";
+}
+
+function deriveThemeDisplay(theme: string): "Light" | "Dark" {
+  return (THEME_TO_DISPLAY[theme] || "Light") as "Light" | "Dark";
+}
+
+function deriveSubscriptionDisplay(
+  sub: string,
+): "Basic" | "Standard" | "Premium" {
+  return (SUBSCRIPTION_TO_DISPLAY[sub?.toLowerCase()] || "Basic") as
+    | "Basic"
+    | "Standard"
+    | "Premium";
+}
+
+export function UserForm({
+  initialUser,
+  onSave,
+  onCancel,
+  isSubmitting = false,
+}: UserFormProps) {
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
-    mode: 'onSubmit',
+    mode: "onSubmit",
     defaultValues: {
-      name: initialUser?.name || '',
-      email: initialUser?.email || '',
-      password: '',
-      phone: initialUser?.phone || '',
-      status: initialUser?.status || 'Active',
-      subscription: initialUser?.subscription || 'Basic',
-      preferences: { 
-        theme: initialUser?.preferences?.theme || 'Light',
-        language: initialUser?.preferences?.language || 'English'
+      name: initialUser?.name || "",
+      email: initialUser?.email || "",
+      password: "",
+      phone: initialUser?.phone || "",
+      status: deriveStatusDisplay(initialUser?.status || "Active"),
+      subscription: deriveSubscriptionDisplay(initialUser?.subscription || "Basic"),
+      preferences: {
+        theme: deriveThemeDisplay(initialUser?.preferences?.theme || "Light"),
+        language: deriveLanguageDisplay(initialUser?.preferences?.language || "en"),
       },
-      project: { name: initialUser?.project?.name || '' },
-      platform: {
-        package_name: initialUser?.platform?.package_name || '',
-        platform_type: initialUser?.platform?.platform_type || []
-      }
-    }
+    },
   });
 
   useEffect(() => {
@@ -72,43 +138,38 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
       form.reset({
         name: initialUser.name,
         email: initialUser.email,
-        password: '',
-        phone: initialUser.phone || '',
-        status: initialUser.status,
-        subscription: initialUser.subscription,
-        preferences: { 
-          theme: initialUser.preferences?.theme || 'Light',
-          language: initialUser.preferences?.language || 'English'
+        password: "",
+        phone: initialUser.phone || "",
+        status: deriveStatusDisplay(initialUser.status),
+        subscription: deriveSubscriptionDisplay(initialUser.subscription || "Basic"),
+        preferences: {
+          theme: deriveThemeDisplay(initialUser.preferences?.theme || "Light"),
+          language: deriveLanguageDisplay(initialUser.preferences?.language || "en"),
         },
-        project: { name: initialUser.project?.name || '' },
-        platform: {
-          package_name: initialUser.platform?.package_name || '',
-          platform_type: initialUser.platform?.platform_type || []
-        }
       });
     }
-  }, [initialUser?.id, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialUser?.appwrite_user_id, form]);
 
   const generatePassword = () => {
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+    const charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
     const length = 14;
     let password = "";
     for (let i = 0; i < length; i++) {
       password += charset.charAt(Math.floor(Math.random() * charset.length));
     }
-    form.setValue('password', password, { shouldValidate: true });
+    form.setValue("password", password, { shouldValidate: true });
   };
 
   const onSubmit = (data: UserFormValues) => {
-    onSave(data);
+    onSave(data as unknown as Partial<User>);
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid grid-cols-1 gap-8 items-start">
-          
-          {/* Column 1: Account Details */}
           <Card className="border-border bg-card/50 shadow-sm h-full">
             <CardHeader className="border-b bg-muted/20 py-4">
               <CardTitle className="flex items-center gap-2 text-lg font-bold">
@@ -124,7 +185,14 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
-                      <FormControl><Input placeholder="John Doe" {...field} className="h-10" /></FormControl>
+                      <FormControl>
+                        <Input
+                          placeholder="John Doe"
+                          {...field}
+                          className="h-10"
+                          disabled={isSubmitting}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -134,8 +202,52 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email Address</FormLabel>
-                      <FormControl><Input placeholder="john@example.com" type="email" {...field} className="h-10" /></FormControl>
+                      <FormLabel className="flex items-center gap-1.5">
+                        Email Address
+                        {!!initialUser && (
+                          <Lock className="h-3 w-3 text-muted-foreground" />
+                        )}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="john@example.com"
+                          type="email"
+                          {...field}
+                          className="h-10"
+                          readOnly={!!initialUser}
+                          disabled={!!initialUser}
+                        />
+                      </FormControl>
+                      {!!initialUser && (
+                        <FormDescription className="text-[10px]">
+                          Email cannot be changed after account creation.
+                        </FormDescription>
+                      )}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <FormControl>
+                          <Input
+                            placeholder="+1234567890"
+                            type="tel"
+                            {...field}
+                            className="h-10 pl-10"
+                            disabled={isSubmitting}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormDescription className="text-[10px]">
+                        Optional. Must start with &apos;+&apos; followed by country code.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -145,16 +257,30 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Update Password (Optional)</FormLabel>
+                      <FormLabel>
+                        {initialUser
+                          ? "Update Password (Optional)"
+                          : "Password"}
+                      </FormLabel>
                       <div className="flex gap-2">
                         <FormControl>
-                          <Input placeholder="Leave blank to keep current" {...field} className="h-10" />
+                          <Input
+                            placeholder={
+                              initialUser
+                                ? "Leave blank to keep current"
+                                : "••••••••"
+                            }
+                            {...field}
+                            className="h-10"
+                            disabled={isSubmitting}
+                          />
                         </FormControl>
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          size="icon" 
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
                           onClick={generatePassword}
+                          disabled={isSubmitting}
                           className="h-10 w-10 shrink-0 border-primary/30 text-primary hover:bg-primary/10"
                         >
                           <RefreshCw className="h-4 w-4" />
@@ -171,7 +297,11 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Plan</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isSubmitting}
+                        >
                           <FormControl>
                             <SelectTrigger className="h-10 text-xs">
                               <SelectValue />
@@ -192,7 +322,11 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Status</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isSubmitting}
+                        >
                           <FormControl>
                             <SelectTrigger className="h-10 text-xs">
                               <SelectValue />
@@ -207,7 +341,7 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                     )}
                   />
                 </div>
-                
+
                 <div className="pt-4 border-t space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                     <Globe className="h-3 w-3" /> Preferences
@@ -218,8 +352,14 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                       name="preferences.language"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-[10px]">Language</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormLabel className="text-[10px]">
+                            Language
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            disabled={isSubmitting}
+                          >
                             <FormControl>
                               <SelectTrigger className="h-10 text-xs">
                                 <SelectValue />
@@ -242,7 +382,11 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-[10px]">Theme</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            disabled={isSubmitting}
+                          >
                             <FormControl>
                               <SelectTrigger className="h-10 text-xs">
                                 <SelectValue />
@@ -261,96 +405,36 @@ export function UserForm({ initialUser, onSave, onCancel }: UserFormProps) {
               </div>
             </CardContent>
           </Card>
-
-          {/* Column 2: Project Information */}
-          <Card className="border-border bg-card/50 shadow-sm h-full">
-            <CardHeader className="border-b bg-muted/20 py-4">
-              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                <Briefcase className="h-5 w-5 text-secondary" />
-                Project Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-6">
-              <div className="grid grid-cols-1 gap-5">
-                <FormField
-                  control={form.control}
-                  name="project.name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Project Name</FormLabel>
-                      <FormControl><Input placeholder="Internal CRM" {...field} className="h-10" /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="platform.package_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Package ID (Bundle ID)</FormLabel>
-                      <FormControl><Input placeholder="com.company.app" {...field} className="h-10 font-mono text-xs" /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="platform.platform_type"
-                  render={() => (
-                    <FormItem>
-                      <div className="mb-3">
-                        <FormLabel className="text-sm font-semibold">Deployment Environments</FormLabel>
-                        <FormDescription className="text-[10px]">Select all active platforms for this account.</FormDescription>
-                      </div>
-                      <div className="grid grid-cols-1 gap-3">
-                        {['android', 'apple'].map((type) => (
-                          <FormField
-                            key={type}
-                            control={form.control}
-                            name="platform.platform_type"
-                            render={({ field }) => (
-                              <FormItem
-                                key={type}
-                                className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 hover:bg-muted/50 transition-all cursor-pointer group"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(type)}
-                                    onCheckedChange={(checked) => {
-                                      const newValue = checked
-                                        ? [...field.value, type]
-                                        : field.value?.filter((value: string) => value !== type);
-                                      field.onChange(newValue);
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="font-medium capitalize cursor-pointer flex-1 text-sm group-hover:text-primary transition-colors">
-                                  {type === 'apple' ? 'Apple (iOS/macOS)' : 'Android (Mobile/TV)'}
-                                </FormLabel>
-                              </FormItem>
-                            )}
-                          />
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         <div className="flex items-center justify-end gap-4 pt-8 border-t">
-          <Button type="button" variant="ghost" onClick={onCancel} className="px-6 h-10 text-sm">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onCancel}
+            className="px-6 h-10 text-sm"
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button type="submit" className="bg-primary text-background hover:bg-primary/90 font-bold px-10 h-10">
-            <CheckCircle2 className="mr-2 h-4 w-4" /> Save Changes
+          <Button
+            type="submit"
+            className="bg-primary text-background hover:bg-primary/90 font-bold px-10 h-10"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving Changes…
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="mr-2 h-4 w-4" /> Save Changes
+              </>
+            )}
           </Button>
         </div>
       </form>
     </Form>
-  )
+  );
 }

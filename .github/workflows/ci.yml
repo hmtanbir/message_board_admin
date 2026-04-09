@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [development]
+
+# Cancel old runs on the same branch to save CI time
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    strategy:
+      matrix:
+        node-version: [24.x]
+      fail-fast: false
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      # 2. Setup Node.js with caching
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # 3. Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      # 4. Cache pnpm store for faster installs
+      - name: Setup pnpm store cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      # 5. Install dependencies (frozen for reproducibility)
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      # 6. Lint
+      - name: Run ESLint
+        run: pnpm lint
+
+      # 7. Type check (only if TypeScript project)
+      - name: Type check
+        if: ${{ hashFiles('tsconfig.json') != '' }}
+        run: pnpm typecheck
+
+      # 8. Format check (only if TypeScript project)
+      - name: Format check
+        if: ${{ hashFiles('tsconfig.json') != '' }}
+        run: pnpm format
