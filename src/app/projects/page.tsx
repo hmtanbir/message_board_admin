@@ -11,24 +11,29 @@ import { ProjectList } from "@/components/projects/ProjectList";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
-import { type Project } from "@/lib/types";
+import { type Project, type PaginatedResponse } from "@/lib/types";
 
 export default function ProjectsPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [perPage, setPerPage] = useState(10);
 
-  const fetchProjects = useCallback(async () => {
+  const fetchProjects = useCallback(async (page: number, limit: number) => {
     try {
       setLoading(true);
-      const response = (await api.get("/projects")) as
-        | { data?: Project[] }
+      const response = (await api.get(`/projects?page=${page}&per_page=${limit}`)) as
+        | PaginatedResponse<Project>
         | Project[]
         | null;
 
       if (response && "data" in response && Array.isArray(response.data)) {
         setProjects(response.data);
+        if (response.current_page) setCurrentPage(response.current_page);
+        if (response.total_pages) setTotalPages(response.total_pages);
       } else if (Array.isArray(response)) {
         setProjects(response);
       }
@@ -45,8 +50,8 @@ export default function ProjectsPage() {
   }, [toast]);
 
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    fetchProjects(currentPage, perPage);
+  }, [fetchProjects, currentPage, perPage]);
 
   const handleAdd = () => {
     router.push("/projects/new");
@@ -101,6 +106,11 @@ export default function ProjectsPage() {
           <ProjectList
             projects={projects}
             loading={loading}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            perPage={perPage}
+            onPageChange={setCurrentPage}
+            onPerPageChange={setPerPage}
             onAdd={handleAdd}
             onEdit={handleEdit}
             onDelete={handleDelete}

@@ -13,6 +13,8 @@ import {
   AlertTriangle,
   Calendar,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 import {
@@ -57,6 +59,11 @@ import { cn } from "@/lib/utils";
 interface ProjectListProps {
   projects: Project[];
   loading?: boolean;
+  currentPage?: number;
+  totalPages?: number;
+  perPage?: number;
+  onPageChange?: (page: number) => void;
+  onPerPageChange?: (perPage: number) => void;
   onAdd: () => void;
   onEdit: (project: Project) => void;
   onDelete: (appwriteProjectId: string) => void;
@@ -87,6 +94,11 @@ function AppleIcon({ className }: { className?: string }) {
 export function ProjectList({
   projects,
   loading = false,
+  currentPage = 1,
+  totalPages = 1,
+  perPage = 10,
+  onPageChange,
+  onPerPageChange,
   onAdd,
   onEdit,
   onDelete,
@@ -350,6 +362,69 @@ export function ProjectList({
             })()}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex flex-col sm:flex-row items-center justify-between border-t border-border pt-4 gap-4">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Rows per page:</span>
+          <Select
+            value={String(perPage)}
+            onValueChange={(value) => onPerPageChange && onPerPageChange(Number(value))}
+          >
+            <SelectTrigger className="h-8 w-[70px]">
+              <SelectValue placeholder={String(perPage)} />
+            </SelectTrigger>
+            <SelectContent side="top">
+              {[10, 20, 50, 100].map((size) => (
+                <SelectItem key={size} value={String(size)}>
+                  {size}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Page:</span>
+            <Select
+              value={String(currentPage)}
+              onValueChange={(value) => onPageChange && onPageChange(Number(value))}
+            >
+              <SelectTrigger className="h-8 w-[70px]">
+                <SelectValue placeholder={String(currentPage)} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {Array.from({ length: Math.max(1, totalPages) }).map((_, i) => (
+                  <SelectItem key={`page-${Math.random()}`} value={String(i + 1)}>
+                    {i + 1}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span>of {Math.max(1, totalPages)}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange && onPageChange(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange && onPageChange(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              Next <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
       </div>
 
       <AlertDialog

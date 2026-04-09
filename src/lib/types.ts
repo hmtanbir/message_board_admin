@@ -4,6 +4,18 @@ export type SubscriptionTier = "Basic" | "Standard" | "Premium";
 export type Language = "en" | "fr" | "es" | "zh" | "ja";
 export type Theme = "Dark" | "Light";
 
+export interface PaginatedResponse<T> {
+  status?: number;
+  message?: string;
+  data: T[];
+  current_page?: number;
+  per_page?: number;
+  total_pages?: number;
+  total_count?: number;
+  next_page?: number | null;
+  prev_page?: number | null;
+}
+
 export interface User {
   id: string;
   name: string;
