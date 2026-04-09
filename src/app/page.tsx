@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 
 import {
   Users,
@@ -10,6 +10,7 @@ import {
   ChevronRight,
   PieChart as PieChartIcon,
   Activity,
+  AlertCircle,
 } from "lucide-react";
 import { PieChart, Pie, Cell } from "recharts";
 
@@ -28,7 +29,9 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { MOCK_USERS } from "@/lib/mock-data";
+import { useToast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
+import { type DashboardData } from "@/lib/types";
 
 // Suppress Recharts React 19 defaultProps warning in terminal / console
 if (typeof console !== "undefined") {
@@ -59,38 +62,49 @@ if (typeof console !== "undefined") {
 }
 
 export default function DashboardPage() {
-  const [mounted, setMounted] = React.useState(false);
+  const { toast } = useToast();
+  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<DashboardData | null>(null);
 
-  React.useEffect(() => {
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("/dashboard") as { data: DashboardData };
+      setData(response.data);
+    } catch (error) {
+      toast({
+        title: "Analytics Failure",
+        description: error instanceof Error ? error.message : "Failed to load dashboard metrics",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+
+  useEffect(() => {
     setMounted(true);
-  }, []);
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
-  const totalUsers = MOCK_USERS.length;
-  const activeUsers = MOCK_USERS.filter((u) => u.status === "Active").length;
-  const premiumUsers = MOCK_USERS.filter(
-    (u) => u.subscription === "Premium",
-  ).length;
-  const totalProjects = MOCK_USERS.filter((u) => u.project).length;
+  // Derived data for charts
+  const subData = useMemo(() => {
+    if (!data) return [];
+    return [
+      { name: "Basic", value: data.basic_users },
+      { name: "Standard", value: data.standard_users },
+      { name: "Premium", value: data.premium_users },
+    ].filter((item) => item.value > 0);
+  }, [data]);
 
-  // Data for Subscription Pie Chart
-  const subData = MOCK_USERS.reduce(
-    (acc: { name: string; value: number }[], user) => {
-      const existing = acc.find((s) => s.name === user.subscription);
-      if (existing) {
-        existing.value += 1;
-      } else {
-        acc.push({ name: user.subscription, value: 1 });
-      }
-      return acc;
-    },
-    [],
-  );
-
-  // Data for Status Pie Chart
-  const statusData = [
-    { name: "Active", value: activeUsers },
-    { name: "Inactive", value: totalUsers - activeUsers },
-  ];
+  const statusData = useMemo(() => {
+    if (!data) return [];
+    return [
+      { name: "Active", value: data.active_users },
+      { name: "Inactive", value: data.inactive_users },
+    ].filter((item) => item.value > 0);
+  }, [data]);
 
   const SUB_COLORS = [
     "var(--color-primary)",
@@ -140,27 +154,35 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 animate-in fade-in slide-in-from-bottom duration-700 delay-100">
           <StatCard
             title="Total Accounts"
-            value={totalUsers}
+            value={data?.total_accounts ?? 0}
             icon={<Users className="h-5 w-5 text-primary" />}
             description="Across all departments"
+            loading={loading}
           />
           <StatCard
             title="Active Users"
-            value={activeUsers}
+            value={data?.active_users ?? 0}
             icon={<TrendingUp className="h-5 w-5 text-secondary" />}
-            description={`${((activeUsers / totalUsers) * 100).toFixed(0)}% engagement rate`}
+            description={
+              data
+                ? `${((data.active_users / data.total_accounts) * 100).toFixed(0)}% engagement rate`
+                : "Calculating..."
+            }
+            loading={loading}
           />
           <StatCard
             title="Premium Tier"
-            value={premiumUsers}
+            value={data?.premium_users ?? 0}
             icon={<ShieldCheck className="h-5 w-5 text-primary" />}
             description="High-value subscribers"
+            loading={loading}
           />
           <StatCard
             title="Live Projects"
-            value={totalProjects}
+            value={data?.live_projects ?? 0}
             icon={<Briefcase className="h-5 w-5 text-secondary" />}
             description="Active provisioning"
+            loading={loading}
           />
         </div>
 
@@ -268,11 +290,13 @@ function StatCard({
   value,
   icon,
   description,
+  loading = false,
 }: {
   title: string;
   value: number;
   icon: React.ReactNode;
   description: string;
+  loading?: boolean;
 }) {
   return (
     <Card className="border-border bg-card/50 shadow-sm hover:border-primary/50 transition-colors">
@@ -283,7 +307,11 @@ function StatCard({
         {icon}
       </CardHeader>
       <CardContent>
-        <div className="text-3xl font-bold mb-1">{value}</div>
+        {loading ? (
+          <div className="h-9 w-16 bg-muted/20 animate-pulse rounded mb-1" />
+        ) : (
+          <div className="text-3xl font-bold mb-1">{value}</div>
+        )}
         <p className="text-xs text-muted-foreground">{description}</p>
       </CardContent>
     </Card>

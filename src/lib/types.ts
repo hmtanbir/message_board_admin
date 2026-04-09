@@ -54,3 +54,13 @@ export interface Account {
   created_at: string;
   updated_at: string;
 }
+
+export interface DashboardData {
+  total_accounts: number;
+  active_users: number;
+  inactive_users: number;
+  basic_users: number;
+  standard_users: number;
+  premium_users: number;
+  live_projects: number;
+}
