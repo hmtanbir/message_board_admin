@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -11,32 +11,38 @@ import { Toaster } from "@/components/ui/toaster";
 import { UserList } from "@/components/users/UserList";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
-import { type User } from "@/lib/types";
+import { type User, type PaginatedResponse } from "@/lib/types";
 
 export default function AccountsPage() {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const { toast } = useToast();
 
-  React.useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await api.get("/accounts?role=user") as { data?: User[] } | User[] | null;
-        if (response && "data" in response && Array.isArray(response.data)) {
-          setUsers(response.data);
-        } else if (Array.isArray(response)) {
-          setUsers(response);
-        }
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: error instanceof Error ? error.message : "Failed to load accounts",
-          variant: "destructive"
-        });
+  const fetchUsers = useCallback(async (page: number, limit: number) => {
+    try {
+      const response = await api.get(`/accounts?role=user&page=${page}&per_page=${limit}`) as PaginatedResponse<User> | User[] | null;
+      if (response && "data" in response && Array.isArray(response.data)) {
+        setUsers(response.data);
+        if (response.current_page) setCurrentPage(response.current_page);
+        if (response.total_pages) setTotalPages(response.total_pages);
+      } else if (Array.isArray(response)) {
+        setUsers(response);
       }
-    };
-    fetchUsers();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to load accounts",
+        variant: "destructive"
+      });
+    }
   }, [toast]);
+
+  useEffect(() => {
+    fetchUsers(currentPage, perPage);
+  }, [fetchUsers, currentPage, perPage]);
 
   const handleAdd = () => {
     router.push("/accounts/new");
@@ -87,6 +93,11 @@ export default function AccountsPage() {
         <section className="animate-in fade-in slide-in-from-bottom duration-700 delay-200">
           <UserList
             users={users}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            perPage={perPage}
+            onPageChange={setCurrentPage}
+            onPerPageChange={setPerPage}
             onAdd={handleAdd}
             onEdit={handleEdit}
             onDelete={handleDelete}
