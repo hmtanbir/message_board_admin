@@ -149,10 +149,11 @@ export function ProjectForm({
                           <Button
                             variant="outline"
                             role="combobox"
-                            disabled={loadingAccounts}
+                            disabled={loadingAccounts || !!initialData}
                             className={cn(
                               "w-full justify-between h-11 bg-background border-muted font-normal",
                               !field.value && "text-muted-foreground",
+                              !!initialData && "bg-muted cursor-not-allowed opacity-100 disabled:opacity-100",
                             )}
                           >
                             <div className="flex items-center gap-2 truncate">
@@ -181,7 +182,7 @@ export function ProjectForm({
                                 return "Assign project to a user...";
                               })()}
                             </div>
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            {!initialData && <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -261,8 +262,9 @@ export function ProjectForm({
                       </PopoverContent>
                     </Popover>
                     <FormDescription className="text-[10px]">
-                      Search and select the account that will own this project
-                      resource.
+                      {initialData
+                        ? "The project owner is locked and cannot be changed after creation."
+                        : "Search and select the account that will own this project resource."}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
