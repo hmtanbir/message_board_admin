@@ -296,7 +296,11 @@ export function ProjectForm({
                       <Input
                         placeholder="com.company.app"
                         {...field}
-                        className="h-11 font-mono text-xs bg-background"
+                        readOnly={!!initialData}
+                        className={cn(
+                          "h-11 font-mono text-xs bg-background",
+                          !!initialData && "bg-muted cursor-not-allowed",
+                        )}
                       />
                     </FormControl>
                     <FormDescription className="text-[10px]">
