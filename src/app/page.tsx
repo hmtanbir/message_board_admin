@@ -69,7 +69,7 @@ export default function DashboardPage() {
   const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await api.get("/dashboard") as { data: DashboardData };
+      const response = await api.get("/admin/dashboard") as { data: DashboardData };
       setData(response.data);
     } catch (error) {
       toast({

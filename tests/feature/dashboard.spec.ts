@@ -8,7 +8,7 @@ test.describe('Dashboard Features', () => {
     });
 
     // Mock dashboard data
-    await page.route('**/api/v1/dashboard', async (route) => {
+    await page.route('**/api/v1/admin/dashboard', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -32,7 +32,7 @@ test.describe('Dashboard Features', () => {
 
     await expect(page.locator('text=Total Accounts')).toBeVisible();
     await expect(page.locator('text=150')).toBeVisible();
-    
+
     await expect(page.locator('text=Active Users')).toBeVisible();
     await expect(page.locator('text=120')).toBeVisible();
     await expect(page.locator('text=80% engagement rate')).toBeVisible(); // (120/150)*100
@@ -47,7 +47,7 @@ test.describe('Dashboard Features', () => {
     // Check if charts are rendered (Recharts uses SVG)
     await expect(page.locator('text=Subscription Tiers')).toBeVisible();
     await expect(page.locator('text=Account Status')).toBeVisible();
-    
+
     // Simple check for SVG elements within charts
     const charts = page.locator('.recharts-responsive-container');
     await expect(charts).toHaveCount(2);
