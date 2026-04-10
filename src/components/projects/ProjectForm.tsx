@@ -153,7 +153,8 @@ export function ProjectForm({
                             className={cn(
                               "w-full justify-between h-11 bg-background border-muted font-normal",
                               !field.value && "text-muted-foreground",
-                              !!initialData && "bg-muted cursor-not-allowed opacity-100 disabled:opacity-100",
+                              !!initialData &&
+                                "bg-muted cursor-not-allowed opacity-100 disabled:opacity-100",
                             )}
                           >
                             <div className="flex items-center gap-2 truncate">
@@ -182,7 +183,9 @@ export function ProjectForm({
                                 return "Assign project to a user...";
                               })()}
                             </div>
-                            {!initialData && <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />}
+                            {!initialData && (
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            )}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>

@@ -68,10 +68,9 @@ const userFormSchema = z.object({
     .or(z.literal("")),
   phone: z
     .string()
-    .refine(
-      (val) => val === "" || (val.length >= 10 && /^\+/.test(val)),
-      { message: "Phone must be 10+ chars starting with '+' (e.g. +1...)" },
-    ),
+    .refine((val) => val === "" || (val.length >= 10 && /^\+/.test(val)), {
+      message: "Phone must be 10+ chars starting with '+' (e.g. +1...)",
+    }),
   status: z.enum(["Active", "Inactive"]),
   subscription: z.enum(["Basic", "Standard", "Premium"]),
   preferences: z.object({
@@ -93,8 +92,15 @@ function deriveStatusDisplay(status: string): "Active" | "Inactive" {
   return status?.toLowerCase() === "active" ? "Active" : "Inactive";
 }
 
-function deriveLanguageDisplay(lang: string): "English" | "French" | "Spanish" | "Chinese" | "Japanese" {
-  return (LANGUAGE_TO_DISPLAY[lang] || "English") as "English" | "French" | "Spanish" | "Chinese" | "Japanese";
+function deriveLanguageDisplay(
+  lang: string,
+): "English" | "French" | "Spanish" | "Chinese" | "Japanese" {
+  return (LANGUAGE_TO_DISPLAY[lang] || "English") as
+    | "English"
+    | "French"
+    | "Spanish"
+    | "Chinese"
+    | "Japanese";
 }
 
 function deriveThemeDisplay(theme: string): "Light" | "Dark" {
@@ -125,10 +131,14 @@ export function UserForm({
       password: "",
       phone: initialUser?.phone || "",
       status: deriveStatusDisplay(initialUser?.status || "Active"),
-      subscription: deriveSubscriptionDisplay(initialUser?.subscription || "Basic"),
+      subscription: deriveSubscriptionDisplay(
+        initialUser?.subscription || "Basic",
+      ),
       preferences: {
         theme: deriveThemeDisplay(initialUser?.preferences?.theme || "Light"),
-        language: deriveLanguageDisplay(initialUser?.preferences?.language || "en"),
+        language: deriveLanguageDisplay(
+          initialUser?.preferences?.language || "en",
+        ),
       },
     },
   });
@@ -141,10 +151,14 @@ export function UserForm({
         password: "",
         phone: initialUser.phone || "",
         status: deriveStatusDisplay(initialUser.status),
-        subscription: deriveSubscriptionDisplay(initialUser.subscription || "Basic"),
+        subscription: deriveSubscriptionDisplay(
+          initialUser.subscription || "Basic",
+        ),
         preferences: {
           theme: deriveThemeDisplay(initialUser.preferences?.theme || "Light"),
-          language: deriveLanguageDisplay(initialUser.preferences?.language || "en"),
+          language: deriveLanguageDisplay(
+            initialUser.preferences?.language || "en",
+          ),
         },
       });
     }
@@ -246,7 +260,8 @@ export function UserForm({
                         </FormControl>
                       </div>
                       <FormDescription className="text-[10px]">
-                        Optional. Must start with &apos;+&apos; followed by country code.
+                        Optional. Must start with &apos;+&apos; followed by
+                        country code.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

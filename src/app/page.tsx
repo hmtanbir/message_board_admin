@@ -69,12 +69,17 @@ export default function DashboardPage() {
   const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await api.get("/admin/dashboard") as { data: DashboardData };
+      const response = (await api.get("/admin/dashboard")) as {
+        data: DashboardData;
+      };
       setData(response.data);
     } catch (error) {
       toast({
         title: "Analytics Failure",
-        description: error instanceof Error ? error.message : "Failed to load dashboard metrics",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to load dashboard metrics",
         variant: "destructive",
       });
     } finally {
