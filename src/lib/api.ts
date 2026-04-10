@@ -1,8 +1,12 @@
 export const getApiConfig = () => ({
-  encryptionEnabled: process.env.NEXT_PUBLIC_API_PAYLOAD_ENCRYPTION_ENABLED === "true",
-  encryptionKeyHex: process.env.NEXT_PUBLIC_API_ENCRYPTION_KEY || "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  encryptionEnabled:
+    process.env.NEXT_PUBLIC_API_PAYLOAD_ENCRYPTION_ENABLED === "true",
+  encryptionKeyHex:
+    process.env.NEXT_PUBLIC_API_ENCRYPTION_KEY ||
+    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
   apiGatewayKey: process.env.NEXT_PUBLIC_API_GATEWAY_KEY || "",
-  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api/v1",
+  baseUrl:
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api/v1",
 });
 
 // Crypto Helpers

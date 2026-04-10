@@ -40,18 +40,21 @@ A modern, high-performance admin dashboard built with **Next.js 16**, **Tailwind
 ### Local Installation
 
 1. **Clone the repository**:
+
    ```bash
    git clone <repository-url>
    cd admin
    ```
 
 2. **Install dependencies**:
+
    ```bash
    pnpm install
    ```
 
 3. **Configure Environment Variables**:
    Copy `.env.example` to `.env` and fill in the required values:
+
    ```bash
    cp .env.example .env
    ```
@@ -73,6 +76,7 @@ The project is fully containerized for production stability and easy deployment.
 To build and start the application in production mode:
 
 1. **Build and start the containers**:
+
    ```bash
    docker-compose up --build -d
    ```
@@ -98,15 +102,15 @@ docker run -p 9001:9001 --env-file .env.production message-board-admin
 
 The following environment variables are required for the application to function correctly:
 
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `NODE_ENV` | Environment (development/production) | `development` |
-| `PORT` | Local port for the application | `9001` |
-| `GEMINI_API_KEY` | Google Gemini API Key for AI features | - |
-| `NEXT_PUBLIC_API_BASE_URL` | Base URL for the backend API | - |
-| `NEXT_PUBLIC_API_PAYLOAD_ENCRYPTION_ENABLED` | Enable/Disable payload encryption | `true` |
-| `NEXT_PUBLIC_API_GATEWAY_KEY` | Gateway authentication key | - |
-| `NEXT_PUBLIC_API_ENCRYPTION_KEY` | AES-256-GCM encryption key | - |
+| Variable                                     | Description                           | Default       |
+| :------------------------------------------- | :------------------------------------ | :------------ |
+| `NODE_ENV`                                   | Environment (development/production)  | `development` |
+| `PORT`                                       | Local port for the application        | `9001`        |
+| `GEMINI_API_KEY`                             | Google Gemini API Key for AI features | -             |
+| `NEXT_PUBLIC_API_BASE_URL`                   | Base URL for the backend API          | -             |
+| `NEXT_PUBLIC_API_PAYLOAD_ENCRYPTION_ENABLED` | Enable/Disable payload encryption     | `true`        |
+| `NEXT_PUBLIC_API_GATEWAY_KEY`                | Gateway authentication key            | -             |
+| `NEXT_PUBLIC_API_ENCRYPTION_KEY`             | AES-256-GCM encryption key            | -             |
 
 ---
 

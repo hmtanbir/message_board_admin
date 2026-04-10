@@ -44,9 +44,12 @@ export default function EditAccountPage({
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = (await api.get(`/accounts/${id}`)) as {
-          data?: User;
-        } | User | null;
+        const response = (await api.get(`/accounts/${id}`)) as
+          | {
+              data?: User;
+            }
+          | User
+          | null;
 
         if (response && "data" in response && response.data) {
           setUser(response.data);
@@ -92,12 +95,14 @@ export default function EditAccountPage({
       if (data.phone) payload.phone = data.phone;
       if (data.password) payload.password = data.password;
       if (data.status) payload.status = data.status.toLowerCase();
-      if (data.subscription)
-        {payload.subscription = data.subscription.toLowerCase();}
+      if (data.subscription) {
+        payload.subscription = data.subscription.toLowerCase();
+      }
 
       if (data.preferences) {
         payload.preferences = {
-          theme: THEME_MAP[data.preferences.theme || ""] || data.preferences.theme,
+          theme:
+            THEME_MAP[data.preferences.theme || ""] || data.preferences.theme,
           language:
             LANGUAGE_MAP[data.preferences.language || ""] ||
             data.preferences.language,

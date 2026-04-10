@@ -37,7 +37,7 @@ export default function LoginPage() {
         {
           user: { email, password },
         },
-        { skipDecryption: true }
+        { skipDecryption: true },
       )) as { data?: string; message?: string };
 
       if (response && response.data) {

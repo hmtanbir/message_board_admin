@@ -69,7 +69,17 @@ interface UserListProps {
   onDelete: (id: string) => void | Promise<void>;
 }
 
-export function UserList({ users, currentPage = 1, totalPages = 1, perPage = 10, onPageChange, onPerPageChange, onAdd, onEdit, onDelete }: UserListProps) {
+export function UserList({
+  users,
+  currentPage = 1,
+  totalPages = 1,
+  perPage = 10,
+  onPageChange,
+  onPerPageChange,
+  onAdd,
+  onEdit,
+  onDelete,
+}: UserListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [subscriptionFilter, setSubscriptionFilter] = useState<string>("all");
@@ -86,12 +96,16 @@ export function UserList({ users, currentPage = 1, totalPages = 1, perPage = 10,
       const matchesSearch =
         (user.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
         (user.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-        String(user.appwrite_user_id || "").toLowerCase().includes(searchTerm.toLowerCase());
+        String(user.appwrite_user_id || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
       const matchesStatus =
-        statusFilter === "all" || (user.status || "").toLowerCase() === statusFilter.toLowerCase();
+        statusFilter === "all" ||
+        (user.status || "").toLowerCase() === statusFilter.toLowerCase();
       const matchesSubscription =
         subscriptionFilter === "all" ||
-        (user.subscription || "").toLowerCase() === subscriptionFilter.toLowerCase();
+        (user.subscription || "").toLowerCase() ===
+          subscriptionFilter.toLowerCase();
       return matchesSearch && matchesStatus && matchesSubscription;
     });
   }, [users, searchTerm, statusFilter, subscriptionFilter]);
@@ -335,7 +349,9 @@ export function UserList({ users, currentPage = 1, totalPages = 1, perPage = 10,
                             <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => setDeleteId(String(user.appwrite_user_id))}
+                            onClick={() =>
+                              setDeleteId(String(user.appwrite_user_id))
+                            }
                             className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
                           >
                             <Trash2 className="mr-2 h-4 w-4" /> Remove Account
@@ -380,7 +396,9 @@ export function UserList({ users, currentPage = 1, totalPages = 1, perPage = 10,
           <span>Rows per page:</span>
           <Select
             value={String(perPage)}
-            onValueChange={(value) => onPerPageChange && onPerPageChange(Number(value))}
+            onValueChange={(value) =>
+              onPerPageChange && onPerPageChange(Number(value))
+            }
           >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue placeholder={String(perPage)} />
@@ -400,14 +418,19 @@ export function UserList({ users, currentPage = 1, totalPages = 1, perPage = 10,
             <span>Page:</span>
             <Select
               value={String(currentPage)}
-              onValueChange={(value) => onPageChange && onPageChange(Number(value))}
+              onValueChange={(value) =>
+                onPageChange && onPageChange(Number(value))
+              }
             >
               <SelectTrigger className="h-8 w-[70px]">
                 <SelectValue placeholder={String(currentPage)} />
               </SelectTrigger>
               <SelectContent side="top">
                 {Array.from({ length: Math.max(1, totalPages) }).map((_, i) => (
-                  <SelectItem key={`user-page-${Math.random()}`} value={String(i + 1)}>
+                  <SelectItem
+                    key={`user-page-${Math.random()}`}
+                    value={String(i + 1)}
+                  >
                     {i + 1}
                   </SelectItem>
                 ))}
@@ -420,7 +443,9 @@ export function UserList({ users, currentPage = 1, totalPages = 1, perPage = 10,
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onPageChange && onPageChange(Math.max(1, currentPage - 1))}
+              onClick={() =>
+                onPageChange && onPageChange(Math.max(1, currentPage - 1))
+              }
               disabled={currentPage === 1}
             >
               <ChevronLeft className="h-4 w-4 mr-1" /> Prev
@@ -428,7 +453,10 @@ export function UserList({ users, currentPage = 1, totalPages = 1, perPage = 10,
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onPageChange && onPageChange(Math.min(totalPages, currentPage + 1))}
+              onClick={() =>
+                onPageChange &&
+                onPageChange(Math.min(totalPages, currentPage + 1))
+              }
               disabled={currentPage === totalPages || totalPages === 0}
             >
               Next <ChevronRight className="h-4 w-4 ml-1" />

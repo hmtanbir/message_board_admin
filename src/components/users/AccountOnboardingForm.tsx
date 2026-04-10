@@ -42,10 +42,9 @@ const onboardingSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   phone: z
     .string()
-    .refine(
-      (val) => val === "" || (val.length >= 10 && /^\+/.test(val)),
-      { message: "Phone must be 10+ chars starting with '+' (e.g. +1...)" },
-    ),
+    .refine((val) => val === "" || (val.length >= 10 && /^\+/.test(val)), {
+      message: "Phone must be 10+ chars starting with '+' (e.g. +1...)",
+    }),
   status: z.enum(["Active", "Inactive"]),
   subscription: z.enum(["Basic", "Standard", "Premium"]),
   preferences: z.object({
@@ -177,7 +176,8 @@ export function AccountOnboardingForm({
                         </FormControl>
                       </div>
                       <FormDescription className="text-[10px]">
-                        Optional. Must start with &apos;+&apos; followed by country code.
+                        Optional. Must start with &apos;+&apos; followed by
+                        country code.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

@@ -21,24 +21,30 @@ export default function AccountsPage() {
   const [perPage, setPerPage] = useState(10);
   const { toast } = useToast();
 
-  const fetchUsers = useCallback(async (page: number, limit: number) => {
-    try {
-      const response = await api.get(`/accounts?role=user&page=${page}&per_page=${limit}`) as PaginatedResponse<User> | User[] | null;
-      if (response && "data" in response && Array.isArray(response.data)) {
-        setUsers(response.data);
-        if (response.current_page) setCurrentPage(response.current_page);
-        if (response.total_pages) setTotalPages(response.total_pages);
-      } else if (Array.isArray(response)) {
-        setUsers(response);
+  const fetchUsers = useCallback(
+    async (page: number, limit: number) => {
+      try {
+        const response = (await api.get(
+          `/accounts?role=user&page=${page}&per_page=${limit}`,
+        )) as PaginatedResponse<User> | User[] | null;
+        if (response && "data" in response && Array.isArray(response.data)) {
+          setUsers(response.data);
+          if (response.current_page) setCurrentPage(response.current_page);
+          if (response.total_pages) setTotalPages(response.total_pages);
+        } else if (Array.isArray(response)) {
+          setUsers(response);
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description:
+            error instanceof Error ? error.message : "Failed to load accounts",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to load accounts",
-        variant: "destructive"
-      });
-    }
-  }, [toast]);
+    },
+    [toast],
+  );
 
   useEffect(() => {
     fetchUsers(currentPage, perPage);
@@ -55,7 +61,7 @@ export default function AccountsPage() {
   const handleDelete = async (id: string) => {
     try {
       await api.delete(`/accounts/${id}`);
-      
+
       setUsers(users.filter((u) => u.appwrite_user_id !== id));
       toast({
         title: "Account Removed",
@@ -65,7 +71,8 @@ export default function AccountsPage() {
     } catch (error) {
       toast({
         title: "Deletion Failed",
-        description: error instanceof Error ? error.message : "Failed to delete account",
+        description:
+          error instanceof Error ? error.message : "Failed to delete account",
         variant: "destructive",
       });
     }

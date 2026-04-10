@@ -261,15 +261,23 @@ export function ProjectList({
                   >
                     <TableCell>
                       <div className="flex flex-col space-y-3 pt-1">
-                        {project.fcm_appwrite_provider_id && (
+                        {project.fcm_appwrite_provider_id ? (
                           <div className="flex flex-col gap-1 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap">
                             <div className="flex items-center gap-1.5">
-                              <span className="text-foreground/80"><span className="text-secondary">FCM:</span> {project.fcm_appwrite_provider_id}</span>
+                              <span className="text-foreground/80">
+                                <span className="text-secondary">FCM:</span>{" "}
+                                {project.fcm_appwrite_provider_id}
+                              </span>
                               <button
-                                onClick={() => handleCopy(project.fcm_appwrite_provider_id!)}
+                                onClick={() =>
+                                  handleCopy(
+                                    project.fcm_appwrite_provider_id || "",
+                                  )
+                                }
                                 className="p-0.5 hover:bg-primary/10 rounded transition-colors"
                               >
-                                {copiedId === project.fcm_appwrite_provider_id ? (
+                                {copiedId ===
+                                project.fcm_appwrite_provider_id ? (
                                   <Check className="h-2.5 w-2.5 text-green-500" />
                                 ) : (
                                   <Copy className="h-2.5 w-2.5" />
@@ -277,17 +285,25 @@ export function ProjectList({
                               </button>
                             </div>
                           </div>
-                        )}
+                        ) : null}
 
-                        {project.apn_appwrite_provider_id && (
+                        {project.apn_appwrite_provider_id ? (
                           <div className="flex flex-col gap-1 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap">
                             <div className="flex items-center gap-1.5">
-                              <span className="text-foreground/80"><span className="text-primary">APN:</span> {project.apn_appwrite_provider_id}</span>
+                              <span className="text-foreground/80">
+                                <span className="text-primary">APN:</span>{" "}
+                                {project.apn_appwrite_provider_id}
+                              </span>
                               <button
-                                onClick={() => handleCopy(project.apn_appwrite_provider_id!)}
+                                onClick={() =>
+                                  handleCopy(
+                                    project.apn_appwrite_provider_id || "",
+                                  )
+                                }
                                 className="p-0.5 hover:bg-primary/10 rounded transition-colors"
                               >
-                                {copiedId === project.apn_appwrite_provider_id ? (
+                                {copiedId ===
+                                project.apn_appwrite_provider_id ? (
                                   <Check className="h-2.5 w-2.5 text-green-500" />
                                 ) : (
                                   <Copy className="h-2.5 w-2.5" />
@@ -295,7 +311,7 @@ export function ProjectList({
                               </button>
                             </div>
                           </div>
-                        )}
+                        ) : null}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -312,9 +328,13 @@ export function ProjectList({
                           </span>
                           <div className="flex flex-col gap-1 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap">
                             <div className="flex items-center gap-1.5">
-                              <span className="text-foreground/80">{project.appwrite_project_id}</span>
+                              <span className="text-foreground/80">
+                                {project.appwrite_project_id}
+                              </span>
                               <button
-                                onClick={() => handleCopy(project.appwrite_project_id)}
+                                onClick={() =>
+                                  handleCopy(project.appwrite_project_id)
+                                }
                                 className="p-0.5 hover:bg-primary/10 rounded transition-colors"
                               >
                                 {copiedId === project.appwrite_project_id ? (
@@ -450,7 +470,9 @@ export function ProjectList({
           <span>Rows per page:</span>
           <Select
             value={String(perPage)}
-            onValueChange={(value) => onPerPageChange && onPerPageChange(Number(value))}
+            onValueChange={(value) =>
+              onPerPageChange && onPerPageChange(Number(value))
+            }
           >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue placeholder={String(perPage)} />
@@ -470,14 +492,19 @@ export function ProjectList({
             <span>Page:</span>
             <Select
               value={String(currentPage)}
-              onValueChange={(value) => onPageChange && onPageChange(Number(value))}
+              onValueChange={(value) =>
+                onPageChange && onPageChange(Number(value))
+              }
             >
               <SelectTrigger className="h-8 w-[70px]">
                 <SelectValue placeholder={String(currentPage)} />
               </SelectTrigger>
               <SelectContent side="top">
                 {Array.from({ length: Math.max(1, totalPages) }).map((_, i) => (
-                  <SelectItem key={`page-${Math.random()}`} value={String(i + 1)}>
+                  <SelectItem
+                    key={`page-${Math.random()}`}
+                    value={String(i + 1)}
+                  >
                     {i + 1}
                   </SelectItem>
                 ))}
@@ -490,7 +517,9 @@ export function ProjectList({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onPageChange && onPageChange(Math.max(1, currentPage - 1))}
+              onClick={() =>
+                onPageChange && onPageChange(Math.max(1, currentPage - 1))
+              }
               disabled={currentPage === 1}
             >
               <ChevronLeft className="h-4 w-4 mr-1" /> Prev
@@ -498,7 +527,10 @@ export function ProjectList({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onPageChange && onPageChange(Math.min(totalPages, currentPage + 1))}
+              onClick={() =>
+                onPageChange &&
+                onPageChange(Math.min(totalPages, currentPage + 1))
+              }
               disabled={currentPage === totalPages || totalPages === 0}
             >
               Next <ChevronRight className="h-4 w-4 ml-1" />

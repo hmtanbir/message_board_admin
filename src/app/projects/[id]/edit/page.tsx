@@ -41,7 +41,6 @@ export default function EditProjectPage({
     };
   }, [project]);
 
-
   const fetchProject = useCallback(async () => {
     try {
       setLoading(true);
@@ -101,7 +100,6 @@ export default function EditProjectPage({
         setProject(response as Project);
       }
 
-
       toast({
         title: "🛠️ Project Updated",
         description: `${data.name} has been modified successfully.`,
@@ -144,8 +142,6 @@ export default function EditProjectPage({
       </div>
     );
   }
-
-
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">

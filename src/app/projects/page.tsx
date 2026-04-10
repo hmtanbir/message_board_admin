@@ -23,33 +23,35 @@ export default function ProjectsPage() {
   const [perPage, setPerPage] = useState(10);
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const fetchProjects = useCallback(async (page: number, limit: number, status: string) => {
-    try {
-      setLoading(true);
-      const statusParam = status !== "all" ? `&status=${status}` : "";
-      const response = (await api.get(`/projects?page=${page}&per_page=${limit}${statusParam}`)) as
-        | PaginatedResponse<Project>
-        | Project[]
-        | null;
+  const fetchProjects = useCallback(
+    async (page: number, limit: number, status: string) => {
+      try {
+        setLoading(true);
+        const statusParam = status !== "all" ? `&status=${status}` : "";
+        const response = (await api.get(
+          `/projects?page=${page}&per_page=${limit}${statusParam}`,
+        )) as PaginatedResponse<Project> | Project[] | null;
 
-      if (response && "data" in response && Array.isArray(response.data)) {
-        setProjects(response.data);
-        if (response.current_page) setCurrentPage(response.current_page);
-        if (response.total_pages) setTotalPages(response.total_pages);
-      } else if (Array.isArray(response)) {
-        setProjects(response);
+        if (response && "data" in response && Array.isArray(response.data)) {
+          setProjects(response.data);
+          if (response.current_page) setCurrentPage(response.current_page);
+          if (response.total_pages) setTotalPages(response.total_pages);
+        } else if (Array.isArray(response)) {
+          setProjects(response);
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description:
+            error instanceof Error ? error.message : "Failed to load projects",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to load projects",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+    },
+    [toast],
+  );
 
   useEffect(() => {
     fetchProjects(currentPage, perPage, statusFilter);

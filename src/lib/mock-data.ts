@@ -17,7 +17,7 @@ export const MOCK_USERS: User[] = [
       package_name: "com.titan.shield",
       android: true,
       apple: true,
-      user_id: "69c8c4c987ac7740eae7"
+      user_id: "69c8c4c987ac7740eae7",
     },
   },
   {
@@ -36,7 +36,7 @@ export const MOCK_USERS: User[] = [
       package_name: "com.nova.genesis",
       android: false,
       apple: true,
-      user_id: "a1b2c3d4e5f6g7h8i9j0"
+      user_id: "a1b2c3d4e5f6g7h8i9j0",
     },
   },
   {
@@ -55,7 +55,7 @@ export const MOCK_USERS: User[] = [
       package_name: "com.zenith.flow",
       android: true,
       apple: false,
-      user_id: "f9e8d7c6b5a493827160"
+      user_id: "f9e8d7c6b5a493827160",
     },
   },
   {
@@ -74,7 +74,7 @@ export const MOCK_USERS: User[] = [
       package_name: "com.prism.core",
       android: false,
       apple: true,
-      user_id: "bcdef0123456789abcde"
+      user_id: "bcdef0123456789abcde",
     },
   },
   {
@@ -93,7 +93,7 @@ export const MOCK_USERS: User[] = [
       package_name: "com.aether.network",
       android: true,
       apple: true,
-      user_id: "1a2b3c4d5e6f7a8b9c0d"
+      user_id: "1a2b3c4d5e6f7a8b9c0d",
     },
   },
 ];
