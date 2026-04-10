@@ -1,0 +1,9 @@
+packages:
+  - "."
+strictDepBuilds: true
+allowBuilds:
+  sharp: true
+  esbuild: true
+  '@firebase/util': false
+  protobufjs: false
+  unrs-resolver: false
