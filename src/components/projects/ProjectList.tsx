@@ -15,6 +15,8 @@ import {
   Loader2,
   ChevronLeft,
   ChevronRight,
+  Copy,
+  Check,
 } from "lucide-react";
 
 import {
@@ -109,6 +111,7 @@ export function ProjectList({
 }: ProjectListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [envFilter, setEnvFilter] = useState("all");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -145,6 +148,12 @@ export function ProjectList({
       onDelete(deleteId);
       setDeleteId(null);
     }
+  };
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(text);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   return (
@@ -208,10 +217,10 @@ export function ProjectList({
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="text-xs uppercase tracking-widest font-semibold py-4">
-                Project ID
+                Provider ID
               </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
-                Project Name
+                Project
               </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
                 Owner
@@ -250,12 +259,48 @@ export function ProjectList({
                     key={project.appwrite_project_id}
                     className="border-border hover:bg-muted/20 transition-colors group"
                   >
-                    <TableCell className="font-mono text-xs text-muted-foreground">
-                      {project.appwrite_project_id}
+                    <TableCell>
+                      <div className="flex flex-col space-y-3 pt-1">
+                        {project.fcm_appwrite_provider_id && (
+                          <div className="flex flex-col gap-1 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-foreground/80"><span className="text-secondary">FCM:</span> {project.fcm_appwrite_provider_id}</span>
+                              <button
+                                onClick={() => handleCopy(project.fcm_appwrite_provider_id!)}
+                                className="p-0.5 hover:bg-primary/10 rounded transition-colors"
+                              >
+                                {copiedId === project.fcm_appwrite_provider_id ? (
+                                  <Check className="h-2.5 w-2.5 text-green-500" />
+                                ) : (
+                                  <Copy className="h-2.5 w-2.5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {project.apn_appwrite_provider_id && (
+                          <div className="flex flex-col gap-1 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-foreground/80"><span className="text-primary">APN:</span> {project.apn_appwrite_provider_id}</span>
+                              <button
+                                onClick={() => handleCopy(project.apn_appwrite_provider_id!)}
+                                className="p-0.5 hover:bg-primary/10 rounded transition-colors"
+                              >
+                                {copiedId === project.apn_appwrite_provider_id ? (
+                                  <Check className="h-2.5 w-2.5 text-green-500" />
+                                ) : (
+                                  <Copy className="h-2.5 w-2.5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-primary/10 rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 bg-primary/10 rounded-lg shrink-0 mt-1">
                           <Briefcase className="h-4 w-4 text-primary" />
                         </div>
                         <div className="flex flex-col min-w-0">
@@ -265,6 +310,21 @@ export function ProjectList({
                           <span className="text-xs text-muted-foreground font-mono truncate">
                             {project.package_name}
                           </span>
+                          <div className="flex flex-col gap-1 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-foreground/80">{project.appwrite_project_id}</span>
+                              <button
+                                onClick={() => handleCopy(project.appwrite_project_id)}
+                                className="p-0.5 hover:bg-primary/10 rounded transition-colors"
+                              >
+                                {copiedId === project.appwrite_project_id ? (
+                                  <Check className="h-2.5 w-2.5 text-green-500" />
+                                ) : (
+                                  <Copy className="h-2.5 w-2.5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </TableCell>

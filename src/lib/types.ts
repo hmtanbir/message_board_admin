@@ -48,6 +48,8 @@ export interface Project {
   android: boolean;
   apple: boolean;
   appwrite_project_id: string;
+  fcm_appwrite_provider_id: string | null;
+  apn_appwrite_provider_id: string | null;
   user_id: number;
   appwrite_user_id: string;
   user_name?: string;
