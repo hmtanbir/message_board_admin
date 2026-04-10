@@ -15,6 +15,8 @@ import {
   Loader2,
   ChevronLeft,
   ChevronRight,
+  Copy,
+  Check,
 } from "lucide-react";
 
 import {
@@ -109,6 +111,7 @@ export function ProjectList({
 }: ProjectListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [envFilter, setEnvFilter] = useState("all");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -145,6 +148,12 @@ export function ProjectList({
       onDelete(deleteId);
       setDeleteId(null);
     }
+  };
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(text);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   return (
@@ -254,7 +263,20 @@ export function ProjectList({
                     className="border-border hover:bg-muted/20 transition-colors group"
                   >
                     <TableCell className="font-mono text-xs text-muted-foreground">
-                      {project.appwrite_project_id}
+                      <div className="flex items-center gap-2">
+                        {project.appwrite_project_id}
+                        <button
+                          onClick={() => handleCopy(project.appwrite_project_id)}
+                          className="p-1 hover:bg-primary/10 rounded-md transition-colors text-muted-foreground hover:text-primary"
+                          title="Copy Project ID"
+                        >
+                          {copiedId === project.appwrite_project_id ? (
+                            <Check className="h-3 w-3 text-green-500" />
+                          ) : (
+                            <Copy className="h-3 w-3" />
+                          )}
+                        </button>
+                      </div>
                     </TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">
                       {project.appwrite_provider_id}
