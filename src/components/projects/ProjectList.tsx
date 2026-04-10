@@ -217,13 +217,10 @@ export function ProjectList({
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="text-xs uppercase tracking-widest font-semibold py-4">
-                Project ID
-              </TableHead>
-              <TableHead className="text-xs uppercase tracking-widest font-semibold">
                 Provider ID
               </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
-                Project Name
+                Project
               </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
                 Owner
@@ -244,7 +241,7 @@ export function ProjectList({
               if (loading) {
                 return (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-64 text-center">
+                    <TableCell colSpan={6} className="h-64 text-center">
                       <div className="flex flex-col items-center justify-center space-y-3">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
                         <p className="text-muted-foreground">
@@ -262,28 +259,48 @@ export function ProjectList({
                     key={project.appwrite_project_id}
                     className="border-border hover:bg-muted/20 transition-colors group"
                   >
-                    <TableCell className="font-mono text-xs text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        {project.appwrite_project_id}
-                        <button
-                          onClick={() => handleCopy(project.appwrite_project_id)}
-                          className="p-1 hover:bg-primary/10 rounded-md transition-colors text-muted-foreground hover:text-primary"
-                          title="Copy Project ID"
-                        >
-                          {copiedId === project.appwrite_project_id ? (
-                            <Check className="h-3 w-3 text-green-500" />
-                          ) : (
-                            <Copy className="h-3 w-3" />
-                          )}
-                        </button>
+                    <TableCell>
+                      <div className="flex flex-col space-y-3 pt-1">
+                        {project.fcm_appwrite_provider_id && (
+                          <div className="flex flex-col gap-1 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-foreground/80"><span className="text-secondary">FCM:</span> {project.fcm_appwrite_provider_id}</span>
+                              <button
+                                onClick={() => handleCopy(project.fcm_appwrite_provider_id!)}
+                                className="p-0.5 hover:bg-primary/10 rounded transition-colors"
+                              >
+                                {copiedId === project.fcm_appwrite_provider_id ? (
+                                  <Check className="h-2.5 w-2.5 text-green-500" />
+                                ) : (
+                                  <Copy className="h-2.5 w-2.5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {project.apn_appwrite_provider_id && (
+                          <div className="flex flex-col gap-1 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-foreground/80"><span className="text-primary">APN:</span> {project.apn_appwrite_provider_id}</span>
+                              <button
+                                onClick={() => handleCopy(project.apn_appwrite_provider_id!)}
+                                className="p-0.5 hover:bg-primary/10 rounded transition-colors"
+                              >
+                                {copiedId === project.apn_appwrite_provider_id ? (
+                                  <Check className="h-2.5 w-2.5 text-green-500" />
+                                ) : (
+                                  <Copy className="h-2.5 w-2.5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">
-                      {project.appwrite_provider_id}
-                    </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-primary/10 rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 bg-primary/10 rounded-lg shrink-0 mt-1">
                           <Briefcase className="h-4 w-4 text-primary" />
                         </div>
                         <div className="flex flex-col min-w-0">
@@ -293,6 +310,21 @@ export function ProjectList({
                           <span className="text-xs text-muted-foreground font-mono truncate">
                             {project.package_name}
                           </span>
+                          <div className="flex flex-col gap-1 text-[11px] font-mono text-muted-foreground whitespace-pre-wrap">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-foreground/80">{project.appwrite_project_id}</span>
+                              <button
+                                onClick={() => handleCopy(project.appwrite_project_id)}
+                                className="p-0.5 hover:bg-primary/10 rounded transition-colors"
+                              >
+                                {copiedId === project.appwrite_project_id ? (
+                                  <Check className="h-2.5 w-2.5 text-green-500" />
+                                ) : (
+                                  <Copy className="h-2.5 w-2.5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </TableCell>
@@ -388,7 +420,7 @@ export function ProjectList({
 
               return (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-64 text-center">
+                  <TableCell colSpan={6} className="h-64 text-center">
                     <div className="flex flex-col items-center justify-center space-y-3">
                       <p className="text-muted-foreground">
                         No projects found matching your filters.
