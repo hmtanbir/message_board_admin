@@ -211,6 +211,9 @@ export function ProjectList({
                 Project ID
               </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
+                Provider ID
+              </TableHead>
+              <TableHead className="text-xs uppercase tracking-widest font-semibold">
                 Project Name
               </TableHead>
               <TableHead className="text-xs uppercase tracking-widest font-semibold">
@@ -232,7 +235,7 @@ export function ProjectList({
               if (loading) {
                 return (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-64 text-center">
+                    <TableCell colSpan={7} className="h-64 text-center">
                       <div className="flex flex-col items-center justify-center space-y-3">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
                         <p className="text-muted-foreground">
@@ -252,6 +255,9 @@ export function ProjectList({
                   >
                     <TableCell className="font-mono text-xs text-muted-foreground">
                       {project.appwrite_project_id}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {project.appwrite_provider_id}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -360,7 +366,7 @@ export function ProjectList({
 
               return (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-64 text-center">
+                  <TableCell colSpan={7} className="h-64 text-center">
                     <div className="flex flex-col items-center justify-center space-y-3">
                       <p className="text-muted-foreground">
                         No projects found matching your filters.
