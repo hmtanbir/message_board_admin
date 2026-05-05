@@ -160,7 +160,7 @@ export async function apiClient(endpoint: string, options: ApiOptions = {}) {
   // Handle transparent decryption first, so we can read encrypted error messages!
   if (
     config.encryptionEnabled &&
-    !skipDecryption &&
+    (!skipDecryption || !response.ok) &&
     jsonResponse &&
     typeof jsonResponse === "object" &&
     "data" in jsonResponse &&
